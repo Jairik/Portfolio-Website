@@ -10,6 +10,7 @@ const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({
   canvas: document.querySelector('#bg'),
+  alpha: true
 });
 
 //Recursively loops through all objects, animating each one. Will be called at the end
@@ -39,6 +40,9 @@ renderer.setPixelRatio(window.devicePixelRatio)
 renderer.setSize(window.innerWidth, window.innerHeight);
 camera.position.setZ(30);
 
+//Adding stars to the scene
+Array(200).fill().forEach(addStar);
+
 //Creating torus object & adding it to the scene
 const geometry = new THREE.TorusGeometry(10, 3, 16, 100);
 const material = new THREE.MeshStandardMaterial({color: 0xFF6347, wireframe: true});
@@ -59,12 +63,16 @@ scene.add(lightHelper, gridHelper);
 //Allowing for users to move around the scene by dragging
 const controls = new OrbitControls(camera, renderer.domElement);
 
-//Adding stars to the scene
-Array(200).fill().forEach(addStar);
+//Loading in the background (It almost looks better without, will re-evaluate later)
+//const spaceTexture = new THREE.TextureLoader().load('dark-night-mountains-minimalist-4k-o4-2560x1440.jpg');
+//scene.background = spaceTexture;
 
-//Loading in the background
-const spaceTexture = new THREE.TextureLoader().load('black_and_white_space_background.jpg');
-scene.background = spaceTexture;
+//Ensuring that the renderer properly resizes the window
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight)
+})
 
 animate();
 
