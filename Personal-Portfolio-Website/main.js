@@ -30,8 +30,8 @@ renderer.setPixelRatio(window.devicePixelRatio)
 renderer.setSize(window.innerWidth, window.innerHeight);
 camera.position.setZ(30);
 
-//Adding 5000 stars to the scene
-Array(5000).fill().forEach(addStar);
+//Adding 9000 stars to the scene
+Array(9000).fill().forEach(addStar);
 
 /* --- Creating Objects --- */
 
@@ -42,7 +42,7 @@ const material = new THREE.MeshStandardMaterial({
   wireframe: true
 });
 const torus = new THREE.Mesh(geometry, material);
-scene.add(torus);
+//scene.add(torus);
 
 //Moon Object
 const moonTexture = new THREE.TextureLoader().load('moon-texture.jpg');
@@ -168,7 +168,7 @@ const saturn = new THREE.Mesh(
     map: saturnTexture,
   })
 );
-saturn.position.set(-45, -3, -15);
+saturn.position.set(-48, -3, -15);
 scene.add(saturn);
 
 //Saturn Ring Object
@@ -181,7 +181,7 @@ const saturnRing = new THREE.Mesh(
     //transparent: true,
   })
 );
-saturnRing.position.set(-45, -3, -15);
+saturnRing.position.set(-48, -3, -15);
 saturnRing.rotation.x = Math.PI / 2; //To make it lie flat
 scene.add(saturnRing);
 
@@ -194,13 +194,14 @@ pointLight.position.set(-15, 15, 15);
 const ambientLight = new THREE.AmbientLight(0xffffff);  //White light
 scene.add( pointLight, ambientLight);
 
-//DEV - adding helpers for testing purposes
-const lightHelper = new THREE.PointLightHelper(pointLight);
-const gridHelper = new THREE.GridHelper(200, 50);
-scene.add(lightHelper, gridHelper);
+// //DEV - adding helpers for testing purposes
+// const lightHelper = new THREE.PointLightHelper(pointLight);
+// const gridHelper = new THREE.GridHelper(200, 50);
+// scene.add(lightHelper, gridHelper);
 
 //Allowing for users to move around the scene by dragging
 const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableZoom = false; //minimize conflictions with scrolling the text
 
 //Loading in the background (It almost looks better without, will re-evaluate later)
 //const spaceTexture = new THREE.TextureLoader().load('outer-space-background.jpg');
@@ -221,10 +222,10 @@ let angle = 0;
 function animate() {
   requestAnimationFrame(animate);
   //Rotate the objects
-  torus.rotation.y += .01;
+  //torus.rotation.y += .01;
 
   earth.rotation.x += .01;
-  earth.rotation.y += -.01;
+  earth.rotation.y += -.005;
   earth.rotation.z += .005;
   jupiter.rotation.x += .005;
   jupiter.rotation.y += .01;
