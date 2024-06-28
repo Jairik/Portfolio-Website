@@ -258,23 +258,6 @@ function animate() {
   renderer.render(scene, camera);
 }
 
-//Adding a scroll listener to the window
-const scrollMultiplier = 3;
-//Ensuring that DOM content is firstly loaded
-document.addEventListener('DOMContentLoaded', () => {
-
-  window.addEventListener('scroll', () => {
-    console.log('Scroll event detected on window');
-    const scrollPosition = window.scrollY;
-    const scrollMax = document.documentElement.scrollHeight - window.innerHeight;
-    const scrollFraction = scrollPosition / scrollMax;
-    const newZoom = 1 + scrollFraction * scrollMultiplier;
-    camera.zoom = newZoom;
-    camera.updateProjectionMatrix();
-    console.log(`Scroll Position: ${scrollPosition}, Scroll Fraction: ${scrollFraction}, New Zoom: ${newZoom}`);
-  });
-});
-
 console.log("Website created using Vite framework and three.js package. All code can be found on my github.");
 
 
