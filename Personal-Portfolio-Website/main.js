@@ -194,18 +194,9 @@ pointLight.position.set(-15, 15, 15);
 const ambientLight = new THREE.AmbientLight(0xffffff);  //White light
 scene.add( pointLight, ambientLight);
 
-// //DEV - adding helpers for testing purposes
-// const lightHelper = new THREE.PointLightHelper(pointLight);
-// const gridHelper = new THREE.GridHelper(200, 50);
-// scene.add(lightHelper, gridHelper);
-
 //Allowing for users to move around the scene by dragging
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableZoom = false; //minimize conflictions with scrolling the text
-
-//Loading in the background (It almost looks better without, will re-evaluate later)
-//const spaceTexture = new THREE.TextureLoader().load('outer-space-background.jpg');
-//scene.background = spaceTexture;
 
 //Ensuring that the renderer properly resizes the window
 window.addEventListener('resize', () => {
@@ -266,6 +257,26 @@ function animate() {
   controls.update();
   renderer.render(scene, camera);
 }
+
+//Adding a scroll listener to the window
+const scrollMultiplier = 3;
+//Ensuring that DOM content is firstly loaded
+document.addEventListener('DOMContentLoaded', () => {
+
+  window.addEventListener('scroll', () => {
+    console.log('Scroll event detected on window');
+    const scrollPosition = window.scrollY;
+    const scrollMax = document.documentElement.scrollHeight - window.innerHeight;
+    const scrollFraction = scrollPosition / scrollMax;
+    const newZoom = 1 + scrollFraction * scrollMultiplier;
+    camera.zoom = newZoom;
+    camera.updateProjectionMatrix();
+    console.log(`Scroll Position: ${scrollPosition}, Scroll Fraction: ${scrollFraction}, New Zoom: ${newZoom}`);
+  });
+});
+
+console.log("Website created using Vite framework and three.js package. All code can be found on my github.");
+
 
 animate();
 

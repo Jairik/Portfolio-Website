@@ -10,7 +10,7 @@
         margin: 0;
         height: 100%;
         background-color: black;
-        overflow: auto;
+        overflow-y: scroll;
       }
       .container {
         display: flex;
@@ -36,7 +36,7 @@
         opacity: 0;
       }
       #bg {
-        position: absolute;
+        position: fixed;
         top: 0;
         left: 0;
         width: 100%;
@@ -62,6 +62,7 @@
         margin-right: 400px;
         margin-top: 100px;
         font-size: 1.2em;
+        min-height: 200vh;
       }
       .links {
         color:rgb(21, 255, 0);
@@ -101,13 +102,14 @@
 
     <canvas id="bg"></canvas>
 
-    <main>
+    <main id="scrollable-content">
 
       <header>
         <h1>Jairik 'JJ' McCauley</h1>
         <h2>SWE & Data Scientist</h2>
         <h3>Salisbury University Class of 2026</h3>
         <h4><a href="https://github.com/Jairik" class="links"></a>Github</h4>
+        <br>
       </header>
 
       <section>
@@ -131,7 +133,7 @@
         <p>
           Elementary console-orentied game, playable via the console. <a href="https://github.com/Jairik/Casino_Game" class="links">Demos/code here.</a>
         </p>
-
+        <br>
       </section>
 
       <section>
@@ -141,7 +143,7 @@
           Computer Science Tutor (Start Date of Aug 2024)<br>
           Resident Assistant (Aug 2023 - Present)<br>
         </p>
-
+        <br>
       </section>
 
       <section>
@@ -161,8 +163,7 @@
         <p>
           Expected Graduation: May 2026
         </p>
-          
-        
+        <br>
       </section>
 
       <section>
@@ -171,8 +172,8 @@
           jmccauley4@gulls.salisbury.edu<br>
           <a href="www.linkedin.com/in/jairik-mccauley" class="links">Linkedin</a>
         </p>
+        <br>
       </section>
-
     </main>
 
     <script type="module" src="/main.js"></script>
