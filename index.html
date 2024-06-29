@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/Portfolio-Website/JJMCIcon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JJ McCauley</title>
+    <style>
+      body, html {
+        margin: 0;
+        height: 100%;
+        background-color: black;
+        overflow-y: scroll;
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        position: relative;
+        z-index: 10;
+        color:rgb(21, 255, 0);
+        font-family: 'Courier New', Courier, monospace;
+      }
+      .text {
+        font-family: 'Courier New', Courier, monospace;
+        font-weight: 200;
+        line-height: 1.5;
+        font-size: 3em;
+        color: rgb(21, 255, 0);
+        opacity: 1;
+        transition: opacity 3s ease-in-out;
+      }
+      .fade-out {
+        opacity: 0;
+      }
+      #bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0; /*Canvas behind text*/
+      }
+      header {
+        text-align: center;
+        color: rgb(21, 255, 0);
+        font-family: 'Courier New', Courier, monospace;
+        margin: 20px 0;
+      }
+      section {
+        text-align: left;
+        color:rgb(21, 255, 0);
+        font-family: 'Courier New', Courier, monospace;
+        margin: 20px;
+      }
+      main {
+        position: relative;
+        z-index: 1; /*Text above canvas*/
+        margin-left: 450px;
+        margin-right: 400px;
+        margin-top: 100px;
+        font-size: 1.2em;
+        min-height: 200vh;
+      }
+      .links {
+        color:rgb(21, 255, 0);
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+    </style>
+    <script type="module" crossorigin src="/Portfolio-Website/assets/index-CS0oWxVn.js"></script>
+    <link rel="stylesheet" crossorigin href="/Portfolio-Website/assets/index-BgB2Lj1r.css">
+  </head>
+  <body>
+    <div class="container">
+      <div class="text"></div>
+    </div>
+
+    <script>
+      const div = document.querySelector(".text");
+      const text = "Jairik \"JJ\" McCauley";
+
+      function textTypingEffect(element, text, counter = 0) {
+        element.textContent += text[counter];
+        
+        if (counter === text.length - 1) {
+          setTimeout(() => {
+            element.classList.add('fade-out');
+            element.addEventListener('transitionend', () => {
+              element.parentElement.remove(); //Remove the container div
+            });
+          }, 1); 
+          return;
+        }
+
+        setTimeout(() => textTypingEffect(element, text, counter + 1), 100);
+      }
+
+      textTypingEffect(div, text);
+    </script>
+
+    <canvas id="bg"></canvas>
+
+    <main id="scrollable-content">
+
+      <header>
+        <h1>Jairik 'JJ' McCauley</h1>
+        <h2>SWE & Data Scientist</h2>
+        <h3>Salisbury University Class of 2026</h3>
+        <h4><a href="https://github.com/Jairik" class="links"></a>Github</h4>
+        <br>
+      </header>
+
+      <section>
+        <h3>Projects</h3>
+        <p>
+          For all of my work, feel free to visit my <a href="https://github.com/Jairik" class="links">Github</a>
+        </p>
+        
+        <h4>ML Stock Analyzer</h4>
+        <p>
+          Uses both regression and classification models in order to predict future prices and identify trends. Currently closed source.
+        </p>
+        
+        <h4>Move4Wellness Fitness App</h4>
+        <p>
+          Android Fitness app developed for client at Salisbury University. Utilizes firebase database, authentication, and uses realtime charts.
+          <a href="https://github.com/Jairik/MOVE4WELLNESS-Android-App" class="links">Demos/code here.</a>
+        </p>
+
+        <h4>Console Casino Game</h4>
+        <p>
+          Elementary console-orentied game, playable via the console. <a href="https://github.com/Jairik/Casino_Game" class="links">Demos/code here.</a>
+        </p>
+        <br>
+      </section>
+
+      <section>
+        <h3>Experience</h3>
+        <p>
+          Discrete Mathematics Tutor (Jan 2022 - May 2023)<br>
+          Computer Science Tutor (Start Date of Aug 2024)<br>
+          Resident Assistant (Aug 2023 - Present)<br>
+        </p>
+        <br>
+      </section>
+
+      <section>
+        <h3>Education</h3>
+        <p>
+          Salisbury University - Computer Science (SWE & AI Tracks) & Data Science (Computational Data Track) <br>
+          3.77 GPA
+        </p>
+        <ul>
+          <li>Upsilon Pi Epsilon Member (Computer Science Honors Society)</li>
+          <li>Chi Alpha Sigma (Athletics Honors Society)</li>
+          <li>Clarkes Honors College Member</li>
+          <li>RA 'Best Community Builder' Award Recipient</li>
+          <li>4/4 Dean's List</li>
+          <li>High School - NCSM Math Award & President's Award</li>
+        </ul>
+        <p>
+          Expected Graduation: May 2026
+        </p>
+        <br>
+      </section>
+
+      <section>
+        <h3>Contact Information</h3>
+        <p>
+          jmccauley4@gulls.salisbury.edu<br>
+          <a href="www.linkedin.com/in/jairik-mccauley" class="links">Linkedin</a>
+        </p>
+        <br>
+      </section>
+    </main>
+
+
+  </body>
+</html>
