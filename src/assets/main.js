@@ -6,7 +6,8 @@ to the github-pages branch. It will save you 4 hours of debugging 😭*/
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-let scene, camera, renderer;
+let scene, camera, renderer, earth, moon, jupiter, sun, mars, neptune, mercury, venus, uranus, 
+uranusRing, saturn, saturnRing, controls;
 
 function init() {
 
@@ -52,7 +53,7 @@ function init() {
   //Moon Object
   const moonTexture = new THREE.TextureLoader().load('moon-texture.jpg');
   const moonTexture_normal = new THREE.TextureLoader().load('normal.jpg');
-  const moon = new THREE.Mesh(
+  moon = new THREE.Mesh(
     new THREE.SphereGeometry(2, 32, 32),
     new THREE.MeshStandardMaterial({
       map: moonTexture,
@@ -65,7 +66,7 @@ function init() {
   //Earth Object
   const earthTexture = new THREE.TextureLoader().load('earth-texture.jpg');
   const earthTexture_normal = new THREE.TextureLoader().load('earth-normalmap.jpg');
-  const earth = new THREE.Mesh(
+  earth = new THREE.Mesh(
     new THREE.SphereGeometry(10, 32, 32),
     new THREE.MeshStandardMaterial({
       map: earthTexture,
@@ -77,7 +78,7 @@ function init() {
 
   //Jupiter Object
   const jupiterTexture = new THREE.TextureLoader().load('jupiter-texture.jpg');
-  const jupiter = new THREE.Mesh(
+  jupiter = new THREE.Mesh(
     new THREE.SphereGeometry(8, 32, 32),
     new THREE.MeshStandardMaterial({
       map: jupiterTexture,
@@ -88,7 +89,7 @@ function init() {
 
   //Sun Object
   const sunTexture = new THREE.TextureLoader().load('sun-texture.jpg');
-  const sun = new THREE.Mesh(
+  sun = new THREE.Mesh(
     new THREE.SphereGeometry(10, 32, 32),
     new THREE.MeshStandardMaterial({
       map: sunTexture,
@@ -99,7 +100,7 @@ function init() {
 
   //Mars Object
   const marsTexture = new THREE.TextureLoader().load('mars-texture.jpg');
-  const mars = new THREE.Mesh(
+  mars = new THREE.Mesh(
     new THREE.SphereGeometry(8, 32, 32),
     new THREE.MeshStandardMaterial({
       map: marsTexture,
@@ -110,7 +111,7 @@ function init() {
 
   //Neptune Object
   const neptuneTexture = new THREE.TextureLoader().load('neptune-texture.jpg');
-  const neptune = new THREE.Mesh(
+  neptune = new THREE.Mesh(
     new THREE.SphereGeometry(10, 32, 32),
     new THREE.MeshStandardMaterial({
       map: neptuneTexture,
@@ -121,7 +122,7 @@ function init() {
 
   //Mercury Object
   const mercuryTexture = new THREE.TextureLoader().load('mercury-texture.jpg');
-  const mercury = new THREE.Mesh(
+  mercury = new THREE.Mesh(
     new THREE.SphereGeometry(6, 32, 32),
     new THREE.MeshStandardMaterial({
       map: mercuryTexture,
@@ -132,7 +133,7 @@ function init() {
 
   //Venus Object
   const venusTexture = new THREE.TextureLoader().load('venus-texture.jpg');
-  const venus = new THREE.Mesh(
+  venus = new THREE.Mesh(
     new THREE.SphereGeometry(5, 32, 32),
     new THREE.MeshStandardMaterial({
       map: venusTexture,
@@ -143,7 +144,7 @@ function init() {
 
   //Uranus Object
   const uranusTexture = new THREE.TextureLoader().load('uranus-texture.jpg');
-  const uranus = new THREE.Mesh(
+  uranus = new THREE.Mesh(
     new THREE.SphereGeometry(7, 32, 32),
     new THREE.MeshStandardMaterial({
       map: uranusTexture,
@@ -154,7 +155,7 @@ function init() {
 
   //Uranus Ring Object
   const uranusRingTexture = new THREE.TextureLoader().load('uranus-ring-texture.jpg');
-  const uranusRing = new THREE.Mesh(
+  uranusRing = new THREE.Mesh(
     new THREE.RingGeometry(8, 8.5, 64, 3),
     new THREE.MeshStandardMaterial({
       map: uranusRingTexture,
@@ -167,7 +168,7 @@ function init() {
 
   //Saturn Object
   const saturnTexture = new THREE.TextureLoader().load('saturn-texture.jpg');
-  const saturn = new THREE.Mesh(
+  saturn = new THREE.Mesh(
     new THREE.SphereGeometry(10, 32, 32),
     new THREE.MeshStandardMaterial({
       map: saturnTexture,
@@ -178,7 +179,7 @@ function init() {
 
   //Saturn Ring Object
   const saturnRingTexture = new THREE.TextureLoader().load('saturn-ring-texture.jpg');
-  const saturnRing = new THREE.Mesh(
+  saturnRing = new THREE.Mesh(
     new THREE.RingGeometry(11, 13, 64, 3),
     new THREE.MeshStandardMaterial({
       map: saturnRingTexture,
@@ -200,7 +201,7 @@ function init() {
   scene.add( pointLight, ambientLight);
 
   //Allowing for users to move around the scene by dragging
-  const controls = new OrbitControls(camera, renderer.domElement);
+  controls = new OrbitControls(camera, renderer.domElement);
   controls.enableZoom = false; //minimize conflictions with scrolling the text
 
   //Ensuring that the renderer properly resizes the window
