@@ -224,8 +224,7 @@ let angle = 0;
 
 //Recursively loops through all objects, animating each one. Will be called at the end
 function animate() {
-  requestAnimationFrame(animate);
-  //Rotate the objects
+  //Rotate the planet objects
   earth.rotation.x += .01;
   earth.rotation.y += -.005;
   earth.rotation.z += .005;
@@ -269,6 +268,8 @@ function animate() {
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
 }
+
+console.log("Planets initiated and rotating");
 
 function onScroll() {
   const scrollY = window.scrollY;
