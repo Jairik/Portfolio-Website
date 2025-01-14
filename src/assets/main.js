@@ -6,8 +6,9 @@ to the github-pages branch. It will save you 4 hours of debugging 😭*/
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
+// Initialize all the variables
 let scene, camera, renderer, earth, moon, jupiter, sun, mars, neptune, mercury, venus, uranus, 
-uranusRing, saturn, saturnRing, controls;
+uranusRing, saturn, saturnRing, controls, stars = [];
 
 function init() {
 
@@ -29,6 +30,8 @@ function init() {
     const[x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(500));
     star.position.set(x, y, z);
     scene.add(star);
+    stars.push(star);
+    if(stars == null){console.log("Star Error")}
   }
 
   //Instantiating renderer and setting camera position
@@ -40,15 +43,6 @@ function init() {
   Array(9000).fill().forEach(addStar);
 
   /* --- Creating Objects --- */
-
-  //Torus Object 
-  const geometry = new THREE.TorusGeometry(10, 3, 16, 100);
-  const material = new THREE.MeshStandardMaterial({
-    color: 0x15FF00, 
-    wireframe: true
-  });
-  const torus = new THREE.Mesh(geometry, material);
-  //scene.add(torus);
 
   //Moon Object
   const moonTexture = new THREE.TextureLoader().load('moon-texture.jpg');
@@ -263,6 +257,13 @@ function animate() {
   moon.rotation.x += .01;
   moon.rotation.y += .005;
   moon.rotation.z += .005;
+  // Rotate all of the stars
+  // Add slight movement to each star
+  stars.forEach(star => {
+    star.position.x += Math.sin(star.position.x * 0.001) * 0.001;
+    star.position.y += Math.cos(star.position.y * 0.001) * 0.001; 
+    star.position.z += Math.sin(star.position.z * 0.001) * 0.001; 
+  });
   //Update controls and re-render
   controls.update();
   requestAnimationFrame(animate);
