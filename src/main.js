@@ -13,7 +13,7 @@ function init() {
 
   // Creating scene (container), camera, and renderer
   scene = new THREE.Scene()
-  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 0.1, 2000);
   renderer = new THREE.WebGLRenderer({
     canvas: document.querySelector('#bg'),
     alpha: true
@@ -38,8 +38,9 @@ function init() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   camera.position.setZ(30);
 
-  //Adding 9000 stars to the scene
-  Array(9000).fill().forEach(addStar);
+  //Adding 6900 stars to the scene
+  //Note: May not be quite as filled, but will help with rendering speed and is still alot of stars
+  Array(6900).fill().forEach(addStar);
 
   /* --- Creating Objects --- */
 

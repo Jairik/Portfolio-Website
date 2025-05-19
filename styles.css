@@ -4,17 +4,23 @@ body {
     margin: 0; padding: 0;
     font-family: 'Courier New', Courier, monospace;
     position: relative; z-index: 1;
+    font-weight: bold; /* Make all text bold */
 }
 
 body, body * {
     color: rgb(21, 255, 0) !important;
+    font-weight: bold; /* Make all text bold */
 }
 
 h1, h2, h3, h4, h5, h6,
 p, li, summary, a, .text, .list-group-item {
     background-color: rgba(0, 0, 0, 0.1) !important;
     display: inline !important; /* Ensure background wraps only the text */
-    padding: 0 2px; /* Optional: Add some padding around the text */
+    padding: 0 2px;
+    color:rgb(21, 255, 0) !important;
+    font-weight: bold; /* Make all text bold */
+    text-align: center !important;
+    width: 100%;
 }
 
 .list-group-item-dark {
@@ -22,23 +28,32 @@ p, li, summary, a, .text, .list-group-item {
     border: 1px solid rgba(21, 255, 0, 0.5) !important;
     display: inline-block !important; /* Ensure background wraps only the text */
     padding: 0 2px; /* Optional: Add some padding around the text */
+    font-weight: bold; /* Make all text bold */
 }
 
 a {
     text-decoration: none !important;
+    font-weight: bold; /* Make all text bold */
 }
 a:hover, a:focus {
     text-decoration: underline !important;
+    font-weight: bold; /* Make all text bold */
 }
 
 .fade-out      { opacity: 0; transition: opacity 3s ease-in-out; }
 #bg            { position: fixed; inset: 0; z-index: -1; }
 
+/* Awful name but is used for the name at the top */
 .text {
-    position: relative;
-    top: 25%; /* Moves the title 25% lower */
-    transform: translateY(-25%); /* Centers it vertically within the 25% offset */
-  }
+    position: static;
+    margin-top: 25vh;
+    margin-bottom: 2rem;
+    font-weight: bold;
+    font-size: 4vw;
+    display: block !important;
+    text-align: center !important;
+    width: 100%;
+}
 
 .hidden-content {display: none;}
 .fade-in {animation: fadeIn 1s forwards;}
