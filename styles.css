@@ -1,0 +1,41 @@
+/* keep your dark page behind the canvas */
+html { background: black; height: 100%; margin: 0; padding: 0; }
+body {
+    background: transparent;
+    margin: 0; padding: 0;
+    font-family: 'Courier New', Courier, monospace;
+    position: relative; z-index: 1;
+}
+
+/* 1) Make every piece of text green */
+body, body * {
+    color: rgb(21, 255, 0) !important;
+}
+
+/* 2) Give each text element a 10% gray shadow */
+h1, h2, h3, h4, h5, h6,
+p, li, summary, a, .text, .list-group-item {
+    background-color: rgba(0, 0, 0, 0.1) !important;
+    display: inline !important; /* Ensure background wraps only the text */
+    padding: 0 2px; /* Optional: Add some padding around the text */
+}
+
+/* 3) Tweak your list‐group items’ borders too */
+.list-group-item-dark {
+    background-color: rgba(0, 0, 0, 0.1) !important;
+    border: 1px solid rgba(21, 255, 0, 0.5) !important;
+    display: inline-block !important; /* Ensure background wraps only the text */
+    padding: 0 2px; /* Optional: Add some padding around the text */
+}
+
+/* 4) Links stay green, but underline on hover */
+a {
+    text-decoration: none !important;
+}
+a:hover, a:focus {
+    text-decoration: underline !important;
+}
+
+/* 5) keep everything else as before */
+.fade-out      { opacity: 0; transition: opacity 3s ease-in-out; }
+#bg            { position: fixed; inset: 0; z-index: -1; }

@@ -5,94 +5,160 @@
     <link rel="icon" type="image/png" href="/JJMCIcon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JJ McCauley</title>
-    <style>
-      body, html {
-        margin: 0;
-        height: 100%;
-        background-color: black;
-        overflow-y: scroll;
-      }
-      .container {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
-        position: relative;
-        z-index: 10;
-        color:rgb(21, 255, 0);
-        font-family: 'Courier New', Courier, monospace;
-      }
-      .text {
-        font-family: 'Courier New', Courier, monospace;
-        font-weight: 200;
-        line-height: 1.5;
-        font-size: 3em;
-        color: rgb(21, 255, 0);
-        opacity: 1;
-        transition: opacity 3s ease-in-out;
-      }
-      .fade-out {
-        opacity: 0;
-      }
-      #bg {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 0; /*Canvas behind text*/
-      }
-      header {
-        text-align: center;
-        color: rgb(42, 238, 42);
-        font-family: 'Courier New', Courier, monospace;
-        margin: 20px 0;
-      }
-      section {
-        text-align: left;
-        color:rgb(144, 238, 144);
-        font-family: 'Courier New', Courier, monospace;
-        margin: 20px;
-      }
-      main {
-        position: relative;
-        z-index: 1; /*Text above canvas*/
-        margin-left: 450px;
-        margin-right: 400px;
-        margin-top: 100px;
-        font-size: 1.2em;
-        min-height: 200vh;
-      }
-      .links {
-        color:rgb(44, 238, 44);
-        text-decoration: none;
-        font-weight: bold;
-      }
-
-    </style>
-
-    <script type="module" crossorigin src="/src/assets/main.js"></script>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <div class="container">
-      <div class="text"></div>
+    <div class="container text-center py-5">
+      <div class="text display-4"></div>
     </div>
 
+    <canvas id="bg"></canvas>
+
+    <main class="container mt-5">
+      <header class="text-center mb-5">
+        <h1 class="text-success">Jairik 'JJ' McCauley</h1>
+        <h2 class="text-light">SWE & Data Science Student</h2>
+        <h3 class="text-muted">Salisbury University Class of 2026</h3>
+        <div class="mt-3">
+          <a href="https://www.github.com/jairik" class="me-3">
+            <img
+              src="/public/Github-Logo-Inverted.png"
+              alt="GitHub"
+              class="img-fluid"
+              style="width: 50px;"
+            />
+          </a>
+          <a href="https://www.linkedin.com/in/jairik-mccauley/">
+            <img
+              src="/public/LinkedIn-Logo-Inverted.png"
+              alt="LinkedIn"
+              class="img-fluid"
+              style="width: 50px;"
+            />
+          </a>
+        </div>
+        <p class="text-light mt-3">
+          Contact Info: jmccauley4@gulls.salisbury.edu | jairikmc@gmail.com
+        </p>
+      </header>
+
+      <section class="mb-5">
+        <h3 class="text-success">Projects</h3>
+        <div class="list-group">
+          <a
+            href="https://devpost.com/software/testifai"
+            class="list-group-item list-group-item-dark"
+          >
+            <h4>TestifAI</h4>
+            <p>
+              Recognized as the Best Educational and 2nd Overall Best Hack at
+              the 2024 UMBC Hackathon, Testif.AI is a full-stack application
+              leveraging advanced AI/LLMs.
+            </p>
+          </a>
+          <a
+            href="https://github.com/Jairik/MOVE4WELLNESS-Android-App"
+            class="list-group-item list-group-item-dark"
+          >
+            <h4>Move4Wellness Fitness App</h4>
+            <p>
+              Android Fitness app developed for a mock client at Salisbury
+              University. Utilizes Firebase database and authentication.
+            </p>
+          </a>
+          <a
+            href="https://github.com/Jairik/AI-Puzzle-Game"
+            class="list-group-item list-group-item-dark"
+          >
+            <h4>AI Sliding Puzzle Game</h4>
+            <p>
+              Utilizes A* Search to automate the 15-puzzle-game, a popular game
+              that includes shifting tiles to a sequential configuration.
+            </p>
+          </a>
+        </div>
+      </section>
+
+      <section class="mb-5">
+        <h3 class="text-success">Experience</h3>
+        <ul class="list-group">
+          <li class="list-group-item list-group-item-dark">
+            Discrete Mathematics Tutor (Jan 2022 - May 2023)
+          </li>
+          <li class="list-group-item list-group-item-dark">
+            Computer Science Tutor - Programming Fundamentals (Aug 2024 - Dec
+            2024)
+          </li>
+          <li class="list-group-item list-group-item-dark">
+            Resident Assistant (Aug 2023 - Present)
+          </li>
+        </ul>
+      </section>
+
+      <section class="mb-5">
+        <h3 class="text-success">Education</h3>
+        <p>
+          Salisbury University - Computer Science (SWE & AI Tracks) & Data
+          Science (Computational Data Track)
+        </p>
+        <ul class="list-group">
+          <li class="list-group-item list-group-item-dark">
+            Upsilon Pi Epsilon Member (Computer Science Honors Society)
+          </li>
+          <li class="list-group-item list-group-item-dark">
+            Chi Alpha Sigma (Athletics Honors Society)
+          </li>
+          <li class="list-group-item list-group-item-dark">
+            RA 'Best Community Builder' Award Recipient
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h3 class="text-success">Favorite Quotes/Sayings</h3>
+        <ul class="list-group">
+          <li class="list-group-item list-group-item-dark">
+            <details>
+              <summary>Momento Mori</summary>
+              <p>
+                Translates to "Remember to Die". Although morbid, it takes the
+                seriousness out of life.
+              </p>
+            </details>
+          </li>
+          <li class="list-group-item list-group-item-dark">
+            <details>
+              <summary>Amor Fati</summary>
+              <p>
+                Translates to "Love of one's Fate". This essentially means to go
+                with the flow.
+              </p>
+            </details>
+          </li>
+        </ul>
+      </section>
+    </main>
+
+    <!-- Bootstrap JS -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+    ></script>
     <script>
-      const div = document.querySelector(".text");
-      const text = "Jairik \"JJ\" McCauley";
+      const div = document.querySelector('.text');
+      const text = 'Jairik "JJ" McCauley';
 
       function textTypingEffect(element, text, counter = 0) {
         element.textContent += text[counter];
-        
+
         if (counter === text.length - 1) {
           setTimeout(() => {
             element.classList.add('fade-out');
-            element.addEventListener('transitionend', () => {
-              element.parentElement.remove(); //Remove the container div
-            });
-          }, 1); 
+          }, 1000);
           return;
         }
 
@@ -102,139 +168,8 @@
       textTypingEffect(div, text);
     </script>
 
-    <canvas id="bg"></canvas>
-
-    <main id="scrollable-content">
-
-      <header>
-        <h1>Jairik 'JJ' McCauley</h1>
-        <h2>SWE & Data Science Student</h2>
-        <h3>Salisbury University Class of 2026</h3>
-
-        <!-- Clickable github & linkedin logos -->
-        <a href="https://www.github.com/jairik">
-          <img src="/public/Github-Logo-Inverted.png" alt="Clickable Image" style="width: 100px; height: auto;">
-        </a>
-        <a href="https://www.linkedin.com/in/jairik-mccauley/">
-          <img src="/public/LinkedIn-Logo-Inverted.png" alt="Clickable Image" style="width: 100px; height: auto;">
-        </a>
-        <br>
-
-        <h5>Contact Info: jmccauley4@gulls.salisbury.edu | jairikmc@gmail.com</h5>
-      </header>
-
-      <!-- Personal Projects -->
-      <section>
-        <h3 style="color: rgb(24, 238, 24);">Projects</h3>
-
-        <h4><a href="https://devpost.com/software/testifai" class="links">TestifAI</a></h4>
-        <p>
-          Recognized as the Best Educational and 2nd Overall Best Hack at the 2024 UMBC Hackathon, Testif.AI is a full-stack application that
-          leverages advanced AI/LLMs (through langchain & openAI API) to generate tests from user provided source material. I worked with a team of four, 
-          primarily working on the back-end.
-          <!--<a href="https://github.com/SpencerPresley/UMBC-2024-Hackathon" class="links">Code</a> -->
-        </p>
-        
-        <h4><a href="https://github.com/Jairik/MOVE4WELLNESS-Android-App" class="links">Move4Wellness Fitness App</a></h4>
-        <p>
-          Android Fitness app developed for a mock client at Salisbury University. Utilizes firebase database, authentication, and uses realtime charts.
-        </p>
-
-        <h4><a href="https://github.com/Jairik/AI-Puzzle-Game" class="links">AI Sliding Puzzle Game</a></h4>
-        <p>
-          Utilizes A* Search to automate the 15-puzzle-game, a popular game that includes shifting tiles to a sequential configuration
-        </p>
-
-        <h4>Current Projects</h4>
-        <h5>Salisbury University Fall '25 Hackathon</h5>
-        <p style="font-size: 16px;">
-          Currently working with faculty to organize the first ever Hackathon at Salisbury University. Current responsibilities include developing the website and master plans. 
-        </p>
-        <h5><a href="https://github.com/Jairik/Auto-Academic-Scheduler" class="links">Automatic Academic Scheduler</a></h5>
-        <p style="font-size: 16px;">
-          Fork off of Dr. Don Spickler's Academic Scheduler project, aiming to implement an optimized auto-scheduler that will cut time during the scheduling process for faculty leads. 
-        </p>
-        <br>
-      </section>
-
-      <section>
-        <h3 style="color: rgb(24, 238, 24);">Experience</h3>
-        <p>
-          Discrete Mathematics Tutor (Jan 2022 - May 2023)<br>
-          Computer Science Tutor - Programming Fundementals (Aug 2024 - Dec 2024)<br>
-          Computer Science Tutor - System Software (Start date early Feb 2025)<br>
-          Resident Assistant (Aug 2023 - Present)<br>
-        </p>
-        <br>
-      </section>
-
-      <section>
-        <h3 style="color: rgb(24, 238, 24);">Education</h3>
-        <p>
-          Salisbury University - Computer Science (SWE & AI Tracks) & Data Science (Computational Data Track) <br>
-          3.81 GPA
-        </p>
-        <ul>
-          <li>Upsilon Pi Epsilon Member (Computer Science Honors Society)</li>
-          <li>Chi Alpha Sigma (Athletics Honors Society)</li>
-          <li>Clarkes Honors College Member</li>
-          <li>RA 'Best Community Builder' Award Recipient</li>
-          <li>5/5 Dean's List</li>
-          <li>High School - NCSM Execellence in Mathematics Award, President's Award, DAR Good Citizen, Execellence 
-            in AP Economics Award, Software Specialist Completer Certificate, Honors Society</li>
-        </ul>
-        <p>
-          Expected Graduation: May 2026
-        </p>
-        <br>
-      </section>
-
-      <section>
-        <h3 style="color: rgb(24, 238, 24);">Favorite Quotes/Sayings</h3>
-          <ul>
-            <li>
-              <details>
-                <summary>Momento Mori</summary>
-                <p>
-                  Translates to "Remember to Die". Although morbid, it takes the seriousness out of life, and reminds us to take it one day at a time.
-                </p>
-              </details>
-            </li>
-            <li>
-              <details>
-                <summary>Amor Fati</summary>
-                <p>
-                  Translates to "Love of one's Fate". This essentially means to go with the flow, and that anything that happens isn't inherently good or bad, it just is what it is.
-                </p>
-              </details>
-            </li>
-            <li>
-              <details>
-                <summary>Vincit Qui Se Vincit</summary>
-                <p>
-                  Translates to "He conquers who conquers himself". Demonstrates the importance of taking care of ourselves and being a well-rounded individual who is not defined by external factors.
-                </p>
-              </details>
-            </li>
-            <li>
-              <details>
-                <summary>Sapere Aude</summary>
-                <p>
-                  Translates to "Dare to Know". Undermines the importance of the constant pursuit of knowledge, which I reasonate immensely with.
-                </p>
-              </details>
-            </li>
-            <li>
-              <details>
-                <summary>"The worst thing about prison was the Dementors." – Prison Mike </summary>
-                <p>
-                  Wise words from Michael Scott.
-                </p>
-              </details>
-            </li>
-          </ul>
-      </section>
-    </main>
+    <!-- Three.js app entrypoint -->
+<script type="module" src="/src/main.js"></script>
 
   </body>
 </html>

@@ -2,7 +2,6 @@
 Make sure you correct the directory once you build and before you push 
 to the github-pages branch. It will save you 4 hours of debugging 😭*/
 
-
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
