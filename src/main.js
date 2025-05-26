@@ -8,6 +8,10 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 // Initialize all the variables
 let scene, camera, renderer, earth, moon, jupiter, sun, mars, neptune, mercury, venus, uranus, 
 uranusRing, saturn, saturnRing, controls, stars = [];
+const AU = 10.0; // Astronomical Unit, used for scaling the solar system
+const scaledRadius = 1; // Scaling factor for the radius of the planets (earth as base unit)
+const distanceScale = .25; // Scale down the distance between planets for better visibility
+const sunScale = 0.25; // Scale down the sun for better visibility
 
 function init() {
 
@@ -26,17 +30,12 @@ function init() {
     const star = new THREE.Mesh(geometry, material);
 
     //Getting random positions
-    const[x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(500));
+    const[x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(AU * distanceScale * 6900));
     star.position.set(x, y, z);
     scene.add(star);
     stars.push(star);
     if(stars == null){console.log("Star Error")}
   }
-
-  //Instantiating renderer and setting camera position
-  renderer.setPixelRatio(window.devicePixelRatio)
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  camera.position.setZ(30);
 
   //Adding 6900 stars to the scene
   //Note: May not be quite as filled, but will help with rendering speed and is still alot of stars
@@ -48,140 +47,140 @@ function init() {
   const moonTexture = new THREE.TextureLoader().load('moon-texture.jpg');
   const moonTexture_normal = new THREE.TextureLoader().load('normal.jpg');
   moon = new THREE.Mesh(
-    new THREE.SphereGeometry(2, 32, 32),
+    new THREE.SphereGeometry(scaledRadius * .1, 32, 32),
     new THREE.MeshStandardMaterial({
       map: moonTexture,
       normalMap: moonTexture_normal,
     })
   );
-  moon.position.set(40, 15, -25);
+  moon.position.set(AU * distanceScale * 40, 15, -25);
   scene.add(moon);
 
   //Earth Object
   const earthTexture = new THREE.TextureLoader().load('earth-texture.jpg');
   const earthTexture_normal = new THREE.TextureLoader().load('earth-normalmap.jpg');
   earth = new THREE.Mesh(
-    new THREE.SphereGeometry(10, 32, 32),
+    new THREE.SphereGeometry(scaledRadius * 1, 32, 32),
     new THREE.MeshStandardMaterial({
       map: earthTexture,
       normalMap: earthTexture_normal,
     })
   );
-  earth.position.set(45, 15, -10);
+  earth.position.set(AU * distanceScale * 10, 0, 0);
   scene.add(earth);
 
   //Jupiter Object
   const jupiterTexture = new THREE.TextureLoader().load('jupiter-texture.jpg');
   jupiter = new THREE.Mesh(
-    new THREE.SphereGeometry(8, 32, 32),
+    new THREE.SphereGeometry(scaledRadius * 10.967, 32, 32),
     new THREE.MeshStandardMaterial({
       map: jupiterTexture,
     })
   );
-  jupiter.position.set(20, -50, 15);
+  jupiter.position.set(AU * distanceScale * 52, 0, 0);
   scene.add(jupiter);
 
   //Sun Object
   const sunTexture = new THREE.TextureLoader().load('sun-texture.jpg');
   sun = new THREE.Mesh(
-    new THREE.SphereGeometry(10, 32, 32),
+    new THREE.SphereGeometry(scaledRadius * 109.3 * sunScale, 32, 32),
     new THREE.MeshStandardMaterial({
       map: sunTexture,
     })
   );
-  sun.position.set(50, 100, -99);
+  sun.position.set(AU * distanceScale * 0, 0, 0);
   scene.add(sun);
 
   //Mars Object
   const marsTexture = new THREE.TextureLoader().load('mars-texture.jpg');
   mars = new THREE.Mesh(
-    new THREE.SphereGeometry(8, 32, 32),
+    new THREE.SphereGeometry(scaledRadius * .532, 32, 32),
     new THREE.MeshStandardMaterial({
       map: marsTexture,
     })
   );
-  mars.position.set(-40, -30, 15);
+  mars.position.set(AU * distanceScale * 15.2, 0, 0);
   scene.add(mars);
 
   //Neptune Object
   const neptuneTexture = new THREE.TextureLoader().load('neptune-texture.jpg');
   neptune = new THREE.Mesh(
-    new THREE.SphereGeometry(10, 32, 32),
+    new THREE.SphereGeometry(scaledRadius * 3.866, 32, 32),
     new THREE.MeshStandardMaterial({
       map: neptuneTexture,
     })
   );
-  neptune.position.set(-30, 45, -25);
+  neptune.position.set(AU * distanceScale * 300.5, 0, 0);
   scene.add(neptune);
 
   //Mercury Object
   const mercuryTexture = new THREE.TextureLoader().load('mercury-texture.jpg');
   mercury = new THREE.Mesh(
-    new THREE.SphereGeometry(6, 32, 32),
+    new THREE.SphereGeometry(scaledRadius * .383, 32, 32),
     new THREE.MeshStandardMaterial({
       map: mercuryTexture,
     })
   );
-  mercury.position.set(55, -25, -25);
+  mercury.position.set(AU * distanceScale * 3.9, 0, 0);
   scene.add(mercury);
 
   //Venus Object
   const venusTexture = new THREE.TextureLoader().load('venus-texture.jpg');
   venus = new THREE.Mesh(
-    new THREE.SphereGeometry(5, 32, 32),
+    new THREE.SphereGeometry(scaledRadius * .950, 32, 32),
     new THREE.MeshStandardMaterial({
       map: venusTexture,
     })
   );
-  venus.position.set(75, 50, -15);
+  venus.position.set(AU * distanceScale * 7.2, 0, 0);
   scene.add(venus);
 
   //Uranus Object
   const uranusTexture = new THREE.TextureLoader().load('uranus-texture.jpg');
   uranus = new THREE.Mesh(
-    new THREE.SphereGeometry(7, 32, 32),
+    new THREE.SphereGeometry(scaledRadius * 3.979, 32, 32),
     new THREE.MeshStandardMaterial({
       map: uranusTexture,
     })
   );
-  uranus.position.set(100, -3, 0);
+  uranus.position.set(AU * distanceScale * 192.2);
   scene.add(uranus);
 
   //Uranus Ring Object
   const uranusRingTexture = new THREE.TextureLoader().load('uranus-ring-texture.jpg');
   uranusRing = new THREE.Mesh(
-    new THREE.RingGeometry(8, 8.5, 64, 3),
+    new THREE.RingGeometry(scaledRadius * 4, 8.5, 64, 3),
     new THREE.MeshStandardMaterial({
       map: uranusRingTexture,
       side: THREE.DoubleSide
     })
   );
-  uranusRing.position.set(100, -3, 0);
+  uranusRing.position.set(AU * distanceScale * 193, -3, 0);
   uranusRing.rotation.x = Math.PI / 2; //To make it lie flat
   scene.add(uranusRing);
 
   //Saturn Object
   const saturnTexture = new THREE.TextureLoader().load('saturn-texture.jpg');
   saturn = new THREE.Mesh(
-    new THREE.SphereGeometry(10, 32, 32),
+    new THREE.SphereGeometry(scaledRadius * 9.139, 32, 32),
     new THREE.MeshStandardMaterial({
       map: saturnTexture,
     })
   );
-  saturn.position.set(-48, -3, -15);
+  saturn.position.set(AU * distanceScale * 95.8, 0, 0);
   scene.add(saturn);
 
   //Saturn Ring Object
   const saturnRingTexture = new THREE.TextureLoader().load('saturn-ring-texture.jpg');
   saturnRing = new THREE.Mesh(
-    new THREE.RingGeometry(11, 13, 64, 3),
+    new THREE.RingGeometry(scaledRadius * 9.2, 13, 64, 3),
     new THREE.MeshStandardMaterial({
       map: saturnRingTexture,
       side: THREE.DoubleSide,
       //transparent: true,
     })
   );
-  saturnRing.position.set(-48, -3, -15);
+  saturnRing.position.set(AU * distanceScale * 96, 0, 0);
   saturnRing.rotation.x = Math.PI / 2; //To make it lie flat
   scene.add(saturnRing);
 
@@ -204,6 +203,12 @@ function init() {
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight)
   })
+
+  //Instantiating renderer and setting camera position
+  renderer.setPixelRatio(window.devicePixelRatio)
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.position.set(AU * distanceScale * 50, AU * distanceScale * 10, AU * distanceScale * 150);  // x, y, z
+  camera.lookAt(sun.position); // Aim the camera torwards the sun
 
   //Start the animation loop
   animate();
