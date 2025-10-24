@@ -1,23 +1,13 @@
-<svg viewBox="151.60161507402424 44.73118279569893 493.135935397039 143.01075268817203" xmlns="http://www.w3.org/2000/svg" style="max-height: 500px" width="493.135935397039" height="143.01075268817203">
-  <title>JJ Code-Style Logo (Closer Brackets)</title>
-  <desc>Minimalist "JJ" logo with coding angle brackets closer to the text</desc>
-
-  <rect fill="none" height="100%" width="100%"/>
-
-  <g transform="translate(400,150)">
-    
-    <text fill="#1f2937" font-weight="700" font-size="180" font-family="JetBrains Mono, Fira Code, Consolas, Menlo, monospace" text-anchor="middle" y="28" x="-200">
-      &lt;
-    </text>
-
-    
-    <text paint-order="stroke" stroke-width="12" stroke="#1f2937" fill="#ffffff" font-weight="800" font-size="180" font-family="JetBrains Mono, Fira Code, Consolas, Menlo, monospace" text-anchor="middle" y="28" x="0">
-      JJ
-    </text>
-
-    
-    <text fill="#1f2937" font-weight="700" font-size="180" font-family="JetBrains Mono, Fira Code, Consolas, Menlo, monospace" text-anchor="middle" y="28" x="200">
-      &gt;
+<svg viewBox="0 0 300.06888633754306 239.02255639097746" xmlns="http://www.w3.org/2000/svg" style="max-height: 500px" width="300.06888633754306" height="239.02255639097746">
+  <title>Block Text Art</title>
+  <g transform="translate(24,40)">
+    <text fill="#00FF00" font-size="28" font-family="Noto Sans Mono, DejaVu Sans Mono, Menlo, Consolas, monospace" xml:space="preserve">
+      <tspan dy="0em" x="0">░░░░░██╗░░░░░██╗</tspan>
+      <tspan dy="1.3em" x="0">░░░░░██║░░░░░██║</tspan>
+      <tspan dy="1.3em" x="0">░░░░░██║░░░░░██║</tspan>
+      <tspan dy="1.3em" x="0">██╗░░██║██╗░░██║</tspan>
+      <tspan dy="1.3em" x="0">╚█████╔╝╚█████╔╝</tspan>
+      <tspan dy="1.3em" x="0">░╚════╝░░╚════╝░</tspan>
     </text>
   </g>
 </svg>

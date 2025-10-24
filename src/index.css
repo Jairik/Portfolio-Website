@@ -18,6 +18,7 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -99,7 +100,12 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-html, body { overflow-x: hidden; margin: 0; padding: 0; }
+html,
+body {
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
 
 @media (prefers-color-scheme: light) {
   :root {
@@ -186,11 +192,43 @@ html, body { overflow-x: hidden; margin: 0; padding: 0; }
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+/* Base layer cleanup */
 @layer base {
+  /* Remove universal outline to prevent conflicts with accessibility classes */
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Restore proper sr-only visibility for hidden elements (like DecryptedText fallback) */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border-width: 0 !important;
+}
+
+/* Full-viewport background for React Bits Dither */
+.dither-layer { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+.dither-layer > * { position: absolute; inset: 0; }
+
+/* Ensure whatever Dither renders (canvas/svg) stays behind the foreground */
+.dither-layer canvas,
+.dither-layer svg {
+  width: 100vw !important;
+  height: 100vh !important;
+  display: block;
+  z-index: 0 !important;
+  position: absolute !important;
+  inset: 0 !important;
+}
+
+
