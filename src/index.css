@@ -5,8 +5,14 @@
 @plugin "tailwindcss-animate";
 @custom-variant dark (&:is(.dark *));
 
+@layer base {
+  body {
+    font-family: "Source Sans 3", system-ui, sans-serif;
+  }
+}
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Source Sans 3", system-ui, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -217,7 +223,7 @@ body {
 }
 
 /* Full-viewport background for React Bits Dither */
-.dither-layer { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+.dither-layer { position: fixed; inset: 0; z-index: 0; }
 .dither-layer > * { position: absolute; inset: 0; }
 
 /* Ensure whatever Dither renders (canvas/svg) stays behind the foreground */
