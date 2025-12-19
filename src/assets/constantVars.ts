@@ -1,9 +1,9 @@
 /* Constants used throughout the components */
 
 export const menuItems = [
-    { label: "Projects", ariaLabel: 'See projects', link: "#about" },
-    { label: "Experience", ariaLabel: 'See experience', link: "#experience" },
-    { label: "Skills", ariaLabel: 'See skills', link: "#skills" },
+    { label: "About Me", ariaLabel: 'Learn more about me', link: "#about" },
+    { label: "Projects", ariaLabel: 'See projects', link: "#projects" },
+    { label: "Experience", ariaLabel: 'See experience', link: "#experience" },  // Experienc and skills
     { label: "Contact", ariaLabel: 'Get in touch', link: "#contact" }
 ]
 
