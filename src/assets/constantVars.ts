@@ -13,4 +13,3 @@ export const socialItems = [
     { label: "Email", link: "mailto:mjairik@gmail.com" },
     { label: "Resume", link: "/Jairik_McCauley_Resume.pdf" }
 ]
-
