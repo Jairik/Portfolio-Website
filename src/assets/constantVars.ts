@@ -8,8 +8,9 @@ export const menuItems = [
 ]
 
 export const socialItems = [
-    { label: "GitHub", link: "https://github.com/Jairik" },
+    //{ label: "GitHub", link: "https://github.com/Jairik" },
     { label: "LinkedIn", link: "https://www.linkedin.com/in/jairik-mccauley/" },
-    { label: "Email", link: "mailto:mjairik@gmail.com" }
+    { label: "Email", link: "mailto:mjairik@gmail.com" },
+    { label: "Resume", link: "/Jairik_McCauley_Resume.pdf" }
 ]
 

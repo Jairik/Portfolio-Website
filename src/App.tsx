@@ -1,11 +1,14 @@
+// React and Framer Motion imports
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
+// React Bits components
 import Dither from "./components/Dither";
 import DecryptedText from "./components/DecryptedText";
 import AnimatedContent from "./components/AnimatedContent";
 
-import { menuItems } from "./assets/constantVars";
+// Constants for menu items
+import { menuItems, socialItems } from "./assets/constantVars";
 
 function App() {
   const heroRef = useRef<HTMLDivElement | null>(null);
@@ -23,7 +26,7 @@ function App() {
           style={{ opacity: bgOpacity, scale: bgScale }}
         >
           <Dither
-            waveColor={[0.2, 1.0, 0.2]}
+            waveColor={[0.2, 0.7, 0.2]}
             disableAnimation={false}
             enableMouseInteraction={false}
             // mouseRadius={0.08}
@@ -107,7 +110,7 @@ function App() {
           <h2
             className="text-4xl sm:text-5xl font-bold"
             id="about"
-            style={{ filter: "drop-shadow(0 0 20px rgba(0,0,0,0.9)) drop-shadow(0 0 10px rgba(0,202,0,0.4))" }}
+            style={{ filter: "drop-shadow(0 0 20px rgba(0,0,0,0.9)) drop-shadow(0 0 10px rgba(51,178,51,0.4))" }}
           >
             About Me
           </h2>
@@ -121,17 +124,19 @@ function App() {
           <h2
             className="text-4xl sm:text-5xl font-bold mt-12"
             id="projects"
-            style={{ filter: "drop-shadow(0 0 20px rgba(0,0,0,0.9)) drop-shadow(0 0 10px rgba(0,202,0,0.4))" }}
+            style={{ filter: "drop-shadow(0 0 20px rgba(0,0,0,0.9)) drop-shadow(0 0 10px rgba(51,178,51,0.4))" }}
           >
             Projects
           </h2>
+
+
         </AnimatedContent>
         {/* Experience & Skills section */}
         <AnimatedContent className="w-full">
           <h2
             className="text-4xl sm:text-5xl font-bold mt-12"
             id="experience"
-            style={{ filter: "drop-shadow(0 0 20px rgba(0,0,0,0.9)) drop-shadow(0 0 10px rgba(0,202,0,0.4))" }}
+            style={{ filter: "drop-shadow(0 0 20px rgba(0,0,0,0.9)) drop-shadow(0 0 10px rgba(51,178,51,0.4))" }}
           >
             Experience & Skills
           </h2>
@@ -141,10 +146,45 @@ function App() {
           <h2
             className="text-4xl sm:text-5xl font-bold mt-12"
             id="contact"
-            style={{ filter: "drop-shadow(0 0 20px rgba(0,0,0,0.9)) drop-shadow(0 0 10px rgba(0,202,0,0.4))" }}
+            style={{ filter: "drop-shadow(0 0 20px rgba(0,0,0,0.9)) drop-shadow(0 0 10px rgba(51,178,51,0.4))" }}
           >
             Contact
           </h2>
+
+          <div className="flex flex-wrap items-center justify-center gap-12 mt-12">
+            {socialItems.map((item) => (
+              <a
+                key={item.label}
+                href={item.link}
+                target={item.link.startsWith('http') || item.link.endsWith('.pdf') ? '_blank' : undefined}
+                rel={item.link.startsWith('http') || item.link.endsWith('.pdf') ? 'noopener noreferrer' : undefined}
+                className="flex flex-col items-center gap-4 group transition-all duration-300 hover:scale-110"
+              >
+                {/* Icon */}
+                <div className="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center transition-all duration-300 group-hover:bg-[rgb(51,178,51)]/10 group-hover:border-[rgb(51,178,51)]/30">
+                  {item.label === 'LinkedIn' && (
+                    <svg className="w-8 h-8 text-white/80 group-hover:text-[rgb(51,178,51)]" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                    </svg>
+                  )}
+                  {item.label === 'Email' && (
+                    <svg className="w-8 h-8 text-white/80 group-hover:text-[rgb(51,178,51)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                  )}
+                  {item.label === 'Resume' && (
+                    <svg className="w-8 h-8 text-white/80 group-hover:text-[rgb(51,178,51)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  )}
+                </div>
+                {/* Label */}
+                <span className="text-sm font-medium text-white/70 group-hover:text-[rgb(51,178,51)] transition-colors duration-300">
+                  {item.label}
+                </span>
+              </a>
+            ))}
+          </div>
         </AnimatedContent>
       </section>
     </main>
