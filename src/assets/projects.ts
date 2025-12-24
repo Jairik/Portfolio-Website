@@ -2,15 +2,15 @@
 
 // Project item class for easy creation and handling
 export class ProjectItem {
-    title: string = "";
-    date?: string = "";
-    description: string = "";
-    link: string = "";
-    techStack: string[] = [];
-    imageSrc?: string[] = [];
-    demoLink?: string = "";
-    demoVideoLink?: string = "";
-    featured?: boolean = false;
+    title: string = "";  // Project title
+    date?: string = "";  // Project date or duration
+    description: string = "";  // Brief description of the project
+    link: string = "";  // GitHub link
+    techStack: string[] = [];  // Technologies used
+    imageSrc?: string[] = [];  // Demo image sources
+    demoLink?: string = "";  // Link to deployed demo (if applicable)
+    demoVideoLink?: string = "";  // Link to demo video (if applicable)
+    featured?: boolean = false;  // Whether the project is featured for the website
 
     // Default constructor for easy creation
     constructor(
@@ -37,10 +37,10 @@ export class ProjectItem {
 
 }
 
+// Gets all project items, appending each to an array and returning it
 export function getProjectItems(): ProjectItem[] {
     var allProjects: ProjectItem[] = [];  // Array to hold all project items
 
-    // Append each project item to the array
     // Lunara
     allProjects.push(new ProjectItem(
         "Lunara",  // Title
@@ -84,7 +84,7 @@ export function getProjectItems(): ProjectItem[] {
     // Chick Counting
     allProjects.push(new ProjectItem(
         "Computer Vision Chick Counting",  // Title
-        "AI-based system using computer vision to accurately count chicks in poultry farms, improving standard industry efficiencies and reducing manual labor.",  // Brief Description
+        "AI-based system using computer vision to accurately count chicks in poultry farms, improving standard industry efficiencies and reducing manual labor. Patent consideration.",  // Brief Description
         "",  // GitHub Link (Closed Source)
         ["Python", "Ultralytics YOLO", "Raspberry Pi"],  // Tech Stack
         "January 2024 - December 2025",  // Date
@@ -107,7 +107,32 @@ export function getProjectItems(): ProjectItem[] {
         false  // Featured
     ));
 
-    // TODO ClarityCash + KnowYourUni
+    // ClarityCash
+    allProjects.push(new ProjectItem(
+        "ClarityCash",  // Title
+        "Data driven budgeting app that turns your financial data into clear insights and actionable plans.",  // Brief Description
+        "https://github.com/aforti1/clarity-cash",  // GitHub Link
+        ["React", "Firebase", "Plaid API", "FastAPI", "Gemini", "TailwindCSS", "Python"],  // Tech Stack
+        "November 2025",  // Date
+        [],  // TODO Demo Image Sources
+        "",  // Demo Link  (not applicable for this)
+        "",  // Demo Video Link  (not applicable for this)
+        false  // Featured
+    ));
+
+    // KnowYourUni
+    allProjects.push(new ProjectItem(
+        "KnowYourUni",  // Title
+        "Student analytics platform providing ML-derived insights into student performance.",  // Brief Description
+        "https://github.com/ncorcoran771/KnowYourUni_",  // GitHub Link
+        ["React", "Neo4J", "FastAPI", "Gemini", "Langchain", "Python"],  // Tech Stack
+        "September 2025 - November 2025",  // Date
+        ["projects/KnowYourUni-1.png", "projects/KnowYourUni-2.png", "projects/KnowYourUni-3.png", "projects/KnowYourUni-4.png",
+            "projects/KnowYourUni-5.png", "projects/KnowYourUni-6.png"],  // Demo Image Sources
+        "",  // Demo Link  (not applicable for this)
+        "https://www.youtube.com/watch?v=u-mNfCXUxhU&t=1s",  // Demo Video Link
+        false  // Featured
+    ));
 
     // Stock Portfolio Management System
     allProjects.push(new ProjectItem(
@@ -118,12 +143,51 @@ export function getProjectItems(): ProjectItem[] {
         "January 2024 - April 2024",  // Date
         ["projects/Stock-Portfolio-Management-System-1.png", "projects/Stock-Portfolio-Management-System-2.png", "projects/Stock-Portfolio-Management-System-3.png", 
             "projects/Stock-Portfolio-Management-System-4.png"],  // Demo Image Sources
-        "https://lamp.salisbury.edu/~jmccauley4/StocksDB/login.html",  // Demo Link  (not applicable for this)
+        "https://lamp.salisbury.edu/~jmccauley4/StocksDB",  // Demo Link  (not applicable for this)
         "",  // Demo Video Link  (not applicable for this)
         false  // Featured
     ));
 
-    // MOVE4WELLNESS Fitness App
+    // Encrypted P2P Chatroom
+    allProjects.push(new ProjectItem(
+        "Encrypted P2P Chatroom",  // Title
+        "Peer-to-peer chat application with end-to-end encryption for secure communication. Uses ChaCha20-Poly1305 for message encryption, Ed25519 message signatures for user validation, and UDP multicast.",  // Brief Description
+        "https://github.com/Jairik/Secure-P2P-Chatroom",  // GitHub Link
+        ["Cryptography", "PyCryptodome", "WebSockets", "DearPyGUI"],  // Tech Stack
+        "April 2025",  // Date
+        ["projects/P2P-Encrypted-Chatroom-1.png", "projects/P2P-Encrypted-Chatroom-2.png", "projects/P2P-Encrypted-Chatroom-3.png"],  // Demo Image Sources (not applicable for this)
+        "",  // Demo Link  (not applicable for this)
+        "",  // Demo Video Link  (not applicable for this)
+        false  // Featured
+    ));
+
+    // AI Puzzle Game
+    allProjects.push(new ProjectItem(
+        "AI Puzzle Game",  // Title
+        "Utilizes A* Search to automate the 15-puzzle-game, a popular game that includes shifting tiles to a sequential configuration.",  // Brief Description
+        "https://github.com/Jairik/AI-Puzzle-Game",  // GitHub Link
+        ["Python", "A* Search Algorithm", "Tkinter"],  // Tech Stack
+        "November 2024",  // Date
+        ["projects/AI-Puzzle-Game-1.png", "projects/AI-Puzzle-Game-2.png"],  // Demo Image Sources (not applicable for this)
+        "",  // Demo Link  (not applicable for this)
+        "",  // Demo Video Link  (not applicable for this)
+        false  // Featured
+    ));
+
+    // Algorithm Performance Benchmarker (Cool because it is one of the first projects, can be removed)
+    allProjects.push(new ProjectItem(
+        "Algorithm Performance Benchmarker",  // Title
+        "Benchmarks and compares the performance of various sorting algorithms (Bubble Sort, Merge Sort, Quick Sort, etc.). One of the first projects I built.",  // Brief Description
+        "https://github.com/Jairik/Sort-Analysis",  // GitHub Link
+        ["C++", "Chrono"],  // Tech Stack
+        "March 2024",  // Date
+        [],  // Demo Image Sources (not applicable for this)
+        "",  // Demo Link  (not applicable for this)
+        "",  // Demo Video Link  (not applicable for this)
+        false  // Featured
+    ));
+
+    // MOVE4WELLNESS Fitness App Prototype
     allProjects.push(new ProjectItem(
         "Move4Wellness Fitness App",  // Title
         "Prototype mobile app promoting physical activity through personalized workout plans and progress tracking.",  // Brief Description
@@ -135,8 +199,6 @@ export function getProjectItems(): ProjectItem[] {
         "",  // Demo Video Link  (not applicable for this)
         false  // Featured
     ));
-
-    // TODO Encrypted P2P Chatroom, AI Puzzle Game
 
     return allProjects;
 }
