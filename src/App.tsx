@@ -1,20 +1,39 @@
 // React and Framer Motion imports
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
 // React Bits components
 import Dither from "./components/Dither";
 import DecryptedText from "./components/DecryptedText";
 import AnimatedContent from "./components/AnimatedContent";
+import MagicBento from "./components/MagicBento";
+import AnimatedList from "./components/AnimatedList";
+import GlowCard from "./components/GlowCard";
 
-// Constants for menu items
+// Constants for contacts and projects
 import { menuItems, socialItems } from "./assets/constantVars";
+import { getProjectItems } from "./assets/projects";
 
 function App() {
   const heroRef = useRef<HTMLDivElement | null>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const bgOpacity = useTransform(scrollYProgress, [0, 0.9], [1, 0]);
   const bgScale = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
+
+  const [openProject, setOpenProject] = useState<string | null>(null);
+  const [imageIndexMap, setImageIndexMap] = useState<Record<string, number>>({});
+  const projects = getProjectItems();
+  const featuredProjects = projects.filter(p => p.featured);
+  const otherProjects = projects.filter(p => !p.featured);
+
+  const changeImage = (title: string, delta: number, total: number) => {
+    if (total <= 1) return;
+    setImageIndexMap(prev => {
+      const current = prev[title] ?? 0;
+      const next = (current + delta + total) % total;
+      return { ...prev, [title]: next };
+    });
+  };
 
   return (
     <main className="relative min-h-[220vh] bg-black text-white">
@@ -128,8 +147,147 @@ function App() {
           >
             Projects
           </h2>
+            <div className="mt-8 space-y-10">
+              <div>
+                <h3 className="text-2xl font-semibold mb-6 text-white/90">Featured Projects</h3>
+                <MagicBento
+                  cards={featuredProjects.map(project => ({
+                    title: project.title,
+                    description: project.description,
+                    label: project.date || "Featured",
+                    color: "#060010",
+                    imageSrc: project.imageSrc,
+                    link: project.link,
+                    techStack: project.techStack,
+                    demoLink: project.demoLink,
+                    demoVideoLink: project.demoVideoLink,
+                    date: project.date
+                  }))}
+                  enableBorderGlow
+                  glowColor="51, 178, 51"
+                  enableTilt
+                  enableMagnetism
+                  particleCount={10}
+                />
+              </div>
 
-
+              <div>
+                <h3 className="text-2xl font-semibold mb-4 text-white/90">More Projects</h3>
+                <AnimatedList
+                  items={otherProjects}
+                  displayScrollbar={false}
+                  className="w-full"
+                  itemClassName="bg-transparent p-0 mb-0"
+                  renderItem={(project, index, isSelected) => {
+                    const images = project.imageSrc || [];
+                    const currentIndex = imageIndexMap[project.title] ?? 0;
+                    const isOpen = openProject === project.title;
+                    
+                    return (
+                      <GlowCard className="rounded-xl bg-white/5 backdrop-blur-sm mb-3 border border-white/10">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenProject(prev => (prev === project.title ? null : project.title));
+                          }}
+                          className="w-full flex items-center justify-between px-4 py-3 text-left text-white/90 hover:bg-white/5 transition relative z-20"
+                          aria-expanded={isOpen}
+                        >
+                          <div>
+                            <p className="text-lg font-semibold">{project.title}</p>
+                            {project.date && <p className="text-xs text-white/60">{project.date}</p>}
+                          </div>
+                          <svg
+                            className={`w-5 h-5 text-white/70 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <polyline points="6 9 12 15 18 9" />
+                          </svg>
+                        </button>
+                        {isOpen && (
+                          <div className="px-4 pb-4 space-y-3 text-sm text-white/80 relative z-20">
+                            <p>{project.description}</p>
+                            {images.length > 0 && (
+                              <div className="relative w-full rounded-lg overflow-hidden border border-white/10">
+                                <img
+                                  src={images[currentIndex]}
+                                  alt={`${project.title} screenshot ${currentIndex + 1}`}
+                                  className="w-full h-52 object-cover"
+                                  loading="lazy"
+                                />
+                                <button
+                                  type="button"
+                                  className="absolute top-1/2 -translate-y-1/2 left-2 p-2 rounded-full bg-black/60 text-white hover:bg-black/80 transition disabled:opacity-30"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    changeImage(project.title, -1, images.length);
+                                  }}
+                                  disabled={images.length <= 1}
+                                  aria-label="Previous image"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+                                    <polyline points="15 18 9 12 15 6" />
+                                  </svg>
+                                </button>
+                                <button
+                                  type="button"
+                                  className="absolute top-1/2 -translate-y-1/2 right-2 p-2 rounded-full bg-black/60 text-white hover:bg-black/80 transition disabled:opacity-30"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    changeImage(project.title, 1, images.length);
+                                  }}
+                                  disabled={images.length <= 1}
+                                  aria-label="Next image"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+                                    <polyline points="9 18 15 12 9 6" />
+                                  </svg>
+                                </button>
+                                <div className="absolute bottom-2 right-3 text-[11px] px-2 py-1 rounded-full bg-black/60 text-white/80">
+                                  {currentIndex + 1}/{images.length}
+                                </div>
+                              </div>
+                            )}
+                            {project.techStack && project.techStack.length > 0 && (
+                              <div className="flex flex-wrap gap-2">
+                                {project.techStack.map(tech => (
+                                  <span key={tech} className="px-2 py-1 rounded-full bg-white/10 border border-white/10 text-xs text-white/80">
+                                    {tech}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                            <div className="flex flex-wrap gap-4 text-sm">
+                              {project.link && (
+                                <a className="text-[rgb(51,178,51)] hover:text-white transition" href={project.link} target="_blank" rel="noopener noreferrer">
+                                  Code
+                                </a>
+                              )}
+                              {project.demoLink && (
+                                <a className="text-[rgb(51,178,51)] hover:text-white transition" href={project.demoLink} target="_blank" rel="noopener noreferrer">
+                                  Demo
+                                </a>
+                              )}
+                              {project.demoVideoLink && (
+                                <a className="text-[rgb(51,178,51)] hover:text-white transition" href={project.demoVideoLink} target="_blank" rel="noopener noreferrer">
+                                  Video
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </GlowCard>
+                    );
+                  }}
+                />
+              </div>
+            </div>
         </AnimatedContent>
         {/* Experience & Skills section */}
         <AnimatedContent className="w-full">
@@ -138,8 +296,9 @@ function App() {
             id="experience"
             style={{ filter: "drop-shadow(0 0 20px rgba(0,0,0,0.9)) drop-shadow(0 0 10px rgba(51,178,51,0.4))" }}
           >
-            Experience & Skills
+            Experience
           </h2>
+          <p className=""> TODO </p>
         </AnimatedContent>
         {/* Contact section */}
         <AnimatedContent className="w-full">
