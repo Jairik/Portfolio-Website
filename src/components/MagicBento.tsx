@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { gsap } from 'gsap';
+import { motion, AnimatePresence } from 'motion/react';
 
 export interface BentoCardProps {
   color?: string;
@@ -85,10 +86,10 @@ const ArrowButton: React.FC<{ direction: 'left' | 'right'; onClick: () => void; 
     aria-label={direction === 'left' ? 'Previous image' : 'Next image'}
     onClick={onClick}
     disabled={disabled}
-    className="absolute top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/60 text-white hover:bg-black/80 transition disabled:opacity-30 disabled:cursor-not-allowed"
+    className="absolute top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-black/60 text-white hover:bg-black/80 transition disabled:opacity-30 disabled:cursor-not-allowed"
     style={direction === 'left' ? { left: '0.5rem' } : { right: '0.5rem' }}
   >
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3">
       {direction === 'left' ? <polyline points="15 18 9 12 15 6" /> : <polyline points="9 18 15 12 9 6" />}
     </svg>
   </button>
@@ -120,47 +121,79 @@ const BentoCardItem: React.FC<{
   enableMagnetism
 }) => {
   const [imageIndex, setImageIndex] = useState(0);
+  const [isAutoPlayPaused, setIsAutoPlayPaused] = useState(false);
   const images = card.imageSrc || [];
   const hasImages = images.length > 0;
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (!hasImages) return;
     setImageIndex(prev => (prev + 1) % images.length);
-  };
+  }, [hasImages, images.length]);
 
-  const handlePrev = () => {
+  const handlePrev = useCallback(() => {
     if (!hasImages) return;
     setImageIndex(prev => (prev - 1 + images.length) % images.length);
-  };
+  }, [hasImages, images.length]);
+
+  useEffect(() => {
+    if (!hasImages || isAutoPlayPaused) return;
+
+    const interval = setInterval(() => {
+      handleNext();
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [hasImages, isAutoPlayPaused, handleNext]);
 
   const content = (
     <>
       <div className="card__header flex justify-between gap-3 relative text-white">
-        <span className="card__label text-base font-medium text-white/90">{card.label || 'Featured'}</span>
+        <span className="card__label text-lg font-medium text-white/90">{card.label || 'Featured'}</span>
         {card.date && card.date !== card.label && (
-          <span className="text-xs text-white/60">{card.date}</span>
+          <span className="text-sm text-white/60">{card.date}</span>
         )}
       </div>
       <div className="card__content flex flex-col relative text-white gap-4">
         <div className="space-y-2">
-          <h3 className="card__title font-bold text-2xl m-0">
+          <h3 className="card__title font-bold text-3xl m-0">
             {card.title}
           </h3>
-          <p className="card__description text-base leading-relaxed opacity-80">
+          <p className="card__description text-lg leading-relaxed opacity-80">
             {card.description}
           </p>
         </div>
         {hasImages && (
-          <div className="relative w-full rounded-xl overflow-hidden border border-white/10 shadow-2xl">
-            <img
-              src={images[imageIndex]}
-              alt={`${card.title} screenshot ${imageIndex + 1}`}
-              className="w-full aspect-video object-cover"
-              loading="lazy"
+          <div className="relative w-full rounded-xl overflow-hidden border border-white/10 shadow-2xl aspect-video">
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={imageIndex}
+                src={images[imageIndex]}
+                alt={`${card.title} screenshot ${imageIndex + 1}`}
+                className="w-full h-full object-cover absolute inset-0"
+                loading="lazy"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25 }}
+              />
+            </AnimatePresence>
+            <ArrowButton 
+              direction="left" 
+              onClick={() => {
+                setIsAutoPlayPaused(true);
+                handlePrev();
+              }} 
+              disabled={images.length <= 1} 
             />
-            <ArrowButton direction="left" onClick={handlePrev} disabled={images.length <= 1} />
-            <ArrowButton direction="right" onClick={handleNext} disabled={images.length <= 1} />
-            <div className="absolute bottom-3 right-4 text-xs px-3 py-1.5 rounded-full bg-black/70 backdrop-blur-md text-white/90 border border-white/10">
+            <ArrowButton 
+              direction="right" 
+              onClick={() => {
+                setIsAutoPlayPaused(true);
+                handleNext();
+              }} 
+              disabled={images.length <= 1} 
+            />
+            <div className="absolute bottom-3 right-4 text-xs px-3 py-1.5 rounded-full bg-black/70 backdrop-blur-md text-white/90 border border-white/10 z-10">
               {imageIndex + 1} / {images.length}
             </div>
           </div>
@@ -170,7 +203,7 @@ const BentoCardItem: React.FC<{
             {card.techStack.map(tech => (
               <span
                 key={tech}
-                className="px-3 py-1 rounded-md bg-white/5 border border-white/10 text-xs font-medium text-white/70 hover:bg-white/10 transition-colors"
+                className="px-3 py-1 rounded-md bg-white/5 border border-white/10 text-sm font-medium text-white/70 hover:bg-white/10 transition-colors"
               >
                 {tech}
               </span>
@@ -181,32 +214,44 @@ const BentoCardItem: React.FC<{
           <div className="flex flex-wrap gap-3 text-sm">
             {card.link && (
               <a
-                className="text-[rgb(51,178,51)] hover:text-white transition"
+                className="text-white hover:text-[rgb(51,178,51)] transition"
                 href={card.link}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="View Code"
               >
-                Code
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+                  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                </svg>
               </a>
             )}
             {card.demoLink && (
               <a
-                className="text-[rgb(51,178,51)] hover:text-white transition"
+                className="text-white hover:text-[rgb(51,178,51)] transition"
                 href={card.demoLink}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="View Demo"
               >
-                Demo
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="2" y1="12" x2="22" y2="12"></line>
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
               </a>
             )}
             {card.demoVideoLink && (
               <a
-                className="text-[rgb(51,178,51)] hover:text-white transition"
+                className="text-white hover:text-[rgb(51,178,51)] transition"
                 href={card.demoVideoLink}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Watch Video"
               >
-                Video
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+                  <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path>
+                  <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
+                </svg>
               </a>
             )}
           </div>
@@ -732,7 +777,7 @@ const BentoCardGrid: React.FC<{
   gridRef?: React.RefObject<HTMLDivElement | null>;
 }> = ({ children, gridRef }) => (
   <div
-    className="bento-section grid gap-2 p-3 max-w-216 select-none relative"
+    className="bento-section grid gap-2 p-3 w-full select-none relative"
     style={{ fontSize: 'clamp(1rem, 0.9rem + 0.5vw, 1.5rem)' }}
     ref={gridRef}
   >
@@ -793,8 +838,9 @@ const MagicBento: React.FC<BentoProps> = ({
           }
           
           .card-responsive {
-            display: grid;
-            grid-template-columns: 1fr;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
             width: 100%;
             gap: 2rem;
           }
@@ -804,17 +850,18 @@ const MagicBento: React.FC<BentoProps> = ({
             height: auto;
             display: flex;
             flex-direction: column;
+            width: 100%;
           }
           
-          @media (min-width: 768px) {
-            .card-responsive {
-              grid-template-columns: repeat(2, 1fr);
+          @media (min-width: 700px) {
+            .card-responsive .card {
+              width: calc(50% - 1rem);
             }
           }
           
-          @media (min-width: 1536px) {
-            .card-responsive {
-              grid-template-columns: repeat(3, 1fr);
+          @media (min-width: 1100px) {
+            .card-responsive .card {
+              width: calc(33.333% - 1.33rem);
             }
           }
           
@@ -907,7 +954,7 @@ const MagicBento: React.FC<BentoProps> = ({
       )}
 
       <BentoCardGrid gridRef={gridRef}>
-        <div className="card-responsive grid gap-2">
+        <div className="card-responsive">
           {cardsToRender.map((card, index) => {
             const baseClassName = `card flex flex-col justify-between relative w-full max-w-full p-6 rounded-[24px] border border-solid font-light overflow-hidden transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3)] ${
               enableBorderGlow ? 'card--border-glow' : ''

@@ -46,7 +46,7 @@ export function getProjectItems(): ProjectItem[] {
         "Lunara",  // Title
         "AI-powered triage system for healthcare, winning 1st place at Rutgers HealthHack 2025. Currently working with Rutgers on a completer program to bring to production.",  // Brief Description
         "https://github.com/Jairik/RUHealthHack-25",  // GitHub Link
-        ["AWS", "React", "Node.js", "FastAPI", "Python", "TensorFlow", "sklearn", "Terraform"],  // Tech Stack
+        ["AWS", "React", "Node.js", "FastAPI", "Python", "sklearn", "Terraform"],  // Tech Stack
         "October 2025 - Present",  // Date
         ["/projects/Lunara-1.png", "/projects/Lunara-2.png", "/projects/Lunara-3.png", "/projects/Lunara-4.png", "/projects/Lunara-5.png", 
             "/projects/Lunara-6.png", "/projects/Lunara-7.png", "/projects/Lunara-8.png"],// Demo Image Sources
@@ -71,7 +71,7 @@ export function getProjectItems(): ProjectItem[] {
     // CapyMorph
     allProjects.push(new ProjectItem(
         "CapyMorph",  // Title
-        "Educational 2D game facilitate interactive morpheme exercises.",  // Brief Description
+        "Educational 2D game that facilitates interactive morpheme exercises.",  // Brief Description
         "https://github.com/Jairik/Capymorph",  // GitHub Link
         ["React", "Phaser.js", "Go", "MongoDB", "Docker", "Zustand"],  // Tech Stack
         "December 2025",  // Date
@@ -140,7 +140,7 @@ export function getProjectItems(): ProjectItem[] {
         "Web application for managing and analyzing stock portfolios with real-time data integration and performance tracking.",  // Brief Description
         "https://github.com/Jairik/Stock-Portfolio-Management",  // GitHub Link
         ["PHP", "MySQL", "Cron", "HTML/CSS/JavaScript", "Alpaca API"],  // Tech Stack
-        "January 2024 - April 2024",  // Date
+        "March 2024 - April 2024",  // Date
         ["projects/Stock-Portfolio-Management-System-1.png", "projects/Stock-Portfolio-Management-System-2.png", "projects/Stock-Portfolio-Management-System-3.png", 
             "projects/Stock-Portfolio-Management-System-4.png"],  // Demo Image Sources
         "https://lamp.salisbury.edu/~jmccauley4/StocksDB",  // Demo Link  (not applicable for this)
@@ -153,7 +153,7 @@ export function getProjectItems(): ProjectItem[] {
         "Encrypted P2P Chatroom",  // Title
         "Peer-to-peer chat application with end-to-end encryption for secure communication. Uses ChaCha20-Poly1305 for message encryption, Ed25519 message signatures for user validation, and UDP multicast.",  // Brief Description
         "https://github.com/Jairik/Secure-P2P-Chatroom",  // GitHub Link
-        ["Cryptography", "PyCryptodome", "WebSockets", "DearPyGUI"],  // Tech Stack
+        ["Cryptography", "WebSockets", "DearPyGUI"],  // Tech Stack
         "April 2025",  // Date
         ["projects/P2P-Encrypted-Chatroom-1.png", "projects/P2P-Encrypted-Chatroom-2.png", "projects/P2P-Encrypted-Chatroom-3.png"],  // Demo Image Sources (not applicable for this)
         "",  // Demo Link  (not applicable for this)

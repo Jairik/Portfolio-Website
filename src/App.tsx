@@ -1,13 +1,12 @@
 // React and Framer Motion imports
-import { useRef, useState } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef, useState, useEffect, useCallback } from "react";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 
 // React Bits components
 import Dither from "./components/Dither";
 import DecryptedText from "./components/DecryptedText";
 import AnimatedContent from "./components/AnimatedContent";
 import MagicBento from "./components/MagicBento";
-import AnimatedList from "./components/AnimatedList";
 import GlowCard from "./components/GlowCard";
 
 // Constants for contacts and projects
@@ -21,19 +20,33 @@ function App() {
   const bgScale = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
 
   const [openProject, setOpenProject] = useState<string | null>(null);
+  const [isAutoPlayPaused, setIsAutoPlayPaused] = useState(false);
   const [imageIndexMap, setImageIndexMap] = useState<Record<string, number>>({});
   const projects = getProjectItems();
   const featuredProjects = projects.filter(p => p.featured);
   const otherProjects = projects.filter(p => !p.featured);
 
-  const changeImage = (title: string, delta: number, total: number) => {
+  const changeImage = useCallback((title: string, delta: number, total: number) => {
     if (total <= 1) return;
     setImageIndexMap(prev => {
       const current = prev[title] ?? 0;
       const next = (current + delta + total) % total;
       return { ...prev, [title]: next };
     });
-  };
+  }, []);
+
+  useEffect(() => {
+    if (!openProject || isAutoPlayPaused) return;
+    
+    const project = otherProjects.find(p => p.title === openProject);
+    if (!project || !project.imageSrc || project.imageSrc.length <= 1) return;
+
+    const interval = setInterval(() => {
+      changeImage(openProject, 1, project.imageSrc.length);
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [openProject, isAutoPlayPaused, otherProjects, changeImage]);
 
   return (
     <main className="relative min-h-[220vh] bg-black text-white">
@@ -84,14 +97,22 @@ function App() {
             className="mt-10 flex flex-wrap items-center justify-center gap-6 text-sm tracking-widest uppercase text-white"
             style={{ filter: "drop-shadow(0 0 22px rgba(0,0,0,0.9)) drop-shadow(0 0 10px rgba(0,202,0,0.4))" }}
           >
-            {menuItems.map(item => (
+            {menuItems.map((item, index) => (
               <a
                 key={item.label}
                 href={item.link}
                 aria-label={item.ariaLabel}
                 className="text-white transition-opacity duration-200 hover:opacity-80"
               >
-                {item.label}
+                <DecryptedText
+                  text={item.label}
+                  speed={80}
+                  sequential
+                  animateOn="view"
+                  delay={2500 + (index * 200)}
+                  className="text-white"
+                  encryptedClassName="text-white"
+                />
               </a>
             ))}
           </nav>
@@ -124,24 +145,25 @@ function App() {
 
       {/* Content Section */}
       {/* Simple About Me*/}
-      <section className="relative z-20 mx-auto max-w-3xl px-6 py-20 space-y-6">
+      <section className="relative z-20 mx-auto max-w-[90vw] xl:max-w-[1600px] px-6 py-20 space-y-6">
         <AnimatedContent className="w-full">
           <h2
-            className="text-4xl sm:text-5xl font-bold"
+            className="text-4xl sm:text-5xl font-bold text-center"
             id="about"
             style={{ filter: "drop-shadow(0 0 20px rgba(0,0,0,0.9)) drop-shadow(0 0 10px rgba(51,178,51,0.4))" }}
           >
             About Me
           </h2>
         
-          <p className="text-white/75">
-            Just an actual nerd who loves build full-stack stuff.
+          <p className="text-white/75 max-w-3xl mx-auto text-center">
+            Computer science student and ex-SWE intern who loves nerding out over building full-stack projects, especially when there’s a real problem involved.
           </p>
+
         </AnimatedContent>
         {/* Projects section */}
         <AnimatedContent className="w-full">
           <h2
-            className="text-4xl sm:text-5xl font-bold mt-12"
+            className="text-4xl sm:text-5xl font-bold mt-12 text-center"
             id="projects"
             style={{ filter: "drop-shadow(0 0 20px rgba(0,0,0,0.9)) drop-shadow(0 0 10px rgba(51,178,51,0.4))" }}
           >
@@ -149,7 +171,7 @@ function App() {
           </h2>
             <div className="mt-8 space-y-10">
               <div>
-                <h3 className="text-2xl font-semibold mb-6 text-white/90">Featured Projects</h3>
+                <h3 className="text-2xl font-semibold mb-6 text-white/90 text-center">Featured Projects</h3>
                 <MagicBento
                   cards={featuredProjects.map(project => ({
                     title: project.title,
@@ -172,31 +194,32 @@ function App() {
               </div>
 
               <div>
-                <h3 className="text-2xl font-semibold mb-4 text-white/90">More Projects</h3>
-                <AnimatedList
-                  items={otherProjects}
-                  displayScrollbar={false}
-                  className="w-full"
-                  itemClassName="bg-transparent p-0 mb-0"
-                  renderItem={(project, index, isSelected) => {
+                <h3 className="text-2xl font-semibold mb-4 text-white/90 text-center">More Projects</h3>
+                <div className="w-full flex flex-col gap-3">
+                  {otherProjects.map((project) => {
                     const images = project.imageSrc || [];
                     const currentIndex = imageIndexMap[project.title] ?? 0;
                     const isOpen = openProject === project.title;
                     
                     return (
-                      <GlowCard className="rounded-xl bg-white/5 backdrop-blur-sm mb-3 border border-white/10">
+                      <GlowCard key={project.title} className="rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
                         <button
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
-                            setOpenProject(prev => (prev === project.title ? null : project.title));
+                            if (openProject === project.title) {
+                              setOpenProject(null);
+                            } else {
+                              setIsAutoPlayPaused(false);
+                              setOpenProject(project.title);
+                            }
                           }}
                           className="w-full flex items-center justify-between px-4 py-3 text-left text-white/90 hover:bg-white/5 transition relative z-20"
                           aria-expanded={isOpen}
                         >
                           <div>
-                            <p className="text-lg font-semibold">{project.title}</p>
-                            {project.date && <p className="text-xs text-white/60">{project.date}</p>}
+                            <p className="text-xl font-semibold">{project.title}</p>
+                            {project.date && <p className="text-sm text-white/60">{project.date}</p>}
                           </div>
                           <svg
                             className={`w-5 h-5 text-white/70 transition-transform ${isOpen ? 'rotate-180' : ''}`}
@@ -211,45 +234,54 @@ function App() {
                           </svg>
                         </button>
                         {isOpen && (
-                          <div className="px-4 pb-4 space-y-3 text-sm text-white/80 relative z-20">
+                          <div className="px-4 pb-4 pt-2 space-y-3 text-base text-white/80 relative z-20">
                             <p>{project.description}</p>
                             {images.length > 0 && (
-                              <div className="relative w-full rounded-lg overflow-hidden border border-white/10">
-                                <img
-                                  src={images[currentIndex]}
-                                  alt={`${project.title} screenshot ${currentIndex + 1}`}
-                                  className="w-full h-52 object-cover"
-                                  loading="lazy"
-                                />
+                              <div className="relative w-full rounded-lg overflow-hidden border border-white/10 bg-black/50 h-80">
+                                <AnimatePresence mode="wait">
+                                  <motion.img
+                                    key={currentIndex}
+                                    src={images[currentIndex]}
+                                    alt={`${project.title} screenshot ${currentIndex + 1}`}
+                                    className="w-full h-full object-contain absolute inset-0"
+                                    loading="lazy"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.25 }}
+                                  />
+                                </AnimatePresence>
                                 <button
                                   type="button"
-                                  className="absolute top-1/2 -translate-y-1/2 left-2 p-2 rounded-full bg-black/60 text-white hover:bg-black/80 transition disabled:opacity-30"
+                                  className="absolute top-1/2 -translate-y-1/2 left-2 p-1.5 rounded-full bg-black/60 text-white hover:bg-black/80 transition disabled:opacity-30 z-10"
                                   onClick={(e) => {
                                     e.stopPropagation();
+                                    setIsAutoPlayPaused(true);
                                     changeImage(project.title, -1, images.length);
                                   }}
                                   disabled={images.length <= 1}
                                   aria-label="Previous image"
                                 >
-                                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+                                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3">
                                     <polyline points="15 18 9 12 15 6" />
                                   </svg>
                                 </button>
                                 <button
                                   type="button"
-                                  className="absolute top-1/2 -translate-y-1/2 right-2 p-2 rounded-full bg-black/60 text-white hover:bg-black/80 transition disabled:opacity-30"
+                                  className="absolute top-1/2 -translate-y-1/2 right-2 p-1.5 rounded-full bg-black/60 text-white hover:bg-black/80 transition disabled:opacity-30 z-10"
                                   onClick={(e) => {
                                     e.stopPropagation();
+                                    setIsAutoPlayPaused(true);
                                     changeImage(project.title, 1, images.length);
                                   }}
                                   disabled={images.length <= 1}
                                   aria-label="Next image"
                                 >
-                                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+                                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3">
                                     <polyline points="9 18 15 12 9 6" />
                                   </svg>
                                 </button>
-                                <div className="absolute bottom-2 right-3 text-[11px] px-2 py-1 rounded-full bg-black/60 text-white/80">
+                                <div className="absolute bottom-2 right-3 text-[11px] px-2 py-1 rounded-full bg-black/60 text-white/80 z-10">
                                   {currentIndex + 1}/{images.length}
                                 </div>
                               </div>
@@ -257,7 +289,7 @@ function App() {
                             {project.techStack && project.techStack.length > 0 && (
                               <div className="flex flex-wrap gap-2">
                                 {project.techStack.map(tech => (
-                                  <span key={tech} className="px-2 py-1 rounded-full bg-white/10 border border-white/10 text-xs text-white/80">
+                                  <span key={tech} className="px-2 py-1 rounded-full bg-white/10 border border-white/10 text-sm text-white/80">
                                     {tech}
                                   </span>
                                 ))}
@@ -265,18 +297,27 @@ function App() {
                             )}
                             <div className="flex flex-wrap gap-4 text-sm">
                               {project.link && (
-                                <a className="text-[rgb(51,178,51)] hover:text-white transition" href={project.link} target="_blank" rel="noopener noreferrer">
-                                  Code
+                                <a className="text-white hover:text-[rgb(51,178,51)] transition" href={project.link} target="_blank" rel="noopener noreferrer" aria-label="View Code">
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+                                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                                  </svg>
                                 </a>
                               )}
                               {project.demoLink && (
-                                <a className="text-[rgb(51,178,51)] hover:text-white transition" href={project.demoLink} target="_blank" rel="noopener noreferrer">
-                                  Demo
+                                <a className="text-white hover:text-[rgb(51,178,51)] transition" href={project.demoLink} target="_blank" rel="noopener noreferrer" aria-label="View Demo">
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                                  </svg>
                                 </a>
                               )}
                               {project.demoVideoLink && (
-                                <a className="text-[rgb(51,178,51)] hover:text-white transition" href={project.demoVideoLink} target="_blank" rel="noopener noreferrer">
-                                  Video
+                                <a className="text-white hover:text-[rgb(51,178,51)] transition" href={project.demoVideoLink} target="_blank" rel="noopener noreferrer" aria-label="Watch Video">
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+                                    <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path>
+                                    <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
+                                  </svg>
                                 </a>
                               )}
                             </div>
@@ -284,26 +325,26 @@ function App() {
                         )}
                       </GlowCard>
                     );
-                  }}
-                />
+                  })}
+                </div>
               </div>
             </div>
         </AnimatedContent>
         {/* Experience & Skills section */}
         <AnimatedContent className="w-full">
           <h2
-            className="text-4xl sm:text-5xl font-bold mt-12"
+            className="text-4xl sm:text-5xl font-bold mt-12 text-center"
             id="experience"
             style={{ filter: "drop-shadow(0 0 20px rgba(0,0,0,0.9)) drop-shadow(0 0 10px rgba(51,178,51,0.4))" }}
           >
             Experience
           </h2>
-          <p className=""> TODO </p>
+          <p className="text-center"> TODO </p>
         </AnimatedContent>
         {/* Contact section */}
         <AnimatedContent className="w-full">
           <h2
-            className="text-4xl sm:text-5xl font-bold mt-12"
+            className="text-4xl sm:text-5xl font-bold mt-12 text-center"
             id="contact"
             style={{ filter: "drop-shadow(0 0 20px rgba(0,0,0,0.9)) drop-shadow(0 0 10px rgba(51,178,51,0.4))" }}
           >
