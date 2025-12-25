@@ -12,6 +12,7 @@ import GlowCard from "./components/GlowCard";
 // Constants for contacts and projects
 import { menuItems, socialItems } from "./assets/constantVars";
 import { getProjectItems } from "./assets/projects";
+import { experienceItems, technologyItems } from "./assets/experience";
 
 function App() {
   const heroRef = useRef<HTMLDivElement | null>(null);
@@ -339,7 +340,24 @@ function App() {
           >
             Experience
           </h2>
-          <p className="text-center"> TODO </p>
+          <div className="mt-8">
+            <MagicBento
+              cards={experienceItems.map(exp => ({
+                title: exp.role,
+                description: exp.description,
+                label: exp.duration,
+                color: "#060010",
+                  logoSrc: exp.logoSrc,
+                techStack: exp.technologies,
+                date: exp.company
+              }))}
+              enableBorderGlow
+              glowColor="51, 178, 51"
+              enableTilt
+              enableMagnetism
+              particleCount={20}
+            />
+          </div>
         </AnimatedContent>
         {/* Contact section */}
         <AnimatedContent className="w-full">

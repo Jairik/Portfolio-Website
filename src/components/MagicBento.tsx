@@ -7,6 +7,7 @@ export interface BentoCardProps {
   title?: string;
   description?: string;
   label?: string;
+  logoSrc?: string;
   textAutoHide?: boolean;
   disableAnimations?: boolean;
   imageSrc?: string[];
@@ -147,10 +148,22 @@ const BentoCardItem: React.FC<{
 
   const content = (
     <>
-      <div className="card__header flex justify-between gap-3 relative text-white">
-        <span className="card__label text-lg font-medium text-white/90">{card.label || 'Featured'}</span>
-        {card.date && card.date !== card.label && (
-          <span className="text-sm text-white/60">{card.date}</span>
+      <div className="card__header flex justify-between gap-3 relative text-white items-center">
+        <div className="flex flex-col">
+          <span className="card__label text-lg font-medium text-white/90">{card.label || 'Featured'}</span>
+          {card.date && card.date !== card.label && (
+            <span className="text-sm text-white/60">{card.date}</span>
+          )}
+        </div>
+        {card.logoSrc && (
+          <div className="flex-shrink-0 w-14 h-14 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
+            <img
+              src={card.logoSrc}
+              alt={`${card.title || card.label || 'Card'} logo`}
+              className="w-12 h-12 object-contain"
+              loading="lazy"
+            />
+          </div>
         )}
       </div>
       <div className="card__content flex flex-col relative text-white gap-4">
@@ -956,7 +969,7 @@ const MagicBento: React.FC<BentoProps> = ({
       <BentoCardGrid gridRef={gridRef}>
         <div className="card-responsive">
           {cardsToRender.map((card, index) => {
-            const baseClassName = `card flex flex-col justify-between relative w-full max-w-full p-6 rounded-[24px] border border-solid font-light overflow-hidden transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3)] ${
+            const baseClassName = `card flex flex-col justify-start gap-4 relative w-full max-w-full p-6 rounded-[24px] border border-solid font-light overflow-hidden transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3)] ${
               enableBorderGlow ? 'card--border-glow' : ''
             }`;
 
