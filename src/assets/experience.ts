@@ -25,15 +25,15 @@ export const technologyItems = [
     // Frontend & UI
     { name: "React", iconSrc: "/tech-icons/react.svg", category: "Frontend & UI" },
     { name: "D3.js", iconSrc: "/tech-icons/d3.svg", category: "Frontend & UI" },
-    { name: "Three.js", iconSrc: "/tech-icons/threejs.svg", category: "Frontend & UI" },
-    { name: "Chart.js", iconSrc: "/tech-icons/chartjs.svg", category: "Frontend & UI" },
+    { name: "Three.js", iconSrc: "/tech-icons/threedotjs.svg", category: "Frontend & UI" },
+    { name: "Chart.js", iconSrc: "/tech-icons/chartdotjs.svg", category: "Frontend & UI" },
     { name: "Plotly", iconSrc: "/tech-icons/plotly.svg", category: "Frontend & UI" },
     { name: "Figma", iconSrc: "/tech-icons/figma.svg", category: "Frontend & UI" },
     { name: "Vite", iconSrc: "/tech-icons/vite.svg", category: "Frontend & UI" },
     { name: "Wordpress", iconSrc: "/tech-icons/wordpress.svg", category: "Frontend & UI" },
 
     // Backend & Infrastructure
-    { name: "Node.js", iconSrc: "/tech-icons/nodejs.svg", category: "Backend & Infrastructure" },
+    { name: "Node.js", iconSrc: "/tech-icons/nodedotjs.svg", category: "Backend & Infrastructure" },
     { name: "Express", iconSrc: "/tech-icons/express.svg", category: "Backend & Infrastructure" },
     { name: "FastAPI", iconSrc: "/tech-icons/fastapi.svg", category: "Backend & Infrastructure" },
     { name: "Flask", iconSrc: "/tech-icons/flask.svg", category: "Backend & Infrastructure" },
@@ -61,11 +61,33 @@ export const technologyItems = [
     { name: "Langchain", iconSrc: "/tech-icons/langchain.svg", category: "Data, AI & Productivity" },
     { name: "OpenAI", iconSrc: "/tech-icons/openai.svg", category: "Data, AI & Productivity" },
     { name: "Gemini", iconSrc: "/tech-icons/googlegemini.svg", category: "Data, AI & Productivity" },
-    { name: "sklearn", iconSrc: "/tech-icons/sklearn.svg", category: "Data, AI & Productivity" },
+    { name: "Scikit", iconSrc: "/tech-icons/scikitlearn.svg", category: "Data, AI & Productivity" },
     { name: "TensorFlow", iconSrc: "/tech-icons/tensorflow.svg", category: "Data, AI & Productivity" },
     { name: "Ultralytics", iconSrc: "/tech-icons/ultralytics.svg", category: "Data, AI & Productivity" },
     { name: "Neo4J", iconSrc: "/tech-icons/neo4j.svg", category: "Data, AI & Productivity" },
     { name: "Jupyter", iconSrc: "/tech-icons/jupyter.svg", category: "Data, AI & Productivity" },
     { name: "Confluence", iconSrc: "/tech-icons/confluence.svg", category: "Data, AI & Productivity" },
     { name: "Vim", iconSrc: "/tech-icons/vim.svg", category: "Data, AI & Productivity" },
+];
+
+// Completed Coursework
+export const completedCourses = [
+    "High Performance Computing",
+    "Data Science Fundamentals",
+    "Software Engineering I & II",
+    "Computer Networks",
+    "Database Design & Implementation",
+    "Operating Systems",
+    "Systems Software",
+    "Data Visualization & Machine Learning",
+    "Artificial Intelligence",
+    "Advanced Data Structures & Algorithms",
+    "OOP, Design Patterns, & Android Development",
+    "Theory of Computation",
+    "Microcomputer Organization and Architecture",
+    "Linear Algebra",
+    "Discrete Mathematics",
+    "Introduction to Data Structures & Algorithms",
+    "Computer Science I & II",
+    "Programming Fundamentals"
 ];

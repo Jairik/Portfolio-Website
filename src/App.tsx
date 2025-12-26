@@ -6,13 +6,14 @@ import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import Dither from "./components/Dither";
 import DecryptedText from "./components/DecryptedText";
 import AnimatedContent from "./components/AnimatedContent";
+import LogoLoop from "./components/LogoLoop";
 import MagicBento from "./components/MagicBento";
 import GlowCard from "./components/GlowCard";
 
 // Constants for contacts and projects
 import { menuItems, socialItems } from "./assets/constantVars";
 import { getProjectItems } from "./assets/projects";
-import { experienceItems, technologyItems } from "./assets/experience";
+import { experienceItems, technologyItems, completedCourses } from "./assets/experience";
 
 function App() {
   const heroRef = useRef<HTMLDivElement | null>(null);
@@ -21,11 +22,16 @@ function App() {
   const bgScale = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
 
   const [openProject, setOpenProject] = useState<string | null>(null);
+  const [isCoursesOpen, setIsCoursesOpen] = useState(false);
   const [isAutoPlayPaused, setIsAutoPlayPaused] = useState(false);
   const [imageIndexMap, setImageIndexMap] = useState<Record<string, number>>({});
   const projects = getProjectItems();
   const featuredProjects = projects.filter(p => p.featured);
   const otherProjects = projects.filter(p => !p.featured);
+
+  const frontendTech = technologyItems.filter(t => t.category === "Frontend & UI");
+  const backendTech = technologyItems.filter(t => t.category === "Backend & Infrastructure");
+  const dataTech = technologyItems.filter(t => t.category === "Data, AI & Productivity");
 
   const changeImage = useCallback((title: string, delta: number, total: number) => {
     if (total <= 1) return;
@@ -79,7 +85,7 @@ function App() {
             animateOn="view"
             className="text-6xl sm:text-7xl md:text-8xl font-bold text-white"
             encryptedClassName="text-6xl sm:text-7xl md:text-8xl font-bold text-white"
-            style={{ filter: "drop-shadow(0 0 34px rgba(0,0,0,0.96)) drop-shadow(0 0 18px rgba(0,202,0,0.55))" }}
+            style={{ filter: "drop-shadow(0 0 34px rgba(0,0,0,1)) drop-shadow(0 0 18px rgba(0,0,0,1))" }}
           />
           <div className="mt-3 text-base sm:text-lg text-white/80">
             <DecryptedText
@@ -89,7 +95,7 @@ function App() {
               animateOn="view"
               className="text-white"
               encryptedClassName="text-white"
-              style={{ filter: "drop-shadow(0 0 26px rgba(0,0,0,0.9)) drop-shadow(0 0 12px rgba(0,202,0,0.45))" }}
+              style={{ filter: "drop-shadow(0 0 26px rgba(0,0,0,1)) drop-shadow(0 0 12px rgba(0,0,0,1))" }}
             />
           </div>
 
@@ -151,14 +157,59 @@ function App() {
           <h2
             className="text-4xl sm:text-5xl font-bold text-center"
             id="about"
-            style={{ filter: "drop-shadow(0 0 20px rgba(0,0,0,0.9)) drop-shadow(0 0 10px rgba(51,178,51,0.4))" }}
+            style={{ filter: "drop-shadow(0 0 20px rgba(0,0,0,1)) drop-shadow(0 0 10px rgba(0,0,0,1))" }}
           >
             About Me
           </h2>
         
-          <p className="text-white/75 max-w-3xl mx-auto text-center">
-            Computer science student and ex-SWE intern who loves nerding out over building full-stack projects, especially when there’s a real problem involved.
+          <p className="text-white/75 max-w-3xl mx-auto text-center text-lg leading-relaxed mt-8">
+            I'm a fourth-year Computer Science student (AI & Software Engineering focus) and Data Science major who loves building things. I'm a fast, curiosity-driven programmer who takes ownership of my work and genuinely enjoys the process of creating. 
+            I appreciate the full stack, from architectural design to the small details, and believe in choosing the right tools for the job to build systems that last.
           </p>
+
+          {/* <div className="max-w-3xl mx-auto mt-8">
+            <button
+              onClick={() => setIsCoursesOpen(!isCoursesOpen)}
+              className="w-full flex items-center justify-between px-4 py-2 text-white/40 hover:text-white/60 transition-all duration-300 group"
+            >
+              <span className="text-sm font-medium">Completed Coursework</span>
+              <svg
+                className={`w-4 h-4 transition-transform duration-300 ${isCoursesOpen ? 'rotate-180' : ''}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            
+            <AnimatePresence>
+              {isCoursesOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="overflow-hidden"
+                >
+                  <div className="p-4 bg-white/5 border border-white/10 rounded-lg mt-2">
+                    {completedCourses.length > 0 ? (
+                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {completedCourses.map((course, index) => (
+                          <li key={index} className="flex items-center gap-2 text-sm text-white/60">
+                            <span className="w-1 h-1 rounded-full bg-[rgb(51,178,51)]/50" />
+                            {course}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-white/50 italic text-center text-sm">Course list to be populated...</p>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div> */}
 
         </AnimatedContent>
         {/* Projects section */}
@@ -166,7 +217,7 @@ function App() {
           <h2
             className="text-4xl sm:text-5xl font-bold mt-12 text-center"
             id="projects"
-            style={{ filter: "drop-shadow(0 0 20px rgba(0,0,0,0.9)) drop-shadow(0 0 10px rgba(51,178,51,0.4))" }}
+            style={{ filter: "drop-shadow(0 0 20px rgba(0,0,0,1)) drop-shadow(0 0 10px rgba(0,0,0,1))" }}
           >
             Projects
           </h2>
@@ -245,7 +296,8 @@ function App() {
                                     src={images[currentIndex]}
                                     alt={`${project.title} screenshot ${currentIndex + 1}`}
                                     className="w-full h-full object-contain absolute inset-0"
-                                    loading="lazy"
+                                    loading="eager"
+                                    onError={(e) => console.error(`Failed to load image: ${images[currentIndex]}`)}
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     exit={{ opacity: 0 }}
@@ -336,7 +388,7 @@ function App() {
           <h2
             className="text-4xl sm:text-5xl font-bold mt-12 text-center"
             id="experience"
-            style={{ filter: "drop-shadow(0 0 20px rgba(0,0,0,0.9)) drop-shadow(0 0 10px rgba(51,178,51,0.4))" }}
+            style={{ filter: "drop-shadow(0 0 20px rgba(0,0,0,1)) drop-shadow(0 0 10px rgba(0,0,0,1))" }}
           >
             Experience
           </h2>
@@ -358,13 +410,51 @@ function App() {
               particleCount={20}
             />
           </div>
+
+          <div className="mt-16 space-y-12">
+            <div className="space-y-4">
+              <h3 className="text-xl font-semibold text-center text-white/60">Frontend & UI</h3>
+              <LogoLoop
+                logos={frontendTech.map(tech => ({ src: tech.iconSrc, alt: tech.name }))}
+                direction="left"
+                speed={40}
+                pauseOnHover
+                logoHeight={48}
+                gap={64}
+              />
+            </div>
+            
+            <div className="space-y-4">
+              <h3 className="text-xl font-semibold text-center text-white/60">Backend & Infrastructure</h3>
+              <LogoLoop
+                logos={backendTech.map(tech => ({ src: tech.iconSrc, alt: tech.name }))}
+                direction="right"
+                speed={40}
+                pauseOnHover
+                logoHeight={48}
+                gap={64}
+              />
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-xl font-semibold text-center text-white/60">Data, AI & Productivity</h3>
+              <LogoLoop
+                logos={dataTech.map(tech => ({ src: tech.iconSrc, alt: tech.name }))}
+                direction="left"
+                speed={40}
+                pauseOnHover
+                logoHeight={48}
+                gap={64}
+              />
+            </div>
+          </div>
         </AnimatedContent>
         {/* Contact section */}
         <AnimatedContent className="w-full">
           <h2
             className="text-4xl sm:text-5xl font-bold mt-12 text-center"
             id="contact"
-            style={{ filter: "drop-shadow(0 0 20px rgba(0,0,0,0.9)) drop-shadow(0 0 10px rgba(51,178,51,0.4))" }}
+            style={{ filter: "drop-shadow(0 0 20px rgba(0,0,0,1)) drop-shadow(0 0 10px rgba(0,0,0,1))" }}
           >
             Contact
           </h2>
