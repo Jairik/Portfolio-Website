@@ -1,19 +1,21 @@
 // React and Framer Motion imports
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect, useCallback, lazy, Suspense } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 
 // React Bits components
-import Dither from "./components/Dither";
 import DecryptedText from "./components/DecryptedText";
 import AnimatedContent from "./components/AnimatedContent";
-import LogoLoop from "./components/LogoLoop";
-import MagicBento from "./components/MagicBento";
 import GlowCard from "./components/GlowCard";
 
 // Constants for contacts and projects
 import { menuItems, socialItems } from "./assets/constantVars";
 import { getProjectItems } from "./assets/projects";
-import { experienceItems, technologyItems, completedCourses } from "./assets/experience";
+import { experienceItems, technologyItems/*, completedCourses*/ } from "./assets/experience";
+
+// Lazy-loaded heavy components to split initial bundle
+const Dither = lazy(() => import("./components/Dither"));
+const MagicBento = lazy(() => import("./components/MagicBento"));
+const LogoLoop = lazy(() => import("./components/LogoLoop"));
 
 function App() {
   const heroRef = useRef<HTMLDivElement | null>(null);
@@ -22,7 +24,7 @@ function App() {
   const bgScale = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
 
   const [openProject, setOpenProject] = useState<string | null>(null);
-  const [isCoursesOpen, setIsCoursesOpen] = useState(false);
+  //const [isCoursesOpen, setIsCoursesOpen] = useState(false);
   const [isAutoPlayPaused, setIsAutoPlayPaused] = useState(false);
   const [imageIndexMap, setImageIndexMap] = useState<Record<string, number>>({});
   const projects = getProjectItems();
@@ -49,7 +51,9 @@ function App() {
     if (!project || !project.imageSrc || project.imageSrc.length <= 1) return;
 
     const interval = setInterval(() => {
-      changeImage(openProject, 1, project.imageSrc.length);
+      if (project.imageSrc) {
+        changeImage(openProject, 1, project.imageSrc.length);
+      }
     }, 10000);
 
     return () => clearInterval(interval);
@@ -64,16 +68,22 @@ function App() {
           className="dither-layer pointer-events-auto"
           style={{ opacity: bgOpacity, scale: bgScale }}
         >
-          <Dither
-            waveColor={[0.2, 0.7, 0.2]}
-            disableAnimation={false}
-            enableMouseInteraction={false}
-            // mouseRadius={0.08}
-            colorNum={3}
-            waveAmplitude={0.3}
-            waveFrequency={10}
-            waveSpeed={0.012}
-          />
+          <Suspense
+            fallback={(
+              <div className="absolute inset-0 bg-gradient-to-b from-[#0a0f0a] via-black to-black" />
+            )}
+          >
+            <Dither
+              waveColor={[0.2, 0.7, 0.2]}
+              disableAnimation={false}
+              enableMouseInteraction={false}
+              // mouseRadius={0.08}
+              colorNum={3}
+              waveAmplitude={0.3}
+              waveFrequency={10}
+              waveSpeed={0.012}
+            />
+          </Suspense>
         </motion.div>
 
         {/* Foreground content - centered over background */}
@@ -224,25 +234,29 @@ function App() {
             <div className="mt-8 space-y-10">
               <div>
                 <h3 className="text-2xl font-semibold mb-6 text-white/90 text-center">Featured Projects</h3>
-                <MagicBento
-                  cards={featuredProjects.map(project => ({
-                    title: project.title,
-                    description: project.description,
-                    label: project.date || "Featured",
-                    color: "#060010",
-                    imageSrc: project.imageSrc,
-                    link: project.link,
-                    techStack: project.techStack,
-                    demoLink: project.demoLink,
-                    demoVideoLink: project.demoVideoLink,
-                    date: project.date
-                  }))}
-                  enableBorderGlow
-                  glowColor="51, 178, 51"
-                  enableTilt
-                  enableMagnetism
-                  particleCount={10}
-                />
+                <Suspense
+                  fallback={<div className="h-[420px] rounded-[24px] border border-white/10 bg-white/5 animate-pulse" />}
+                >
+                  <MagicBento
+                    cards={featuredProjects.map(project => ({
+                      title: project.title,
+                      description: project.description,
+                      label: project.date || "Featured",
+                      color: "#060010",
+                      imageSrc: project.imageSrc,
+                      link: project.link,
+                      techStack: project.techStack,
+                      demoLink: project.demoLink,
+                      demoVideoLink: project.demoVideoLink,
+                      date: project.date
+                    }))}
+                    enableBorderGlow
+                    glowColor="51, 178, 51"
+                    enableTilt
+                    enableMagnetism
+                    particleCount={10}
+                  />
+                </Suspense>
               </div>
 
               <div>
@@ -297,7 +311,7 @@ function App() {
                                     alt={`${project.title} screenshot ${currentIndex + 1}`}
                                     className="w-full h-full object-contain absolute inset-0"
                                     loading="eager"
-                                    onError={(e) => console.error(`Failed to load image: ${images[currentIndex]}`)}
+                                    onError={() => console.error(`Failed to load image: ${images[currentIndex]}`)}
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     exit={{ opacity: 0 }}
@@ -393,59 +407,69 @@ function App() {
             Experience
           </h2>
           <div className="mt-8">
-            <MagicBento
-              cards={experienceItems.map(exp => ({
-                title: exp.role,
-                description: exp.description,
-                label: exp.duration,
-                color: "#060010",
-                  logoSrc: exp.logoSrc,
-                techStack: exp.technologies,
-                date: exp.company
-              }))}
-              enableBorderGlow
-              glowColor="51, 178, 51"
-              enableTilt
-              enableMagnetism
-              particleCount={20}
-            />
+            <Suspense
+              fallback={<div className="h-[360px] rounded-[24px] border border-white/10 bg-white/5 animate-pulse" />}
+            >
+              <MagicBento
+                cards={experienceItems.map(exp => ({
+                  title: exp.role,
+                  description: exp.description,
+                  label: exp.duration,
+                  color: "#060010",
+                    logoSrc: exp.logoSrc,
+                  techStack: exp.technologies,
+                  date: exp.company
+                }))}
+                enableBorderGlow
+                glowColor="51, 178, 51"
+                enableTilt
+                enableMagnetism
+                particleCount={20}
+              />
+            </Suspense>
           </div>
 
           <div className="mt-16 space-y-12">
             <div className="space-y-4">
               <h3 className="text-xl font-semibold text-center text-white/60">Frontend & UI</h3>
-              <LogoLoop
-                logos={frontendTech.map(tech => ({ src: tech.iconSrc, alt: tech.name }))}
-                direction="left"
-                speed={40}
-                pauseOnHover
-                logoHeight={48}
-                gap={64}
-              />
+              <Suspense fallback={<div className="h-24 rounded-xl bg-white/5 border border-white/10 animate-pulse" />}> 
+                <LogoLoop
+                  logos={frontendTech.map(tech => ({ src: tech.iconSrc, alt: tech.name }))}
+                  direction="left"
+                  speed={40}
+                  pauseOnHover
+                  logoHeight={48}
+                  gap={64}
+                />
+              </Suspense>
             </div>
             
             <div className="space-y-4">
               <h3 className="text-xl font-semibold text-center text-white/60">Backend & Infrastructure</h3>
-              <LogoLoop
-                logos={backendTech.map(tech => ({ src: tech.iconSrc, alt: tech.name }))}
-                direction="right"
-                speed={40}
-                pauseOnHover
-                logoHeight={48}
-                gap={64}
-              />
+              <Suspense fallback={<div className="h-24 rounded-xl bg-white/5 border border-white/10 animate-pulse" />}> 
+                <LogoLoop
+                  logos={backendTech.map(tech => ({ src: tech.iconSrc, alt: tech.name }))}
+                  direction="right"
+                  speed={40}
+                  pauseOnHover
+                  logoHeight={48}
+                  gap={64}
+                />
+              </Suspense>
             </div>
 
             <div className="space-y-4">
               <h3 className="text-xl font-semibold text-center text-white/60">Data, AI & Productivity</h3>
-              <LogoLoop
-                logos={dataTech.map(tech => ({ src: tech.iconSrc, alt: tech.name }))}
-                direction="left"
-                speed={40}
-                pauseOnHover
-                logoHeight={48}
-                gap={64}
-              />
+              <Suspense fallback={<div className="h-24 rounded-xl bg-white/5 border border-white/10 animate-pulse" />}> 
+                <LogoLoop
+                  logos={dataTech.map(tech => ({ src: tech.iconSrc, alt: tech.name }))}
+                  direction="left"
+                  speed={40}
+                  pauseOnHover
+                  logoHeight={48}
+                  gap={64}
+                />
+              </Suspense>
             </div>
           </div>
         </AnimatedContent>

@@ -1,23 +1,15 @@
-<svg viewBox="151.60161507402424 44.73118279569893 493.135935397039 143.01075268817203" xmlns="http://www.w3.org/2000/svg" style="max-height: 500px" width="493.135935397039" height="143.01075268817203">
-  <title>JJ Code-Style Logo (Closer Brackets)</title>
-  <desc>Minimalist "JJ" logo with coding angle brackets closer to the text</desc>
-
-  <rect fill="none" height="100%" width="100%"/>
-
-  <g transform="translate(400,150)">
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" stroke="rgb(51,178,51)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
     
-    <text fill="#1f2937" font-weight="700" font-size="180" font-family="JetBrains Mono, Fira Code, Consolas, Menlo, monospace" text-anchor="middle" y="28" x="-200">
-      &lt;
-    </text>
+    <!-- Laptop screen -->
+    <rect x="12" y="10" width="40" height="28" rx="4" />
 
-    
-    <text paint-order="stroke" stroke-width="12" stroke="#1f2937" fill="#ffffff" font-weight="800" font-size="180" font-family="JetBrains Mono, Fira Code, Consolas, Menlo, monospace" text-anchor="middle" y="28" x="0">
-      JJ
-    </text>
+    <!-- Code symbol -->
+    <path d="M26 20 L22 24 L26 28" />
+    <path d="M38 20 L42 24 L38 28" />
+    <line x1="30" y1="30" x2="34" y2="18" />
 
-    
-    <text fill="#1f2937" font-weight="700" font-size="180" font-family="JetBrains Mono, Fira Code, Consolas, Menlo, monospace" text-anchor="middle" y="28" x="200">
-      &gt;
-    </text>
+    <!-- Laptop base -->
+    <path d="M8 42 H56" />
   </g>
 </svg>

@@ -8,7 +8,6 @@ export interface BentoCardProps {
   description?: string;
   label?: string;
   logoSrc?: string;
-  textAutoHide?: boolean;
   disableAnimations?: boolean;
   imageSrc?: string[];
   link?: string;
@@ -19,7 +18,6 @@ export interface BentoCardProps {
 }
 
 export interface BentoProps {
-  textAutoHide?: boolean;
   enableStars?: boolean;
   enableSpotlight?: boolean;
   enableBorderGlow?: boolean;
@@ -100,7 +98,6 @@ const BentoCardItem: React.FC<{
   card: BentoCardProps;
   baseClassName: string;
   cardStyle: React.CSSProperties;
-  textAutoHide: boolean;
   enableStars: boolean;
   shouldDisableAnimations: boolean;
   particleCount: number;
@@ -112,7 +109,6 @@ const BentoCardItem: React.FC<{
   card,
   baseClassName,
   cardStyle,
-  textAutoHide,
   enableStars,
   shouldDisableAnimations,
   particleCount,
@@ -814,7 +810,6 @@ const useMobileDetection = () => {
 };
 
 const MagicBento: React.FC<BentoProps> = ({
-  textAutoHide = true,
   enableStars = true,
   enableSpotlight = true,
   enableBorderGlow = true,
@@ -989,7 +984,6 @@ const MagicBento: React.FC<BentoProps> = ({
                 card={card}
                 baseClassName={baseClassName}
                 cardStyle={cardStyle}
-                textAutoHide={textAutoHide}
                 enableStars={enableStars}
                 shouldDisableAnimations={shouldDisableAnimations}
                 particleCount={particleCount}

@@ -1,4 +1,5 @@
-import React, { useRef, useState, useEffect, useCallback, ReactNode, MouseEventHandler, UIEvent } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
+import type { ReactNode, MouseEventHandler, UIEvent } from 'react';
 import { motion, useInView } from 'motion/react';
 
 interface AnimatedItemProps {
@@ -9,7 +10,7 @@ interface AnimatedItemProps {
   onClick?: MouseEventHandler<HTMLDivElement>;
 }
 
-const AnimatedItem: React.FC<AnimatedItemProps> = ({ children, delay = 0, index, onMouseEnter, onClick }) => {
+const AnimatedItem = ({ children, delay = 0, index, onMouseEnter, onClick }: AnimatedItemProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { amount: 0.5, once: false });
   
@@ -38,7 +39,7 @@ export interface AnimatedListProps<T> {
   itemClassName?: string;
   displayScrollbar?: boolean;
   initialSelectedIndex?: number;
-  renderItem?: (item: T, index: number, isSelected: boolean) => React.ReactNode;
+  renderItem?: (item: T, index: number, isSelected: boolean) => ReactNode;
 }
 
 const AnimatedList = <T,>({

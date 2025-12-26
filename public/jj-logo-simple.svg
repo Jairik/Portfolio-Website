@@ -1,13 +1,15 @@
-<svg viewBox="0 0 300.06888633754306 239.02255639097746" xmlns="http://www.w3.org/2000/svg" style="max-height: 500px" width="300.06888633754306" height="239.02255639097746">
-  <title>Block Text Art</title>
-  <g transform="translate(24,40)">
-    <text fill="#00FF00" font-size="28" font-family="Noto Sans Mono, DejaVu Sans Mono, Menlo, Consolas, monospace" xml:space="preserve">
-      <tspan dy="0em" x="0">░░░░░██╗░░░░░██╗</tspan>
-      <tspan dy="1.3em" x="0">░░░░░██║░░░░░██║</tspan>
-      <tspan dy="1.3em" x="0">░░░░░██║░░░░░██║</tspan>
-      <tspan dy="1.3em" x="0">██╗░░██║██╗░░██║</tspan>
-      <tspan dy="1.3em" x="0">╚█████╔╝╚█████╔╝</tspan>
-      <tspan dy="1.3em" x="0">░╚════╝░░╚════╝░</tspan>
-    </text>
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" stroke="rgb(51,178,51)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    
+    <!-- Laptop screen -->
+    <rect x="12" y="10" width="40" height="28" rx="4" />
+
+    <!-- Code symbol -->
+    <path d="M26 20 L22 24 L26 28" />
+    <path d="M38 20 L42 24 L38 28" />
+    <line x1="30" y1="30" x2="34" y2="18" />
+
+    <!-- Laptop base -->
+    <path d="M8 42 H56" />
   </g>
 </svg>
