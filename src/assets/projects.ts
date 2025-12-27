@@ -127,8 +127,8 @@ export function getProjectItems(): ProjectItem[] {
         "https://github.com/ncorcoran771/KnowYourUni_",  // GitHub Link
         ["React", "Neo4J", "FastAPI", "Gemini", "Langchain", "Python"],  // Tech Stack
         "September 2025 - November 2025",  // Date
-        ["projects/KnowYourUni-1.png", "projects/KnowYourUni-2.png", "projects/KnowYourUni-3.png", "projects/KnowYourUni-4.png",
-            "projects/KnowYourUni-5.png", "projects/KnowYourUni-6.png"],  // Demo Image Sources
+        ["/projects/KnowYourUni-1.png", "/projects/KnowYourUni-2.png", "/projects/KnowYourUni-3.png", "/projects/KnowYourUni-4.png",
+            "/projects/KnowYourUni-5.png", "/projects/KnowYourUni-6.png"],  // Demo Image Sources
         "",  // Demo Link  (not applicable for this)
         "https://www.youtube.com/watch?v=u-mNfCXUxhU&t=1s",  // Demo Video Link
         false  // Featured
@@ -141,8 +141,8 @@ export function getProjectItems(): ProjectItem[] {
         "https://github.com/Jairik/Stock-Portfolio-Management",  // GitHub Link
         ["PHP", "MySQL", "Cron", "HTML/CSS/JavaScript", "Alpaca API"],  // Tech Stack
         "March 2024 - April 2024",  // Date
-        ["projects/Stock-Portfolio-Management-System-1.png", "projects/Stock-Portfolio-Management-System-2.png", "projects/Stock-Portfolio-Management-System-3.png", 
-            "projects/Stock-Portfolio-Management-System-4.png"],  // Demo Image Sources
+        ["/projects/Stock-Portfolio-Management-System-1.png", "/projects/Stock-Portfolio-Management-System-2.png", "/projects/Stock-Portfolio-Management-System-3.png", 
+            "/projects/Stock-Portfolio-Management-System-4.png"],  // Demo Image Sources
         "https://lamp.salisbury.edu/~jmccauley4/StocksDB",  // Demo Link  (not applicable for this)
         "",  // Demo Video Link  (not applicable for this)
         false  // Featured
@@ -155,7 +155,7 @@ export function getProjectItems(): ProjectItem[] {
         "https://github.com/Jairik/Secure-P2P-Chatroom",  // GitHub Link
         ["Cryptography", "WebSockets", "DearPyGUI"],  // Tech Stack
         "April 2025",  // Date
-        ["projects/P2P-Encrypted-Chatroom-1.png", "projects/P2P-Encrypted-Chatroom-2.png", "projects/P2P-Encrypted-Chatroom-3.png"],  // Demo Image Sources (not applicable for this)
+        ["/projects/P2P-Encrypted-Chatroom-1.png", "/projects/P2P-Encrypted-Chatroom-2.png", "/projects/P2P-Encrypted-Chatroom-3.png"],  // Demo Image Sources (not applicable for this)
         "",  // Demo Link  (not applicable for this)
         "",  // Demo Video Link  (not applicable for this)
         false  // Featured
@@ -168,7 +168,7 @@ export function getProjectItems(): ProjectItem[] {
         "https://github.com/Jairik/AI-Puzzle-Game",  // GitHub Link
         ["Python", "A* Search Algorithm", "Tkinter"],  // Tech Stack
         "November 2024",  // Date
-        ["projects/AI-Puzzle-Game-1.png", "projects/AI-Puzzle-Game-2.png"],  // Demo Image Sources (not applicable for this)
+        ["/projects/AI-Puzzle-Game-1.png", "/projects/AI-Puzzle-Game-2.png"],  // Demo Image Sources (not applicable for this)
         "",  // Demo Link  (not applicable for this)
         "",  // Demo Video Link  (not applicable for this)
         false  // Featured
@@ -194,7 +194,7 @@ export function getProjectItems(): ProjectItem[] {
         "https://github.com/Jairik/MOVE4WELLNESS-Android-App",  // GitHub Link
         ["Java", "Android Studio", "Firebase"],  // Tech Stack
         "April 2024 - May 2024",  // Date
-        ["projects/MOVE4WELLNESS-1.png", "projects/MOVE4WELLNESS-2.png", "projects/MOVE4WELLNESS-3.png", "projects/MOVE4WELLNESS-3.png"],  // Demo Image Sources
+        ["/projects/MOVE4WELLNESS-1.png", "/projects/MOVE4WELLNESS-2.png", "/projects/MOVE4WELLNESS-3.png", "/projects/MOVE4WELLNESS-3.png"],  // Demo Image Sources
         "",  // Demo Link  (not applicable for this)
         "",  // Demo Video Link  (not applicable for this)
         false  // Featured
