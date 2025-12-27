@@ -21,6 +21,8 @@ jobs:
     # Install node, build the site, and deploy to GitHub Pages
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: true  # Enable Git LFS for png files
 
       # Install node
       - uses: actions/setup-node@v4
