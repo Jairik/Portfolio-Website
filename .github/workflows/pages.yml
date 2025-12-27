@@ -1,0 +1,38 @@
+# Build each time changes are pushed to the main branch and deploy to GitHub Pages
+name: Deploy to GitHub Pages
+
+# Rebuild on every push
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Define the deployment job
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+
+    # Install node, build the site, and deploy to GitHub Pages
+    steps:
+      - uses: actions/checkout@v4
+
+      # Install node
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - run: npm ci  # Dependencies
+      - run: npm run build  # Vite build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist  # Build output directory
+
+      - uses: actions/deploy-pages@v4
