@@ -11,6 +11,7 @@ export class ProjectItem {
     demoLink?: string = "";  // Link to deployed demo (if applicable)
     demoVideoLink?: string = "";  // Link to demo video (if applicable)
     featured?: boolean = false;  // Whether the project is featured for the website
+    current?: boolean = false;  // Whether the project is currently in progress
 
     // Default constructor for easy creation
     constructor(
@@ -22,7 +23,8 @@ export class ProjectItem {
         imageSrc?: string[],
         demoLink?: string,
         demoVideoLink?: string,
-        featured?: boolean
+        featured?: boolean,
+        current?: boolean
     ) {
         this.title = title;
         this.date = date;
@@ -33,14 +35,16 @@ export class ProjectItem {
         this.demoLink = demoLink;
         this.demoVideoLink = demoVideoLink;
         this.featured = featured;
+        this.current = current;
     }
 
 }
 
 // Gets all project items, appending each to an array and returning it
 export function getProjectItems(): ProjectItem[] {
-    var allProjects: ProjectItem[] = [];  // Array to hold all project items
+    const allProjects: ProjectItem[] = [];  // Array to hold all project items
 
+    /* === PAST PROJECTS === */
     // Lunara
     allProjects.push(new ProjectItem(
         "Lunara",  // Title
@@ -52,7 +56,8 @@ export function getProjectItems(): ProjectItem[] {
             "/projects/Lunara-6.png", "/projects/Lunara-7.png", "/projects/Lunara-8.png"],// Demo Image Sources
         "",  // Demo Link (not applicable for this)
         "https://www.youtube.com/watch?v=ntU7dSQPw1w",  // Demo Video Link
-        true  // Featured
+        true,  // Featured
+        true   // Current
     ));
 
     // TestifAI
@@ -200,5 +205,49 @@ export function getProjectItems(): ProjectItem[] {
         false  // Featured
     ));
 
+    /* === CURRENT PROJECTS === */
+    // Shakesperean LLM Chatbot
+    allProjects.push(new ProjectItem(
+        "Shakespearean Personality LLM Augmentation",  // Title
+        "Develops and evaluates methods for persona-consistent AI, focusing on Shakespear's works of Hamlet and Macbeth to acheive four-way conversations among language models.",  // Brief Description
+        "https://github.com/bmccorison/DSCI490-Shakespearean-Personality-LLM-Augmentation-",  // GitHub Link
+        ["Python", "HuggingFace", "Pinecone", "React"],  // Tech Stack
+        "January 2026 - Present",  // Date
+        [],  // Demo Image Sources (not applicable for this)
+        "",  // Demo Link  (not applicable for this)
+        "",  // Demo Video Link  (not applicable for this)
+        false,  // Not featured
+        true   // Current
+    ));
+
+    // Poultry Farm Data Analytics Dashboard
+    allProjects.push(new ProjectItem(
+        "Poultry Farm Data Analytics Dashboard",  // Title
+        "Dashboard for poultry farmers that provides real-time insights and analytics on farm operations, focusing on litter quality and living conditions.",  // Brief Description
+        "",  // GitHub Link (Closed Source)
+        ["Quarto", "Python", "Scikit-Learn", "Tensorflow", "Seaborn", "Plotly"],  // Tech Stack
+        "January 2026 - Present",  // Date
+        [],  // Demo Image Sources (not applicable for this, closed source)
+        "",  // Demo Link  (not applicable for this)
+        "",  // Demo Video Link  (not applicable for this)
+        false,  // Not featured
+        true   // Current
+    ));
+
+    // Open Source Open Hours Builder
+    allProjects.push(new ProjectItem(
+        "Basic Open Hours Builder",  // Title
+        "Targeted to SU lab assistants/tutors, allows for users to easily make and deploy their own basic office hours website.",  // Brief Description
+        "",  // GitHub Link (TODO)
+        ["JS", "HTML/CSS", "GitHub Actions"],  // Tech Stack
+        "Feburary 2025 - Present",  // Date
+        [],  // Demo Image Sources (not applicable for this quite yet)
+        "",  // Demo Link  (not applicable for this quite yet)
+        "",  // Demo Video Link  (not applicable for this quite yet)
+        false,  // Not featured
+        true   // Current
+    ));
+
+    // Return the array of all projects
     return allProjects;
 }

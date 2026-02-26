@@ -8,7 +8,7 @@ import AnimatedContent from "./components/AnimatedContent";
 import GlowCard from "./components/GlowCard";
 
 // Constants for contacts and projects
-import { menuItems, socialItems } from "./assets/constantVars";
+import { menuItems, socialItems, mePictures } from "./assets/constantVars";
 import { getProjectItems } from "./assets/projects";
 import { experienceItems, technologyItems/*, completedCourses*/ } from "./assets/experience";
 
@@ -27,9 +27,13 @@ function App() {
   //const [isCoursesOpen, setIsCoursesOpen] = useState(false);
   const [isAutoPlayPaused, setIsAutoPlayPaused] = useState(false);
   const [imageIndexMap, setImageIndexMap] = useState<Record<string, number>>({});
+  const [mePicIndex, setMePicIndex] = useState(0);
+  const [isMePicPaused, setIsMePicPaused] = useState(false);
+  const sortedMePictures = [...mePictures].sort((a, b) => a.order - b.order);
   const projects = getProjectItems();
   const featuredProjects = projects.filter(p => p.featured);
-  const otherProjects = projects.filter(p => !p.featured);
+  const currentProjects = projects.filter(p => p.current && !p.featured);
+  const otherProjects = projects.filter(p => !p.featured && !p.current);
 
   const frontendTech = technologyItems.filter(t => t.category === "Frontend & UI");
   const backendTech = technologyItems.filter(t => t.category === "Backend & Infrastructure");
@@ -47,7 +51,7 @@ function App() {
   useEffect(() => {
     if (!openProject || isAutoPlayPaused) return;
     
-    const project = otherProjects.find(p => p.title === openProject);
+    const project = [...currentProjects, ...otherProjects].find(p => p.title === openProject);
     if (!project || !project.imageSrc || project.imageSrc.length <= 1) return;
 
     const interval = setInterval(() => {
@@ -57,7 +61,15 @@ function App() {
     }, 10000);
 
     return () => clearInterval(interval);
-  }, [openProject, isAutoPlayPaused, otherProjects, changeImage]);
+  }, [openProject, isAutoPlayPaused, currentProjects, otherProjects, changeImage]);
+
+  useEffect(() => {
+    if (isMePicPaused || sortedMePictures.length <= 1) return;
+    const interval = setInterval(() => {
+      setMePicIndex(prev => (prev + 1) % sortedMePictures.length);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, [isMePicPaused, sortedMePictures.length]);
 
   return (
     <main className="relative min-h-[220vh] bg-black text-white">
@@ -171,11 +183,75 @@ function App() {
           >
             About Me
           </h2>
-        
-          <p className="text-white/75 max-w-3xl mx-auto text-center text-lg leading-relaxed mt-8">
-            I'm a fourth-year Computer Science student (AI & Software Engineering focus) and Data Science major who loves building things. I'm a fast, curiosity-driven programmer who takes ownership of my work and genuinely enjoys the process of creating. 
-            I appreciate the full stack, from architectural design to the small details, and believe in choosing the right tools for the job to build systems that last.
-          </p>
+
+          <div className="mt-8 flex flex-col lg:flex-row items-center gap-10">
+            {/* Text */}
+            <p className="text-white/75 text-lg leading-relaxed lg:flex-1">
+              I'm a fourth-year Computer Science student (AI & Software Engineering focus) and Data Science major who loves building things. I'm a fast, curiosity-driven programmer who takes ownership of my work and genuinely enjoys the process of creating.
+              <br/><br/>
+              I proudly describe myself as a nerd for this stuff, I spend my free time learning about new technologies and am always looking to learn. In addition to SWE, I am on the SU Track & Field team as a thrower, have interests in finance, and occasionally get really into Slay the Spire.
+              Feel free to send me an email or connect with me on LinkedIn if you want to chat or collaborate on something cool!
+            </p>
+
+            {/* Picture carousel */}
+            {sortedMePictures.length > 0 && (
+              <div className="group relative w-75 sm:w-90 lg:w-60 xl:w-70 mx-auto lg:mx-0 shrink-0 rounded-xl overflow-hidden border border-white/10 bg-black/50 aspect-4/5">
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={mePicIndex}
+                    src={sortedMePictures[mePicIndex].path}
+                    alt={sortedMePictures[mePicIndex].label}
+                    className="w-full h-full object-cover absolute inset-0"
+                    loading="lazy"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </AnimatePresence>
+                {/* Hover caption overlay */}
+                <div className="absolute inset-0 flex items-end justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none">
+                  <div className="w-full px-2 py-2 bg-black/70 text-[15px] text-white/80 text-center">
+                    {sortedMePictures[mePicIndex].label}
+                  </div>
+                </div>
+                {/* Prev */}
+                <button
+                  type="button"
+                  className="absolute top-1/2 -translate-y-1/2 left-1.5 p-0.5 rounded-full bg-black/60 text-white hover:bg-black/80 transition disabled:opacity-30 z-20"
+                  onClick={() => {
+                    setIsMePicPaused(true);
+                    setMePicIndex(prev => (prev - 1 + sortedMePictures.length) % sortedMePictures.length);
+                  }}
+                  disabled={sortedMePictures.length <= 1}
+                  aria-label="Previous photo"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-2 h-2">
+                    <polyline points="15 18 9 12 15 6" />
+                  </svg>
+                </button>
+                {/* Next */}
+                <button
+                  type="button"
+                  className="absolute top-1/2 -translate-y-1/2 right-1.5 p-0.5 rounded-full bg-black/60 text-white hover:bg-black/80 transition disabled:opacity-30 z-20"
+                  onClick={() => {
+                    setIsMePicPaused(true);
+                    setMePicIndex(prev => (prev + 1) % sortedMePictures.length);
+                  }}
+                  disabled={sortedMePictures.length <= 1}
+                  aria-label="Next photo"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-2 h-2">
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </button>
+                {/* Counter */}
+                <div className="absolute bottom-2 right-2 text-[10px] px-1.5 py-0.5 rounded-full bg-black/60 text-white/80 z-20">
+                  {mePicIndex + 1}/{sortedMePictures.length}
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* <div className="max-w-3xl mx-auto mt-8">
             <button
@@ -260,7 +336,144 @@ function App() {
               </div>
 
               <div>
-                <h3 className="text-2xl font-semibold mb-4 text-white/90 text-center">More Projects</h3>
+                <h3 className="text-2xl font-semibold mb-4 text-white/90 text-center">Current Projects</h3>
+                <div className="w-full flex flex-col gap-3">
+                  {currentProjects.map((project) => {
+                    const images = project.imageSrc || [];
+                    const currentIndex = imageIndexMap[project.title] ?? 0;
+                    const isOpen = openProject === project.title;
+                    
+                    return (
+                      <GlowCard key={project.title} className="rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (openProject === project.title) {
+                              setOpenProject(null);
+                            } else {
+                              setIsAutoPlayPaused(false);
+                              setOpenProject(project.title);
+                            }
+                          }}
+                          className="w-full flex items-center justify-between px-4 py-3 text-left text-white/90 hover:bg-white/5 transition relative z-20"
+                          aria-expanded={isOpen}
+                        >
+                          <div>
+                            <p className="text-xl font-semibold">{project.title}</p>
+                            {project.date && <p className="text-sm text-white/60">{project.date}</p>}
+                          </div>
+                          <svg
+                            className={`w-5 h-5 text-white/70 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <polyline points="6 9 12 15 18 9" />
+                          </svg>
+                        </button>
+                        {isOpen && (
+                          <div className="px-4 pb-4 pt-2 space-y-3 text-base text-white/80 relative z-20">
+                            <p>{project.description}</p>
+                            {images.length > 0 && (
+                              <div className="relative w-full rounded-lg overflow-hidden border border-white/10 bg-black/50 h-80">
+                                <AnimatePresence mode="wait">
+                                  <motion.img
+                                    key={currentIndex}
+                                    src={images[currentIndex]}
+                                    alt={`${project.title} screenshot ${currentIndex + 1}`}
+                                    className="w-full h-full object-contain absolute inset-0"
+                                    loading="eager"
+                                    onError={() => console.error(`Failed to load image: ${images[currentIndex]}`)}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.25 }}
+                                  />
+                                </AnimatePresence>
+                                <button
+                                  type="button"
+                                  className="absolute top-1/2 -translate-y-1/2 left-2 p-1.5 rounded-full bg-black/60 text-white hover:bg-black/80 transition disabled:opacity-30 z-10"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setIsAutoPlayPaused(true);
+                                    changeImage(project.title, -1, images.length);
+                                  }}
+                                  disabled={images.length <= 1}
+                                  aria-label="Previous image"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3">
+                                    <polyline points="15 18 9 12 15 6" />
+                                  </svg>
+                                </button>
+                                <button
+                                  type="button"
+                                  className="absolute top-1/2 -translate-y-1/2 right-2 p-1.5 rounded-full bg-black/60 text-white hover:bg-black/80 transition disabled:opacity-30 z-10"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setIsAutoPlayPaused(true);
+                                    changeImage(project.title, 1, images.length);
+                                  }}
+                                  disabled={images.length <= 1}
+                                  aria-label="Next image"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3">
+                                    <polyline points="9 18 15 12 9 6" />
+                                  </svg>
+                                </button>
+                                <div className="absolute bottom-2 right-3 text-[11px] px-2 py-1 rounded-full bg-black/60 text-white/80 z-10">
+                                  {currentIndex + 1}/{images.length}
+                                </div>
+                              </div>
+                            )}
+                            {project.techStack && project.techStack.length > 0 && (
+                              <div className="flex flex-wrap gap-2">
+                                {project.techStack.map(tech => (
+                                  <span key={tech} className="px-2 py-1 rounded-full bg-white/10 border border-white/10 text-sm text-white/80">
+                                    {tech}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                            <div className="flex flex-wrap gap-4 text-sm">
+                              {project.link && (
+                                <a className="text-white hover:text-[rgb(51,178,51)] transition" href={project.link} target="_blank" rel="noopener noreferrer" aria-label="View Code">
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+                                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                                  </svg>
+                                </a>
+                              )}
+                              {project.demoLink && (
+                                <a className="text-white hover:text-[rgb(51,178,51)] transition" href={project.demoLink} target="_blank" rel="noopener noreferrer" aria-label="View Demo">
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                                  </svg>
+                                </a>
+                              )}
+                              {project.demoVideoLink && (
+                                <a className="text-white hover:text-[rgb(51,178,51)] transition" href={project.demoVideoLink} target="_blank" rel="noopener noreferrer" aria-label="Watch Video">
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+                                    <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path>
+                                    <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
+                                  </svg>
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </GlowCard>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-2xl font-semibold mb-4 text-white/90 text-center">Past Projects</h3>
                 <div className="w-full flex flex-col gap-3">
                   {otherProjects.map((project) => {
                     const images = project.imageSrc || [];
