@@ -70,7 +70,7 @@ export function getProjectItems(): ProjectItem[] {
         ["/projects/TestIfAI-1.png", "/projects/TestIfAI-2.png", "/projects/TestIfAI-3.png", "/projects/TestIfAI-4.png"],  // Demo Image Sources
         "https://testifai.dustintobrien.com/",  // Demo Link
         "https://www.youtube.com/watch?v=DFYo5gKj0tA",  // Demo Video Link
-        true  // Featured
+        false  // Featured
     ));
 
     // CapyMorph
@@ -83,6 +83,19 @@ export function getProjectItems(): ProjectItem[] {
         ["/projects/CapyMorph-1.png", "/projects/CapyMorph-2.png", "/projects/CapyMorph-3.png"],  // Demo Image Sources
         "https://capymorph.fly.dev/",  // Demo Link 
         "",  // Demo Video Link  (not applicable for this)
+        true  // Featured
+    ));
+
+    // PerishLess
+    allProjects.push(new ProjectItem(
+        "PerishLess",  // Title
+        "Food waste reduction platform that uses AI to predict spoilage and optimize inventory management for households.",  // Brief Description
+        "https://github.com/Jairik/Perishless",  // GitHub Link
+        ["React", "FastAPI", "Python", "Firebase Authentication", "FireStore", "Google Cloud", "Google Gemini", "Eleven Labs", "Docker", "Digital Ocean Droplet (VPS)", "Nginx"],  // Tech Stack
+        "March 2026",  // Date
+        ["/projects/PerishLess-1.png", "/projects/PerishLess-2.png", "/projects/PerishLess-3.png", "/projects/PerishLess-4.png"],  // Demo Image Sources
+        "https://perishless.tech/",  // Demo Link 
+        "https://youtu.be/nwS19i9P33c",  // Demo Video Link
         true  // Featured
     ));
 

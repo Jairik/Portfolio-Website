@@ -431,11 +431,26 @@ function App() {
                             )}
                             {project.techStack && project.techStack.length > 0 && (
                               <div className="flex flex-wrap gap-2">
-                                {project.techStack.map(tech => (
-                                  <span key={tech} className="px-2 py-1 rounded-full bg-white/10 border border-white/10 text-sm text-white/80">
-                                    {tech}
-                                  </span>
-                                ))}
+                                {project.techStack.map(tech => {
+                                  const iconSrc = getTechIcon(tech);
+                                  return iconSrc ? (
+                                    /* Icon badge with hover tooltip for technologies with known icons */
+                                    <div
+                                      key={tech}
+                                      className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-white/10 border border-white/10 hover:bg-white/20 transition-colors duration-200 cursor-default"
+                                      onMouseEnter={(e) => setTechTooltip({ name: tech, x: e.clientX, y: e.clientY })}
+                                      onMouseMove={(e) => setTechTooltip({ name: tech, x: e.clientX, y: e.clientY })}
+                                      onMouseLeave={() => setTechTooltip(null)}
+                                    >
+                                      <img src={iconSrc} alt={tech} className="w-5 h-5 brightness-0 invert" />
+                                    </div>
+                                  ) : (
+                                    /* Fallback text pill for technologies without a mapped icon */
+                                    <span key={tech} className="px-2 py-1 rounded-full bg-white/10 border border-white/10 text-sm text-white/80">
+                                      {tech}
+                                    </span>
+                                  );
+                                })}
                               </div>
                             )}
                             <div className="flex flex-wrap gap-4 text-sm">
@@ -568,11 +583,26 @@ function App() {
                             )}
                             {project.techStack && project.techStack.length > 0 && (
                               <div className="flex flex-wrap gap-2">
-                                {project.techStack.map(tech => (
-                                  <span key={tech} className="px-2 py-1 rounded-full bg-white/10 border border-white/10 text-sm text-white/80">
-                                    {tech}
-                                  </span>
-                                ))}
+                                {project.techStack.map(tech => {
+                                  const iconSrc = getTechIcon(tech);
+                                  return iconSrc ? (
+                                    /* Icon badge with hover tooltip for technologies with known icons */
+                                    <div
+                                      key={tech}
+                                      className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-white/10 border border-white/10 hover:bg-white/20 transition-colors duration-200 cursor-default"
+                                      onMouseEnter={(e) => setTechTooltip({ name: tech, x: e.clientX, y: e.clientY })}
+                                      onMouseMove={(e) => setTechTooltip({ name: tech, x: e.clientX, y: e.clientY })}
+                                      onMouseLeave={() => setTechTooltip(null)}
+                                    >
+                                      <img src={iconSrc} alt={tech} className="w-5 h-5 brightness-0 invert" />
+                                    </div>
+                                  ) : (
+                                    /* Fallback text pill for technologies without a mapped icon */
+                                    <span key={tech} className="px-2 py-1 rounded-full bg-white/10 border border-white/10 text-sm text-white/80">
+                                      {tech}
+                                    </span>
+                                  );
+                                })}
                               </div>
                             )}
                             <div className="flex flex-wrap gap-4 text-sm">

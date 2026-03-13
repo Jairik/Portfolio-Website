@@ -53,6 +53,9 @@ export const technologyItems = [
     { name: "Fly.io", iconSrc: "/tech-icons/flydotio.svg", category: "Backend & Infrastructure" },
     { name: "Plaid", iconSrc: "/tech-icons/plaid.svg", category: "Backend & Infrastructure" },
     { name: "Elastic Stack", iconSrc: "/tech-icons/elasticstack.svg", category: "Backend & Infrastructure" },
+    { name: "Google Cloud", iconSrc: "/tech-icons/googlecloud.svg", category: "Backend & Infrastructure" },
+    { name: "Eleven Labs", iconSrc: "/tech-icons/elevenlabs.svg", category: "Backend & Infrastructure" },
+    { name: "DigitalOcean", iconSrc: "/tech-icons/digitalocean.svg", category: "Backend & Infrastructure" },
 
     // Data, AI & Productivity
     { name: "Python", iconSrc: "/tech-icons/python.svg", category: "Data, AI & Productivity" },
