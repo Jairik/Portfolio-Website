@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { gsap } from 'gsap';
 import { motion, AnimatePresence } from 'motion/react';
+import { getTechnologyIcon } from '../assets/experience';
 
 export interface BentoCardProps {
   color?: string;
@@ -15,6 +16,8 @@ export interface BentoCardProps {
   date?: string;
   demoLink?: string;
   demoVideoLink?: string;
+  anchorId?: string;
+  projectTag?: string;
 }
 
 export interface BentoProps {
@@ -33,7 +36,7 @@ export interface BentoProps {
 
 const DEFAULT_PARTICLE_COUNT = 12;
 const DEFAULT_SPOTLIGHT_RADIUS = 300;
-const DEFAULT_GLOW_COLOR = '132, 0, 255';
+const DEFAULT_GLOW_COLOR = '51, 178, 51';
 const MOBILE_BREAKPOINT = 768;
 
 const defaultCardData: BentoCardProps[] = [
@@ -209,14 +212,24 @@ const BentoCardItem: React.FC<{
         )}
         {card.techStack && card.techStack.length > 0 && (
           <div className="flex flex-wrap gap-2 pt-2">
-            {card.techStack.map(tech => (
-              <span
-                key={tech}
-                className="px-3 py-1 rounded-md bg-white/5 border border-white/10 text-sm font-medium text-white/70 hover:bg-white/10 transition-colors"
-              >
-                {tech}
-              </span>
-            ))}
+            {card.techStack.map(tech => {
+              const iconSrc = getTechnologyIcon(tech);
+              return (
+                <span
+                  key={tech}
+                  className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-white/5 border border-white/10 text-sm font-medium text-white/70 hover:bg-white/10 transition-colors"
+                >
+                  {iconSrc && (
+                    <img
+                      src={iconSrc}
+                      alt={tech}
+                      className="h-4 w-4 shrink-0 brightness-0 invert"
+                    />
+                  )}
+                  <span>{tech}</span>
+                </span>
+              );
+            })}
           </div>
         )}
         {(card.link || card.demoLink || card.demoVideoLink) && (
@@ -272,6 +285,8 @@ const BentoCardItem: React.FC<{
   if (enableStars) {
     return (
       <ParticleCard
+        id={card.anchorId}
+        projectTag={card.projectTag}
         className={baseClassName}
         style={cardStyle}
         disableAnimations={shouldDisableAnimations}
@@ -288,6 +303,8 @@ const BentoCardItem: React.FC<{
 
   return (
     <div
+      id={card.anchorId}
+      data-project-tag={card.projectTag}
       className={baseClassName}
       style={cardStyle}
       ref={el => {
@@ -406,6 +423,8 @@ const ParticleCard: React.FC<{
   enableTilt?: boolean;
   clickEffect?: boolean;
   enableMagnetism?: boolean;
+  id?: string;
+  projectTag?: string;
 }> = ({
   children,
   className = '',
@@ -415,7 +434,9 @@ const ParticleCard: React.FC<{
   glowColor = DEFAULT_GLOW_COLOR,
   enableTilt = true,
   clickEffect = false,
-  enableMagnetism = false
+  enableMagnetism = false,
+  id,
+  projectTag
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const particlesRef = useRef<HTMLDivElement[]>([]);
@@ -635,6 +656,8 @@ const ParticleCard: React.FC<{
   return (
     <div
       ref={cardRef}
+      id={id}
+      data-project-tag={projectTag}
       className={`${className} relative overflow-hidden`}
       style={{ ...style, position: 'relative', overflow: 'hidden' }}
     >
@@ -666,6 +689,8 @@ const GlobalSpotlight: React.FC<{
     spotlight.className = 'global-spotlight';
     spotlight.style.cssText = `
       position: fixed;
+      top: 0;
+      left: 0;
       width: 800px;
       height: 800px;
       border-radius: 50%;
@@ -734,8 +759,8 @@ const GlobalSpotlight: React.FC<{
       });
 
       gsap.to(spotlightRef.current, {
-        left: e.clientX,
-        top: e.clientY,
+        x: e.clientX,
+        y: e.clientY,
         duration: 0.1,
         ease: 'power2.out'
       });
@@ -837,12 +862,12 @@ const MagicBento: React.FC<BentoProps> = ({
             --glow-intensity: 0;
             --glow-radius: 200px;
             --glow-color: ${glowColor};
-            --border-color: #392e4e;
+            --border-color: #245224;
             --background-dark: #1a1a1a;
             --white: hsl(0, 0%, 100%);
-            --purple-primary: rgba(132, 0, 255, 1);
-            --purple-glow: rgba(132, 0, 255, 0.2);
-            --purple-border: rgba(132, 0, 255, 0.8);
+            --accent-primary: rgba(51, 178, 51, 1);
+            --accent-glow: rgba(51, 178, 51, 0.2);
+            --accent-border: rgba(51, 178, 51, 0.8);
           }
           
           .card-responsive {
@@ -898,7 +923,7 @@ const MagicBento: React.FC<BentoProps> = ({
           }
           
           .card--border-glow:hover {
-            box-shadow: 0 4px 20px rgba(46, 24, 78, 0.4), 0 0 30px rgba(${glowColor}, 0.2);
+            box-shadow: 0 4px 20px rgba(20, 70, 20, 0.4), 0 0 30px rgba(${glowColor}, 0.2);
           }
           
           .particle::before {
@@ -914,7 +939,7 @@ const MagicBento: React.FC<BentoProps> = ({
           }
           
           .particle-container:hover {
-            box-shadow: 0 4px 20px rgba(46, 24, 78, 0.2), 0 0 30px rgba(${glowColor}, 0.2);
+            box-shadow: 0 4px 20px rgba(20, 70, 20, 0.2), 0 0 30px rgba(${glowColor}, 0.2);
           }
           
           .text-clamp-1 {
