@@ -1,43 +1,381 @@
 // React and Framer Motion imports
-import { useRef, useState, useEffect, useCallback, lazy, Suspense } from "react";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-
-// React Bits components
-import DecryptedText from "./components/DecryptedText";
-import AnimatedContent from "./components/AnimatedContent";
-import GlowCard from "./components/GlowCard";
+import { useRef, useState, useEffect, useCallback, useMemo, lazy, Suspense } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Constants for contacts and projects
 import { menuItems, socialItems, mePictures } from "./assets/constantVars";
-import { getProjectItems } from "./assets/projects";
-import { experienceItems, technologyItems/*, completedCourses*/ } from "./assets/experience";
+import { getProjectItems, type ProjectItem } from "./assets/projects";
+import Stack from "./components/Stack";
+import CountUp from "./components/CountUp";
+import {
+  experienceItems,
+  technologyItems,
+  getTechnologyIcon,
+  getLinkedExperiencesForTechnology,
+  technologiesMatch,
+  type ExperienceItem,
+  type TechnologyItem
+  /*, completedCourses*/
+} from "./assets/experience";
 
 // Lazy-loaded heavy components to split initial bundle
+const DecryptedText = lazy(() => import("./components/DecryptedText"));
+const AnimatedContent = lazy(() => import("./components/AnimatedContent"));
+const GlowCard = lazy(() => import("./components/GlowCard"));
 const Dither = lazy(() => import("./components/Dither"));
 const MagicBento = lazy(() => import("./components/MagicBento"));
-const LogoLoop = lazy(() => import("./components/LogoLoop"));
+const PixelSnow = lazy(() => import("./components/PixelSnow"));
+
+const toProjectTag = (title: string) =>
+  `project-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`;
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+const HERO_CROSSFADE_START = 0.55;
+const HERO_CROSSFADE_DURATION = 0.2;
+const HERO_BACKGROUND_FADE_START = 0.82;
+const HERO_BACKGROUND_FADE_DURATION = 0.18;
+const COMMIT_COUNT_ENDPOINT = "https://jairik--e9c872b823b611f1845142dde27851f2.web.val.run";  // Returns just the total commits
+const COMMIT_COUNT_FIELDS = [
+  "totalCommits",
+  "total_commits",
+  "commitCount",
+  "commit_count",
+  "commits",
+  "total",
+  "count",
+  "value"
+] as const;
+
+const parseNumericValue = (value: unknown): number | null => {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return Math.max(0, Math.round(value));
+  }
+
+  if (typeof value === "string") {
+    const parsed = Number(value.trim().replace(/,/g, ""));
+    if (Number.isFinite(parsed)) {
+      return Math.max(0, Math.round(parsed));
+    }
+  }
+
+  return null;
+};
+
+const parseCommitCount = (payload: unknown): number | null => {
+  const directValue = parseNumericValue(payload);
+  if (directValue !== null) return directValue;
+
+  if (!payload || typeof payload !== "object") return null;
+
+  const queue: unknown[] = [payload];
+  const visited = new Set<object>();
+
+  while (queue.length > 0) {
+    const current = queue.shift();
+    if (!current || typeof current !== "object") continue;
+    if (visited.has(current as object)) continue;
+    visited.add(current as object);
+
+    const record = current as Record<string, unknown>;
+
+    for (const field of COMMIT_COUNT_FIELDS) {
+      if (field in record) {
+        const parsed = parseNumericValue(record[field]);
+        if (parsed !== null) return parsed;
+      }
+    }
+
+    Object.values(record).forEach(value => {
+      if (value && typeof value === "object") {
+        queue.push(value);
+      }
+    });
+  }
+
+  return null;
+};
+
+type FloatingTooltip = { name: string; x: number; y: number };
+type SkillProjectsTooltip = {
+  skillName: string;
+  projects: ProjectItem[];
+  experiences: ExperienceItem[];
+  x: number;
+  y: number;
+};
 
 function App() {
   const heroRef = useRef<HTMLDivElement | null>(null);
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const bgOpacity = useTransform(scrollYProgress, [0, 0.9], [1, 0]);
-  const bgScale = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
+  const skillTooltipHideTimeoutRef = useRef<number | null>(null);
+  const isSkillTooltipHoveredRef = useRef(false);
+  const [heroScrollProgress, setHeroScrollProgress] = useState(0);
+  const crossfadeProgress = useMemo(
+    () => clamp((heroScrollProgress - HERO_CROSSFADE_START) / HERO_CROSSFADE_DURATION, 0, 1),
+    [heroScrollProgress]
+  );
+  const landingFadeOutProgress = useMemo(
+    () => clamp((heroScrollProgress - HERO_BACKGROUND_FADE_START) / HERO_BACKGROUND_FADE_DURATION, 0, 1),
+    [heroScrollProgress]
+  );
+  const landingOpacity = useMemo(() => 1 - landingFadeOutProgress, [landingFadeOutProgress]);
+  const bgOpacity = useMemo(() => (1 - crossfadeProgress) * landingOpacity, [crossfadeProgress, landingOpacity]);
+  const bgScale = useMemo(() => 1 + (heroScrollProgress * 0.08), [heroScrollProgress]);
+  const snowOpacity = useMemo(() => crossfadeProgress * landingOpacity, [crossfadeProgress, landingOpacity]);
 
   const [openProject, setOpenProject] = useState<string | null>(null);
   //const [isCoursesOpen, setIsCoursesOpen] = useState(false);
   const [isAutoPlayPaused, setIsAutoPlayPaused] = useState(false);
   const [imageIndexMap, setImageIndexMap] = useState<Record<string, number>>({});
-  const [mePicIndex, setMePicIndex] = useState(0);
-  const [isMePicPaused, setIsMePicPaused] = useState(false);
-  const sortedMePictures = [...mePictures].sort((a, b) => a.order - b.order);
-  const projects = getProjectItems();
-  const featuredProjects = projects.filter(p => p.featured);
-  const currentProjects = projects.filter(p => p.current && !p.featured);
-  const otherProjects = projects.filter(p => !p.featured && !p.current);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
+  const [commitCount, setCommitCount] = useState(0);
+  const [techTooltip, setTechTooltip] = useState<FloatingTooltip | null>(null);
+  const [skillProjectsTooltip, setSkillProjectsTooltip] = useState<SkillProjectsTooltip | null>(null);
+  const sortedMePictures = useMemo(() => [...mePictures].sort((a, b) => a.order - b.order), []);
+  const aboutMePictureCards = useMemo(
+    () =>
+      sortedMePictures.map((picture, index) => (
+        <div key={picture.path} className="relative h-full w-full">
+          <img
+            src={picture.path}
+            alt={picture.label}
+            className="h-full w-full object-cover"
+            loading={index === 0 ? "eager" : "lazy"}
+            decoding="async"
+            draggable={false}
+          />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-black/70 px-2 py-2 text-center text-[13px] text-white/80 sm:text-[15px]">
+            {picture.label}
+          </div>
+        </div>
+      )),
+    [sortedMePictures]
+  );
+  const projects = useMemo(() => getProjectItems(), []);
+  const featuredProjects = useMemo(() => projects.filter(p => p.featured), [projects]);
+  const currentProjects = useMemo(() => projects.filter(p => p.current && !p.featured), [projects]);
+  const otherProjects = useMemo(() => projects.filter(p => !p.featured && !p.current), [projects]);
+  const projectTagByTitle = useMemo(
+    () => new Map(projects.map(project => [project.title, toProjectTag(project.title)])),
+    [projects]
+  );
+  const featuredProjectTitles = useMemo(
+    () => new Set(featuredProjects.map(project => project.title)),
+    [featuredProjects]
+  );
 
-  const frontendTech = technologyItems.filter(t => t.category === "Frontend & UI");
-  const backendTech = technologyItems.filter(t => t.category === "Backend & Infrastructure");
-  const dataTech = technologyItems.filter(t => t.category === "Data, AI & Productivity");
+  const frontendTech = useMemo(
+    () => technologyItems.filter(tech => tech.category === "Frontend & UI"),
+    []
+  );
+  const backendTech = useMemo(
+    () => technologyItems.filter(tech => tech.category === "Backend & Infrastructure"),
+    []
+  );
+  const dataTech = useMemo(
+    () => technologyItems.filter(tech => tech.category === "Data, AI & Productivity"),
+    []
+  );
+  const skillCategories = useMemo(
+    () => [
+      { title: "Frontend & UI", items: frontendTech },
+      { title: "Backend & Infrastructure", items: backendTech },
+      { title: "Data, AI & Productivity", items: dataTech }
+    ],
+    [frontendTech, backendTech, dataTech]
+  );
+  const aboutStats = useMemo(
+    () => [
+      { label: "Projects Built", value: projects.length, suffix: "+" },
+      { label: "Total Commits", value: commitCount, suffix: "+" },
+      { label: "Experience Roles", value: experienceItems.length, suffix: "" }
+    ],
+    [commitCount, projects.length]
+  );
+
+  const skillTooltipPosition = useMemo(() => {
+    if (!skillProjectsTooltip || typeof window === "undefined") return null;
+    const tooltipWidth = isMobileViewport ? 220 : 260;
+    const estimatedTooltipHeight = 56 +
+      (skillProjectsTooltip.projects.length * 32) +
+      (skillProjectsTooltip.experiences.length * 38) +
+      (isMobileViewport ? 30 : 0);
+    return {
+      left: Math.min(Math.max(12, skillProjectsTooltip.x + 16), window.innerWidth - tooltipWidth - 12),
+      top: Math.min(Math.max(12, skillProjectsTooltip.y + 16), window.innerHeight - estimatedTooltipHeight - 12)
+    };
+  }, [isMobileViewport, skillProjectsTooltip]);
+
+  const techTooltipPosition = useMemo(() => {
+    if (!techTooltip || typeof window === "undefined") return null;
+    const tooltipWidth = 180;
+    const tooltipHeight = 44;
+    return {
+      left: Math.min(Math.max(12, techTooltip.x + 12), window.innerWidth - tooltipWidth - 12),
+      top: Math.min(Math.max(12, techTooltip.y + 12), window.innerHeight - tooltipHeight - 12)
+    };
+  }, [techTooltip]);
+
+  const getProjectsForSkill = useCallback((skillName: string) => {
+    return projects.filter(project => project.techStack.some(tech => technologiesMatch(skillName, tech)));
+  }, [projects]);
+
+  const getExperiencesForSkill = useCallback((skillName: string) => {
+    return getLinkedExperiencesForTechnology(skillName);
+  }, []);
+
+  const getTechIcon = useCallback((techName: string) => {
+    return getTechnologyIcon(techName);
+  }, []);
+
+  const clearSkillTooltipCloseTimeout = useCallback(() => {
+    if (skillTooltipHideTimeoutRef.current !== null) {
+      window.clearTimeout(skillTooltipHideTimeoutRef.current);
+      skillTooltipHideTimeoutRef.current = null;
+    }
+  }, []);
+
+  const closeSkillTooltipSoon = useCallback(() => {
+    clearSkillTooltipCloseTimeout();
+    skillTooltipHideTimeoutRef.current = window.setTimeout(() => {
+      if (!isSkillTooltipHoveredRef.current) {
+        setSkillProjectsTooltip(null);
+      }
+    }, 120);
+  }, [clearSkillTooltipCloseTimeout]);
+
+  const openSkillTooltip = useCallback((skillName: string, x: number, y: number) => {
+    const matchingProjects = getProjectsForSkill(skillName);
+    const matchingExperiences = getExperiencesForSkill(skillName);
+    isSkillTooltipHoveredRef.current = false;
+    clearSkillTooltipCloseTimeout();
+    setSkillProjectsTooltip({
+      skillName,
+      projects: matchingProjects,
+      experiences: matchingExperiences,
+      x,
+      y
+    });
+  }, [clearSkillTooltipCloseTimeout, getExperiencesForSkill, getProjectsForSkill]);
+
+  const jumpToProject = useCallback((project: ProjectItem) => {
+    const projectTag = projectTagByTitle.get(project.title);
+    if (!projectTag) return;
+
+    if (!featuredProjectTitles.has(project.title)) {
+      setIsAutoPlayPaused(false);
+      setOpenProject(project.title);
+    }
+
+    requestAnimationFrame(() => {
+      document.getElementById(projectTag)?.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    });
+
+    clearSkillTooltipCloseTimeout();
+    isSkillTooltipHoveredRef.current = false;
+    setSkillProjectsTooltip(null);
+  }, [clearSkillTooltipCloseTimeout, featuredProjectTitles, projectTagByTitle]);
+
+  const jumpToExperience = useCallback((experience: ExperienceItem) => {
+    requestAnimationFrame(() => {
+      document.getElementById(experience.id)?.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    });
+
+    clearSkillTooltipCloseTimeout();
+    isSkillTooltipHoveredRef.current = false;
+    setSkillProjectsTooltip(null);
+  }, [clearSkillTooltipCloseTimeout]);
+
+  const renderSkillBadge = useCallback((skill: TechnologyItem) => {
+    const skillName = skill.name;
+    const matchingProjects = getProjectsForSkill(skillName);
+    const matchingExperiences = getExperiencesForSkill(skillName);
+    const isActiveSkill = skillProjectsTooltip?.skillName === skillName;
+
+    return (
+      <button
+        key={skillName}
+        type="button"
+        className="group/skill inline-flex min-h-12 items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-left transition-all duration-200 hover:border-[rgb(51,178,51)]/45 hover:bg-[rgb(51,178,51)]/8 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[rgb(51,178,51)]/60"
+        onMouseEnter={(event) => {
+          if (isMobileViewport) return;
+          const bounds = event.currentTarget.getBoundingClientRect();
+          openSkillTooltip(skillName, bounds.left + (bounds.width / 2), bounds.top + (bounds.height / 2));
+        }}
+        onMouseLeave={() => {
+          if (isMobileViewport) return;
+          closeSkillTooltipSoon();
+        }}
+        onFocus={(event) => {
+          const bounds = event.currentTarget.getBoundingClientRect();
+          openSkillTooltip(skillName, bounds.left + (bounds.width / 2), bounds.top + (bounds.height / 2));
+        }}
+        onBlur={() => {
+          closeSkillTooltipSoon();
+        }}
+        onClick={(event) => {
+          if (isMobileViewport) {
+            const bounds = event.currentTarget.getBoundingClientRect();
+            const centerX = bounds.left + (bounds.width / 2);
+            const centerY = bounds.top + (bounds.height / 2);
+
+            if (skillProjectsTooltip?.skillName === skillName) {
+              setSkillProjectsTooltip(null);
+              return;
+            }
+
+            openSkillTooltip(skillName, centerX, centerY);
+            return;
+          }
+
+          if (matchingProjects.length === 1) {
+            jumpToProject(matchingProjects[0]);
+            return;
+          }
+
+          if (matchingExperiences.length === 1) {
+            jumpToExperience(matchingExperiences[0]);
+          }
+        }}
+        aria-label={`${skillName} (${matchingProjects.length} related projects, ${matchingExperiences.length} related experiences)`}
+      >
+        <img
+          src={skill.iconSrc}
+          alt={skillName}
+          className="h-6 w-6 shrink-0 object-contain transition-[filter,transform] duration-200 group-hover/skill:scale-105"
+          loading="lazy"
+          decoding="async"
+          draggable={false}
+          style={{
+            filter: isActiveSkill
+              ? "brightness(0) saturate(100%) invert(57%) sepia(47%) saturate(839%) hue-rotate(73deg) brightness(94%) contrast(88%)"
+              : "brightness(0) invert(1)"
+          }}
+        />
+        <span className="flex flex-col">
+          <span className="text-sm text-white/80 group-hover/skill:text-white">{skillName}</span>
+          {skill.note && (
+            <span className="text-[11px] uppercase tracking-wide text-white/50 group-hover/skill:text-white/70">
+              {skill.note}
+            </span>
+          )}
+        </span>
+      </button>
+    );
+  }, [
+    closeSkillTooltipSoon,
+    getExperiencesForSkill,
+    getProjectsForSkill,
+    isMobileViewport,
+    jumpToExperience,
+    jumpToProject,
+    openSkillTooltip,
+    skillProjectsTooltip?.skillName
+  ]);
 
   const changeImage = useCallback((title: string, delta: number, total: number) => {
     if (total <= 1) return;
@@ -46,6 +384,80 @@ function App() {
       const next = (current + delta + total) % total;
       return { ...prev, [title]: next };
     });
+  }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const loadCommitCount = async () => {
+      try {
+        const response = await fetch(COMMIT_COUNT_ENDPOINT, {
+          method: "GET",
+          signal: controller.signal,
+          headers: {
+            Accept: "application/json, text/plain"
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`Commit endpoint returned ${response.status}`);
+        }
+
+        const contentType = response.headers.get("content-type") || "";
+        const payload: unknown = contentType.includes("application/json")
+          ? await response.json()
+          : await response.text();
+        const parsedCommitCount = parseCommitCount(payload);
+
+        if (parsedCommitCount === null) {
+          throw new Error("Commit endpoint response does not contain a numeric commit total.");
+        }
+
+        setCommitCount(parsedCommitCount);
+      } catch (error) {
+        if ((error as Error).name !== "AbortError") {
+          console.error("Unable to load total commits.", error);
+        }
+      }
+    };
+
+    void loadCommitCount();
+
+    return () => {
+      controller.abort();
+    };
+  }, []);
+
+  useEffect(() => {
+    const updateViewportFlag = () => setIsMobileViewport(window.innerWidth < 768);
+    updateViewportFlag();
+    window.addEventListener("resize", updateViewportFlag);
+    return () => window.removeEventListener("resize", updateViewportFlag);
+  }, []);
+
+  useEffect(() => {
+    let animationFrameId = 0;
+
+    const updateHeroProgress = () => {
+      const heroHeight = heroRef.current?.offsetHeight || window.innerHeight;
+      const progress = clamp(window.scrollY / Math.max(heroHeight, 1), 0, 1);
+      setHeroScrollProgress(prev => (Math.abs(prev - progress) > 0.002 ? progress : prev));
+    };
+
+    const onScrollOrResize = () => {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = requestAnimationFrame(updateHeroProgress);
+    };
+
+    updateHeroProgress();
+    window.addEventListener("scroll", onScrollOrResize, { passive: true });
+    window.addEventListener("resize", onScrollOrResize);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      window.removeEventListener("scroll", onScrollOrResize);
+      window.removeEventListener("resize", onScrollOrResize);
+    };
   }, []);
 
   useEffect(() => {
@@ -64,20 +476,17 @@ function App() {
   }, [openProject, isAutoPlayPaused, currentProjects, otherProjects, changeImage]);
 
   useEffect(() => {
-    if (isMePicPaused || sortedMePictures.length <= 1) return;
-    const interval = setInterval(() => {
-      setMePicIndex(prev => (prev + 1) % sortedMePictures.length);
-    }, 6000);
-    return () => clearInterval(interval);
-  }, [isMePicPaused, sortedMePictures.length]);
+    return () => clearSkillTooltipCloseTimeout();
+  }, [clearSkillTooltipCloseTimeout]);
 
   return (
-    <main className="relative min-h-[220vh] bg-black text-white">
+    <Suspense fallback={<main className="relative min-h-screen bg-black" />}>
+      <main className="relative min-h-[220vh] bg-black text-white">
       {/* Hero Section */}
       <section ref={heroRef} className="relative w-full h-screen overflow-hidden">
         {/* Background layer - full screen (fixed) */}
         <motion.div
-          className="dither-layer pointer-events-auto"
+          className="dither-layer pointer-events-none"
           style={{ opacity: bgOpacity, scale: bgScale }}
         >
           <Suspense
@@ -87,7 +496,7 @@ function App() {
           >
             <Dither
               waveColor={[0.2, 0.7, 0.2]}
-              disableAnimation={false}
+              disableAnimation={bgOpacity <= 0.01}
               enableMouseInteraction={false}
               // mouseRadius={0.08}
               colorNum={3}
@@ -172,9 +581,26 @@ function App() {
         </div>
       </section>
 
+      <motion.div
+        className="pixel-snow-layer pointer-events-none"
+        style={{ opacity: snowOpacity }}
+      >
+        <Suspense fallback={null}>
+          <PixelSnow
+            color="#33b233"
+            flakeSize={0.005}
+            speed={1.25}
+            pixelResolution={220}
+            density={0.33}
+            brightness={1.05}
+            active={snowOpacity >= 0.01}
+          />
+        </Suspense>
+      </motion.div>
+
       {/* Content Section */}
       {/* Simple About Me*/}
-      <section className="relative z-20 mx-auto max-w-[90vw] xl:max-w-[1600px] px-6 py-20 space-y-6">
+      <section className="relative z-20 mx-auto max-w-[90vw] overflow-y-clip px-6 py-20 space-y-6 xl:max-w-[1600px]">
         <AnimatedContent className="w-full">
           <h2
             className="text-4xl sm:text-5xl font-bold text-center"
@@ -187,70 +613,59 @@ function App() {
           <div className="mt-8 flex flex-col lg:flex-row items-center gap-10">
             {/* Text */}
             <p className="text-white/75 text-lg leading-relaxed lg:flex-1">
-              I'm a fourth-year Computer Science student (AI & Software Engineering focus) and Data Science major who loves building things. I'm a fast, curiosity-driven programmer who takes ownership of my work and genuinely enjoys the process of creating.
+              I'm a fourth-year Computer Science student (AI & Software Engineering focus) and Data Science major who loves building things. 
+              I'm a fast, curiosity-driven programmer who takes ownership of my work and genuinely enjoys the process of creating.
               <br/><br/>
-              I proudly describe myself as a nerd for this stuff, I spend my free time learning about new technologies and am always looking to learn. In addition to SWE, I am on the SU Track & Field team as a thrower, have interests in finance, and occasionally get really into Slay the Spire.
+              I proudly describe myself as a nerd for this stuff, I spend my free time learning about new technologies and am always looking to learn. 
+              In addition to SWE, I am on the SU Track & Field team as a thrower, absolutely love Slay the Spire, and my favorite dog are Corgis (big dog guy).
+              <br/><br/>
               Feel free to send me an email or connect with me on LinkedIn if you want to chat or collaborate on something cool!
             </p>
 
             {/* Picture carousel */}
-            {sortedMePictures.length > 0 && (
-              <div className="group relative w-75 sm:w-90 lg:w-60 xl:w-70 mx-auto lg:mx-0 shrink-0 rounded-xl overflow-hidden border border-white/10 bg-black/50 aspect-4/5">
-                <AnimatePresence mode="wait">
-                  <motion.img
-                    key={mePicIndex}
-                    src={sortedMePictures[mePicIndex].path}
-                    alt={sortedMePictures[mePicIndex].label}
-                    className="w-full h-full object-cover absolute inset-0"
-                    loading="lazy"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
+            {aboutMePictureCards.length > 0 && (
+              <div className="mx-auto w-72 shrink-0 sm:w-80 lg:mx-0 lg:w-64 xl:w-72">
+                <div className="relative aspect-4/5 overflow-hidden rounded-xl bg-black/50">
+                  <Stack
+                    cards={aboutMePictureCards}
+                    randomRotation
+                    sensitivity={130}
+                    sendToBackOnClick
+                    autoplay={aboutMePictureCards.length > 1}
+                    autoplayDelay={6969}
+                    pauseOnHover
+                    mobileClickOnly
+                    animationConfig={{ stiffness: 220, damping: 22 }}
                   />
-                </AnimatePresence>
-                {/* Hover caption overlay */}
-                <div className="absolute inset-0 flex items-end justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none">
-                  <div className="w-full px-2 py-2 bg-black/70 text-[15px] text-white/80 text-center">
-                    {sortedMePictures[mePicIndex].label}
-                  </div>
-                </div>
-                {/* Prev */}
-                <button
-                  type="button"
-                  className="absolute top-1/2 -translate-y-1/2 left-1.5 p-0.5 rounded-full bg-black/60 text-white hover:bg-black/80 transition disabled:opacity-30 z-20"
-                  onClick={() => {
-                    setIsMePicPaused(true);
-                    setMePicIndex(prev => (prev - 1 + sortedMePictures.length) % sortedMePictures.length);
-                  }}
-                  disabled={sortedMePictures.length <= 1}
-                  aria-label="Previous photo"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-2 h-2">
-                    <polyline points="15 18 9 12 15 6" />
-                  </svg>
-                </button>
-                {/* Next */}
-                <button
-                  type="button"
-                  className="absolute top-1/2 -translate-y-1/2 right-1.5 p-0.5 rounded-full bg-black/60 text-white hover:bg-black/80 transition disabled:opacity-30 z-20"
-                  onClick={() => {
-                    setIsMePicPaused(true);
-                    setMePicIndex(prev => (prev + 1) % sortedMePictures.length);
-                  }}
-                  disabled={sortedMePictures.length <= 1}
-                  aria-label="Next photo"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-2 h-2">
-                    <polyline points="9 18 15 12 9 6" />
-                  </svg>
-                </button>
-                {/* Counter */}
-                <div className="absolute bottom-2 right-2 text-[10px] px-1.5 py-0.5 rounded-full bg-black/60 text-white/80 z-20">
-                  {mePicIndex + 1}/{sortedMePictures.length}
                 </div>
               </div>
             )}
+          </div>
+
+          <div className="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-3">
+            {aboutStats.map(stat => (
+              <div
+                key={stat.label}
+                className="rounded-lg border border-white/10 bg-white/5 px-3 py-4 text-center backdrop-blur-sm"
+              >
+                <div className="flex items-baseline justify-center gap-1">
+                  <CountUp
+                    to={stat.value}
+                    duration={1.6}
+                    separator=","
+                    className="text-2xl font-semibold text-white sm:text-3xl"
+                  />
+                  {stat.suffix && (
+                    <span className="text-xl font-semibold text-[rgb(51,178,51)] sm:text-2xl">
+                      {stat.suffix}
+                    </span>
+                  )}
+                </div>
+                <p className="mt-1 text-xs uppercase tracking-wide text-white/60 sm:text-[11px]">
+                  {stat.label}
+                </p>
+              </div>
+            ))}
           </div>
 
           {/* <div className="max-w-3xl mx-auto mt-8">
@@ -314,18 +729,23 @@ function App() {
                   fallback={<div className="h-[420px] rounded-[24px] border border-white/10 bg-white/5 animate-pulse" />}
                 >
                   <MagicBento
-                    cards={featuredProjects.map(project => ({
-                      title: project.title,
-                      description: project.description,
-                      label: project.date || "Featured",
-                      color: "#060010",
-                      imageSrc: project.imageSrc,
-                      link: project.link,
-                      techStack: project.techStack,
-                      demoLink: project.demoLink,
-                      demoVideoLink: project.demoVideoLink,
-                      date: project.date
-                    }))}
+                    cards={featuredProjects.map(project => {
+                      const projectTag = projectTagByTitle.get(project.title) || toProjectTag(project.title);
+                      return {
+                        title: project.title,
+                        description: project.description,
+                        label: project.date || "Featured",
+                        color: "#060010",
+                        imageSrc: project.imageSrc,
+                        link: project.link,
+                        techStack: project.techStack,
+                        demoLink: project.demoLink,
+                        demoVideoLink: project.demoVideoLink,
+                        date: project.date,
+                        anchorId: projectTag,
+                        projectTag
+                      };
+                    })}
                     enableBorderGlow
                     glowColor="51, 178, 51"
                     enableTilt
@@ -344,7 +764,12 @@ function App() {
                     const isOpen = openProject === project.title;
                     
                     return (
-                      <GlowCard key={project.title} className="rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
+                      <GlowCard
+                        key={project.title}
+                        id={projectTagByTitle.get(project.title) || toProjectTag(project.title)}
+                        data-project-tag={projectTagByTitle.get(project.title) || toProjectTag(project.title)}
+                        className="rounded-xl bg-white/5 backdrop-blur-sm border border-white/10"
+                      >
                         <button
                           type="button"
                           onClick={(e) => {
@@ -433,36 +858,36 @@ function App() {
                               <div className="flex flex-wrap gap-2">
                                 {project.techStack.map(tech => {
                                   const iconSrc = getTechIcon(tech);
-                                  return iconSrc ? (
-                                    /* Icon badge with hover tooltip for technologies with known icons */
+                                  return (
                                     <div
                                       key={tech}
-                                      className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-white/10 border border-white/10 hover:bg-white/20 transition-colors duration-200 cursor-default"
+                                      className="inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/10 px-2.5 py-1 text-sm text-white/85 transition-colors duration-200 hover:bg-white/20"
                                       onMouseEnter={(e) => setTechTooltip({ name: tech, x: e.clientX, y: e.clientY })}
-                                      onMouseMove={(e) => setTechTooltip({ name: tech, x: e.clientX, y: e.clientY })}
                                       onMouseLeave={() => setTechTooltip(null)}
                                     >
-                                      <img src={iconSrc} alt={tech} className="w-5 h-5 brightness-0 invert" />
+                                      {iconSrc && (
+                                        <img
+                                          src={iconSrc}
+                                          alt={tech}
+                                          className="h-4 w-4 shrink-0 brightness-0 invert"
+                                        />
+                                      )}
+                                      <span>{tech}</span>
                                     </div>
-                                  ) : (
-                                    /* Fallback text pill for technologies without a mapped icon */
-                                    <span key={tech} className="px-2 py-1 rounded-full bg-white/10 border border-white/10 text-sm text-white/80">
-                                      {tech}
-                                    </span>
                                   );
                                 })}
                               </div>
                             )}
                             <div className="flex flex-wrap gap-4 text-sm">
                               {project.link && (
-                                <a className="text-white hover:text-[rgb(51,178,51)] transition" href={project.link} target="_blank" rel="noopener noreferrer" aria-label="View Code">
+                                <a className="text-white hover:text-white/80 transition" href={project.link} target="_blank" rel="noopener noreferrer" aria-label="View Code">
                                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
                                     <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
                                   </svg>
                                 </a>
                               )}
                               {project.demoLink && (
-                                <a className="text-white hover:text-[rgb(51,178,51)] transition" href={project.demoLink} target="_blank" rel="noopener noreferrer" aria-label="View Demo">
+                                <a className="text-white hover:text-white/80 transition" href={project.demoLink} target="_blank" rel="noopener noreferrer" aria-label="View Demo">
                                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
                                     <circle cx="12" cy="12" r="10"></circle>
                                     <line x1="2" y1="12" x2="22" y2="12"></line>
@@ -471,7 +896,7 @@ function App() {
                                 </a>
                               )}
                               {project.demoVideoLink && (
-                                <a className="text-white hover:text-[rgb(51,178,51)] transition" href={project.demoVideoLink} target="_blank" rel="noopener noreferrer" aria-label="Watch Video">
+                                <a className="text-white hover:text-white/80 transition" href={project.demoVideoLink} target="_blank" rel="noopener noreferrer" aria-label="Watch Video">
                                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
                                     <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path>
                                     <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
@@ -496,7 +921,12 @@ function App() {
                     const isOpen = openProject === project.title;
                     
                     return (
-                      <GlowCard key={project.title} className="rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
+                      <GlowCard
+                        key={project.title}
+                        id={projectTagByTitle.get(project.title) || toProjectTag(project.title)}
+                        data-project-tag={projectTagByTitle.get(project.title) || toProjectTag(project.title)}
+                        className="rounded-xl bg-white/5 backdrop-blur-sm border border-white/10"
+                      >
                         <button
                           type="button"
                           onClick={(e) => {
@@ -585,36 +1015,36 @@ function App() {
                               <div className="flex flex-wrap gap-2">
                                 {project.techStack.map(tech => {
                                   const iconSrc = getTechIcon(tech);
-                                  return iconSrc ? (
-                                    /* Icon badge with hover tooltip for technologies with known icons */
+                                  return (
                                     <div
                                       key={tech}
-                                      className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-white/10 border border-white/10 hover:bg-white/20 transition-colors duration-200 cursor-default"
+                                      className="inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/10 px-2.5 py-1 text-sm text-white/85 transition-colors duration-200 hover:bg-white/20"
                                       onMouseEnter={(e) => setTechTooltip({ name: tech, x: e.clientX, y: e.clientY })}
-                                      onMouseMove={(e) => setTechTooltip({ name: tech, x: e.clientX, y: e.clientY })}
                                       onMouseLeave={() => setTechTooltip(null)}
                                     >
-                                      <img src={iconSrc} alt={tech} className="w-5 h-5 brightness-0 invert" />
+                                      {iconSrc && (
+                                        <img
+                                          src={iconSrc}
+                                          alt={tech}
+                                          className="h-4 w-4 shrink-0 brightness-0 invert"
+                                        />
+                                      )}
+                                      <span>{tech}</span>
                                     </div>
-                                  ) : (
-                                    /* Fallback text pill for technologies without a mapped icon */
-                                    <span key={tech} className="px-2 py-1 rounded-full bg-white/10 border border-white/10 text-sm text-white/80">
-                                      {tech}
-                                    </span>
                                   );
                                 })}
                               </div>
                             )}
                             <div className="flex flex-wrap gap-4 text-sm">
                               {project.link && (
-                                <a className="text-white hover:text-[rgb(51,178,51)] transition" href={project.link} target="_blank" rel="noopener noreferrer" aria-label="View Code">
+                                <a className="text-white hover:text-white/80 transition" href={project.link} target="_blank" rel="noopener noreferrer" aria-label="View Code">
                                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
                                     <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
                                   </svg>
                                 </a>
                               )}
                               {project.demoLink && (
-                                <a className="text-white hover:text-[rgb(51,178,51)] transition" href={project.demoLink} target="_blank" rel="noopener noreferrer" aria-label="View Demo">
+                                <a className="text-white hover:text-white/80 transition" href={project.demoLink} target="_blank" rel="noopener noreferrer" aria-label="View Demo">
                                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
                                     <circle cx="12" cy="12" r="10"></circle>
                                     <line x1="2" y1="12" x2="22" y2="12"></line>
@@ -623,7 +1053,7 @@ function App() {
                                 </a>
                               )}
                               {project.demoVideoLink && (
-                                <a className="text-white hover:text-[rgb(51,178,51)] transition" href={project.demoVideoLink} target="_blank" rel="noopener noreferrer" aria-label="Watch Video">
+                                <a className="text-white hover:text-white/80 transition" href={project.demoVideoLink} target="_blank" rel="noopener noreferrer" aria-label="Watch Video">
                                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
                                     <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path>
                                     <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
@@ -655,11 +1085,12 @@ function App() {
             >
               <MagicBento
                 cards={experienceItems.map(exp => ({
+                  anchorId: exp.id,
                   title: exp.role,
                   description: exp.description,
                   label: exp.duration,
                   color: "#060010",
-                    logoSrc: exp.logoSrc,
+                  logoSrc: exp.logoSrc,
                   techStack: exp.technologies,
                   date: exp.company
                 }))}
@@ -673,47 +1104,14 @@ function App() {
           </div>
 
           <div className="mt-16 space-y-12">
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold text-center text-white/60">Frontend & UI</h3>
-              <Suspense fallback={<div className="h-24 rounded-xl bg-white/5 border border-white/10 animate-pulse" />}> 
-                <LogoLoop
-                  logos={frontendTech.map(tech => ({ src: tech.iconSrc, alt: tech.name }))}
-                  direction="left"
-                  speed={40}
-                  pauseOnHover
-                  logoHeight={48}
-                  gap={64}
-                />
-              </Suspense>
-            </div>
-            
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold text-center text-white/60">Backend & Infrastructure</h3>
-              <Suspense fallback={<div className="h-24 rounded-xl bg-white/5 border border-white/10 animate-pulse" />}> 
-                <LogoLoop
-                  logos={backendTech.map(tech => ({ src: tech.iconSrc, alt: tech.name }))}
-                  direction="right"
-                  speed={40}
-                  pauseOnHover
-                  logoHeight={48}
-                  gap={64}
-                />
-              </Suspense>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold text-center text-white/60">Data, AI & Productivity</h3>
-              <Suspense fallback={<div className="h-24 rounded-xl bg-white/5 border border-white/10 animate-pulse" />}> 
-                <LogoLoop
-                  logos={dataTech.map(tech => ({ src: tech.iconSrc, alt: tech.name }))}
-                  direction="left"
-                  speed={40}
-                  pauseOnHover
-                  logoHeight={48}
-                  gap={64}
-                />
-              </Suspense>
-            </div>
+            {skillCategories.map(category => (
+              <div key={category.title} className="space-y-4">
+                <h3 className="text-xl font-semibold text-center text-white/70">{category.title}</h3>
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                  {category.items.map(skill => renderSkillBadge(skill))}
+                </div>
+              </div>
+            ))}
           </div>
         </AnimatedContent>
         {/* Contact section */}
@@ -738,23 +1136,23 @@ function App() {
                 {/* Icon */}
                 <div className="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center transition-all duration-300 group-hover:bg-[rgb(51,178,51)]/10 group-hover:border-[rgb(51,178,51)]/30">
                   {item.label === 'LinkedIn' && (
-                    <svg className="w-8 h-8 text-white/80 group-hover:text-[rgb(51,178,51)]" fill="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-8 h-8 text-white/80 group-hover:text-white" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
                     </svg>
                   )}
                   {item.label === 'Email' && (
-                    <svg className="w-8 h-8 text-white/80 group-hover:text-[rgb(51,178,51)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-8 h-8 text-white/80 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                   )}
                   {item.label === 'Resume' && (
-                    <svg className="w-8 h-8 text-white/80 group-hover:text-[rgb(51,178,51)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-8 h-8 text-white/80 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                   )}
                 </div>
                 {/* Label */}
-                <span className="text-sm font-medium text-white/70 group-hover:text-[rgb(51,178,51)] transition-colors duration-300">
+                <span className="text-sm font-medium text-white/70 group-hover:text-white transition-colors duration-300">
                   {item.label}
                 </span>
               </a>
@@ -762,7 +1160,83 @@ function App() {
           </div>
         </AnimatedContent>
       </section>
-    </main>
+
+      {techTooltip && techTooltipPosition && (
+        <div
+          className="fixed z-[150] pointer-events-none rounded-md border border-white/15 bg-black/90 px-3 py-1.5 text-sm text-white/85 shadow-xl"
+          style={{ left: techTooltipPosition.left, top: techTooltipPosition.top }}
+        >
+          {techTooltip.name}
+        </div>
+      )}
+
+      {skillProjectsTooltip && skillTooltipPosition && (
+        <div
+          className={`fixed z-[160] rounded-xl border border-[rgb(51,178,51)]/35 bg-black/90 p-3 shadow-2xl backdrop-blur-sm ${isMobileViewport ? "w-[220px]" : "w-[260px]"}`}
+          style={{ left: skillTooltipPosition.left, top: skillTooltipPosition.top }}
+          onMouseEnter={() => {
+            isSkillTooltipHoveredRef.current = true;
+            clearSkillTooltipCloseTimeout();
+          }}
+          onMouseLeave={() => {
+            isSkillTooltipHoveredRef.current = false;
+            setSkillProjectsTooltip(null);
+          }}
+        >
+          {isMobileViewport && (
+            <button
+              type="button"
+              onClick={() => setSkillProjectsTooltip(null)}
+              className="absolute right-2 top-2 rounded-md border border-white/10 bg-white/5 px-1.5 py-0.5 text-xs text-white/75"
+            >
+              Close
+            </button>
+          )}
+          <p className="text-xs uppercase tracking-wide text-white/85">
+            {skillProjectsTooltip.skillName}
+          </p>
+          <p className="mt-0.5 text-xs text-white/55">Related Projects</p>
+          <div className="mt-2 space-y-1.5">
+            {skillProjectsTooltip.projects.length > 0 ? (
+              skillProjectsTooltip.projects.map(project => (
+                <button
+                  key={project.title}
+                  type="button"
+                  className="w-full rounded-md border border-white/10 bg-white/5 px-2.5 py-1.5 text-left text-sm text-white/80 transition-colors hover:border-[rgb(51,178,51)]/45 hover:bg-[rgb(51,178,51)]/10 hover:text-white"
+                  onClick={() => jumpToProject(project)}
+                >
+                  {project.title}
+                </button>
+              ))
+            ) : (
+              <p className="rounded-md border border-white/10 bg-white/5 px-2.5 py-1.5 text-sm text-white/50">
+                No linked projects yet.
+              </p>
+            )}
+          </div>
+          <p className="mt-3 text-xs text-white/55">Related Experience</p>
+          <div className="mt-2 space-y-1.5">
+            {skillProjectsTooltip.experiences.length > 0 ? (
+              skillProjectsTooltip.experiences.map(experience => (
+                <button
+                  key={experience.id}
+                  type="button"
+                  className="w-full rounded-md border border-white/10 bg-white/5 px-2.5 py-1.5 text-left text-sm text-white/80 transition-colors hover:border-[rgb(51,178,51)]/45 hover:bg-[rgb(51,178,51)]/10 hover:text-white"
+                  onClick={() => jumpToExperience(experience)}
+                >
+                  {experience.company}
+                </button>
+              ))
+            ) : (
+              <p className="rounded-md border border-white/10 bg-white/5 px-2.5 py-1.5 text-sm text-white/50">
+                No linked experience yet.
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+      </main>
+    </Suspense>
   );
 }
 

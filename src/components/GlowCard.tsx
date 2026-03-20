@@ -1,12 +1,17 @@
 import React, { useRef, useEffect } from 'react';
 
-interface GlowCardProps {
+interface GlowCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  className?: string;
   glowColor?: string;
 }
 
-const GlowCard: React.FC<GlowCardProps> = ({ children, className = '', glowColor = '51, 178, 51' }) => {
+const GlowCard: React.FC<GlowCardProps> = ({
+  children,
+  className = '',
+  glowColor = '51, 178, 51',
+  style,
+  ...rest
+}) => {
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -38,6 +43,7 @@ const GlowCard: React.FC<GlowCardProps> = ({ children, className = '', glowColor
   return (
     <div
       ref={cardRef}
+      {...rest}
       className={`relative overflow-hidden ${className}`}
       style={{
         '--glow-x': '50%',
@@ -45,6 +51,7 @@ const GlowCard: React.FC<GlowCardProps> = ({ children, className = '', glowColor
         '--glow-intensity': '0',
         '--glow-radius': '200px',
         '--glow-color': glowColor,
+        ...style
       } as React.CSSProperties}
     >
       <div className="absolute inset-0 pointer-events-none z-10 transition-opacity duration-300"

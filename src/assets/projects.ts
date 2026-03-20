@@ -37,7 +37,6 @@ export class ProjectItem {
         this.featured = featured;
         this.current = current;
     }
-
 }
 
 // Gets all project items, appending each to an array and returning it
@@ -50,7 +49,7 @@ export function getProjectItems(): ProjectItem[] {
         "Lunara",  // Title
         "AI-powered triage system for healthcare, winning 1st place at Rutgers HealthHack 2025. Currently working with Rutgers on a completer program to bring to production.",  // Brief Description
         "https://github.com/Jairik/RUHealthHack-25",  // GitHub Link
-        ["AWS", "React", "Node.js", "FastAPI", "Python", "sklearn", "Terraform"],  // Tech Stack
+        ["AWS", "React", "Vite", "Node.js", "FastAPI", "Python", "Scikit-Learn", "Terraform"],  // Tech Stack
         "October 2025 - Present",  // Date
         ["/projects/Lunara-1.png", "/projects/Lunara-2.png", "/projects/Lunara-3.png", "/projects/Lunara-4.png", "/projects/Lunara-5.png", 
             "/projects/Lunara-6.png", "/projects/Lunara-7.png", "/projects/Lunara-8.png"],// Demo Image Sources
@@ -78,7 +77,7 @@ export function getProjectItems(): ProjectItem[] {
         "CapyMorph",  // Title
         "Educational 2D game that facilitates interactive morpheme exercises.",  // Brief Description
         "https://github.com/Jairik/Capymorph",  // GitHub Link
-        ["React", "Phaser.js", "Go", "MongoDB", "Docker", "Zustand"],  // Tech Stack
+        ["React", "Vite", "Phaser.js", "Go", "MongoDB", "Docker", "Fly.io", "Zustand"],  // Tech Stack
         "December 2025",  // Date
         ["/projects/CapyMorph-1.png", "/projects/CapyMorph-2.png", "/projects/CapyMorph-3.png"],  // Demo Image Sources
         "https://capymorph.fly.dev/",  // Demo Link 
@@ -91,10 +90,10 @@ export function getProjectItems(): ProjectItem[] {
         "PerishLess",  // Title
         "Food waste reduction platform that uses AI to predict spoilage and optimize inventory management for households.",  // Brief Description
         "https://github.com/Jairik/Perishless",  // GitHub Link
-        ["React", "FastAPI", "Python", "Firebase Authentication", "FireStore", "Google Cloud", "Google Gemini", "Eleven Labs", "Docker", "Digital Ocean Droplet (VPS)", "Nginx"],  // Tech Stack
+        ["React", "Vite", "FastAPI", "Python", "Firebase Authentication", "FireStore", "Google Cloud", "Google Gemini", "Eleven Labs", "Docker", "Digital Ocean Droplet (VPS)", "Nginx"],  // Tech Stack
         "March 2026",  // Date
-        ["/projects/PerishLess-1.png", "/projects/PerishLess-2.png", "/projects/PerishLess-3.png", "/projects/PerishLess-4.png"],  // Demo Image Sources
-        "https://perishless.tech/",  // Demo Link 
+        ["/projects/Perishless-1.png", "/projects/Perishless-2.png", "/projects/Perishless-3.png", "/projects/Perishless-4.png"],  // Demo Image Sources
+        "", // "https://perishless.tech/",  // Demo Link TODO FIX - THIS IS CURRENTLY DOWN
         "https://youtu.be/nwS19i9P33c",  // Demo Video Link
         true  // Featured
     ));
@@ -104,7 +103,7 @@ export function getProjectItems(): ProjectItem[] {
         "Computer Vision Chick Counting",  // Title
         "AI-based system using computer vision to accurately count chicks in poultry farms, improving standard industry efficiencies and reducing manual labor. Patent consideration.",  // Brief Description
         "",  // GitHub Link (Closed Source)
-        ["Python", "Ultralytics YOLO", "Raspberry Pi"],  // Tech Stack
+        ["Python", "Ultralytics YOLO", "Raspberry Pi", "Jupyter"],  // Tech Stack
         "January 2024 - December 2025",  // Date
         [],  // Demo Image Sources (not applicable for this, closed source)
         "",  // Demo Link  (not applicable for this)
@@ -130,7 +129,7 @@ export function getProjectItems(): ProjectItem[] {
         "ClarityCash",  // Title
         "Data driven budgeting app that turns your financial data into clear insights and actionable plans.",  // Brief Description
         "https://github.com/aforti1/clarity-cash",  // GitHub Link
-        ["React", "Firebase", "Plaid API", "FastAPI", "Gemini", "TailwindCSS", "Python"],  // Tech Stack
+        ["React", "Vite", "Firebase", "Plaid API", "FastAPI", "Gemini", "TailwindCSS", "Python"],  // Tech Stack
         "November 2025",  // Date
         [],  // TODO Demo Image Sources
         "",  // Demo Link  (not applicable for this)
@@ -143,7 +142,7 @@ export function getProjectItems(): ProjectItem[] {
         "KnowYourUni",  // Title
         "Student analytics platform providing ML-derived insights into student performance.",  // Brief Description
         "https://github.com/ncorcoran771/KnowYourUni_",  // GitHub Link
-        ["React", "Neo4J", "FastAPI", "Gemini", "Langchain", "Python"],  // Tech Stack
+        ["React", "Vite", "Neo4J", "FastAPI", "Gemini", "Langchain", "Python"],  // Tech Stack
         "September 2025 - November 2025",  // Date
         ["/projects/KnowYourUni-1.png", "/projects/KnowYourUni-2.png", "/projects/KnowYourUni-3.png", "/projects/KnowYourUni-4.png",
             "/projects/KnowYourUni-5.png", "/projects/KnowYourUni-6.png"],  // Demo Image Sources
@@ -157,7 +156,7 @@ export function getProjectItems(): ProjectItem[] {
         "Stock Portfolio Management System",  // Title
         "Web application for managing and analyzing stock portfolios with real-time data integration and performance tracking.",  // Brief Description
         "https://github.com/Jairik/Stock-Portfolio-Management",  // GitHub Link
-        ["PHP", "MySQL", "Cron", "HTML/CSS/JavaScript", "Alpaca API"],  // Tech Stack
+        ["PHP", "MySQL", "Chart.js", "Cron", "HTML/CSS/JavaScript", "Boostrap", "Alpaca API"],  // Tech Stack
         "March 2024 - April 2024",  // Date
         ["/projects/Stock-Portfolio-Management-System-1.png", "/projects/Stock-Portfolio-Management-System-2.png", "/projects/Stock-Portfolio-Management-System-3.png", 
             "/projects/Stock-Portfolio-Management-System-4.png"],  // Demo Image Sources
@@ -174,6 +173,19 @@ export function getProjectItems(): ProjectItem[] {
         ["Cryptography", "WebSockets", "DearPyGUI"],  // Tech Stack
         "April 2025",  // Date
         ["/projects/P2P-Encrypted-Chatroom-1.png", "/projects/P2P-Encrypted-Chatroom-2.png", "/projects/P2P-Encrypted-Chatroom-3.png"],  // Demo Image Sources (not applicable for this)
+        "",  // Demo Link  (not applicable for this)
+        "",  // Demo Video Link  (not applicable for this)
+        false  // Featured
+    ));
+
+    // Data Science Work
+    allProjects.push(new ProjectItem(
+        "Data Science Stuff",  // Title
+        "Data science projects showcasing different ETL and ML techniques on numerous different datasets.",  // Brief Description
+        "https://github.com/Jairik/Data-Science-Fundementals",  // GitHub Link
+        ["Python", "Pandas", "Numpy", "Scikit-Learn", "Tensorflow", "Seaborn", "Plotly", "Jupyter"],  // Tech Stack
+        "August 2025 - December 2025",  // Date
+        [],  // Demo Image Sources (not applicable for this)
         "",  // Demo Link  (not applicable for this)
         "",  // Demo Video Link  (not applicable for this)
         false  // Featured
@@ -210,11 +222,24 @@ export function getProjectItems(): ProjectItem[] {
         "Move4Wellness Fitness App",  // Title
         "Prototype mobile app promoting physical activity through personalized workout plans and progress tracking.",  // Brief Description
         "https://github.com/Jairik/MOVE4WELLNESS-Android-App",  // GitHub Link
-        ["Java", "Android Studio", "Firebase"],  // Tech Stack
+        ["Java", "Android Studio", "Firebase", "Figma"],  // Tech Stack
         "April 2024 - May 2024",  // Date
         ["/projects/MOVE4WELLNESS-1.png", "/projects/MOVE4WELLNESS-2.png", "/projects/MOVE4WELLNESS-3.png", "/projects/MOVE4WELLNESS-3.png"],  // Demo Image Sources
         "",  // Demo Link  (not applicable for this)
         "",  // Demo Video Link  (not applicable for this)
+        false  // Featured
+    ));
+
+    // Portfolio Website
+    allProjects.push(new ProjectItem(
+        "Portfolio Website",  // Title
+        "Personal portfolio website featuring interactive visuals and project storytelling.",  // Brief Description
+        "https://github.com/Jairik/Portfolio-Website",  // GitHub Link
+        ["React", "Vite", "TailwindCSS", "Three.js"],  // Tech Stack
+        "January 2026 - Present",  // Date
+        ["/projects/Portfolio-Website.png"],  // Demo Image Sources
+        "https://jjmccauley.com",  // Demo Link
+        "",  // Demo Video Link
         false  // Featured
     ));
 
@@ -224,7 +249,7 @@ export function getProjectItems(): ProjectItem[] {
         "Shakespearean Personality LLM Augmentation",  // Title
         "Develops and evaluates methods for persona-consistent AI, focusing on Shakespear's works of Hamlet and Macbeth to acheive four-way conversations among language models.",  // Brief Description
         "https://github.com/bmccorison/DSCI490-Shakespearean-Personality-LLM-Augmentation-",  // GitHub Link
-        ["Python", "HuggingFace", "Pinecone", "React"],  // Tech Stack
+        ["Python", "HuggingFace", "Pinecone", "React", "Vite"],  // Tech Stack
         "January 2026 - Present",  // Date
         [],  // Demo Image Sources (not applicable for this)
         "",  // Demo Link  (not applicable for this)
@@ -247,20 +272,5 @@ export function getProjectItems(): ProjectItem[] {
         true   // Current
     ));
 
-    // Open Source Open Hours Builder
-    allProjects.push(new ProjectItem(
-        "Basic Open Hours Builder",  // Title
-        "Targeted to SU lab assistants/tutors, allows for users to easily make and deploy their own basic office hours website.",  // Brief Description
-        "",  // GitHub Link (TODO)
-        ["JS", "HTML/CSS", "GitHub Actions"],  // Tech Stack
-        "Feburary 2025 - Present",  // Date
-        [],  // Demo Image Sources (not applicable for this quite yet)
-        "",  // Demo Link  (not applicable for this quite yet)
-        "",  // Demo Video Link  (not applicable for this quite yet)
-        false,  // Not featured
-        true   // Current
-    ));
-
-    // Return the array of all projects
     return allProjects;
 }
