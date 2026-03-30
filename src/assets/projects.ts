@@ -181,12 +181,12 @@ export function getProjectItems(): ProjectItem[] {
     // Data Science Work
     allProjects.push(new ProjectItem(
         "Data Science Stuff",  // Title
-        "Data science projects showcasing different ETL and ML techniques on numerous different datasets.",  // Brief Description
+        "Data science project collection showcasing different ETL and ML techniques on numerous different datasets.",  // Brief Description
         "https://github.com/Jairik/Data-Science-Fundementals",  // GitHub Link
         ["Python", "Pandas", "Numpy", "Scikit-Learn", "Tensorflow", "Seaborn", "Plotly", "Jupyter"],  // Tech Stack
         "August 2025 - December 2025",  // Date
         [],  // Demo Image Sources (not applicable for this)
-        "",  // Demo Link  (not applicable for this)
+        "https://jairik.github.io/Data-Science-Fundementals/",  // Demo Link  (basic dsci portfolio website)
         "",  // Demo Video Link  (not applicable for this)
         false  // Featured
     ));
