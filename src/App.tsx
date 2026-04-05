@@ -20,6 +20,7 @@ import {
   /*, completedCourses*/
 } from "./assets/experience";
 import {
+  LEGACY_RENDER_MODE_STORAGE_KEY,
   RENDER_MODE_STORAGE_KEY,
   getInitialRenderState,
   type SimplifiedModeReason
@@ -40,6 +41,7 @@ const HERO_CROSSFADE_START = 0.55;
 const HERO_CROSSFADE_DURATION = 0.2;
 const HERO_BACKGROUND_FADE_START = 0.82;
 const HERO_BACKGROUND_FADE_DURATION = 0.18;
+const BENTO_CARD_BACKGROUND = "#1d1f22";
 const COMMIT_COUNT_ENDPOINT = "https://jairik--e9c872b823b611f1845142dde27851f2.web.val.run";  // Returns just the total commits
 const COMMIT_COUNT_FIELDS = [
   "totalCommits",
@@ -136,29 +138,54 @@ function RenderModeControls({
       : "Full View"
     : "Simple View";
   const buttonTitle = buttonLabel === "Retry Full View" ? "See all pictures and full content" : undefined;
+  const button = (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-pressed={isSimplifiedMode}
+      aria-label={isSimplifiedMode ? "Switch back to the full portfolio view" : "Switch to the simplified accessible portfolio view"}
+      title={buttonTitle}
+      style={{
+        backgroundColor: "rgba(52, 52, 52, 0.70)",
+        borderColor: "rgba(52, 52, 52, 1)"
+      }}
+      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-[11px] font-medium tracking-wide text-white/85 transition-colors hover:bg-[rgba(52,52,52,0.82)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[rgb(51,178,51)]/70 ${
+        isSimplifiedMode ? "relative z-[270]" : "absolute right-3 top-3 z-[270] sm:top-4"
+      }`}
+    >
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 24 24"
+        className="h-3.5 w-3.5 shrink-0"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <circle cx="12" cy="4.5" r="1.6" fill="currentColor" stroke="none" />
+        <path d="M5.5 8.5h13" />
+        <path d="M12 8.5v10" />
+        <path d="M8.25 19.5 12 13.5l3.75 6" />
+      </svg>
+      <span>{buttonLabel}</span>
+    </button>
+  );
 
-  return (
-    <>
-      {isSimplifiedMode && (
-        <div className="fixed inset-x-0 top-0 z-[260] bg-[#121315] px-3 py-1 text-center text-[10px] font-medium uppercase tracking-[0.2em] text-white/55">
+  if (isSimplifiedMode) {
+    return (
+      <div className="sticky inset-x-0 top-0 z-[260] border-b border-white/5 bg-[#121315]/95 backdrop-blur-sm">
+        <div className="px-3 py-1 text-center text-[10px] font-medium uppercase tracking-[0.2em] text-white/55">
           {getSimplifiedBannerMessage(simplifiedModeReason)}
         </div>
-      )}
+        <div className="mx-auto flex max-w-6xl justify-end px-5 py-3 sm:px-8">
+          {button}
+        </div>
+      </div>
+    );
+  }
 
-      <button
-        type="button"
-        onClick={onToggle}
-        aria-pressed={isSimplifiedMode}
-        aria-label={isSimplifiedMode ? "Switch back to the full portfolio view" : "Switch to the simplified accessible portfolio view"}
-        title={buttonTitle}
-        className={`fixed right-3 z-[270] rounded-full border border-white/12 bg-[#101112]/90 px-3 py-2 text-xs font-medium tracking-wide text-white/85 shadow-lg backdrop-blur-md transition-colors hover:bg-[#1a1c1f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[rgb(51,178,51)]/70 ${
-          isSimplifiedMode ? "top-10 sm:top-11" : "top-3 sm:top-4"
-        }`}
-      >
-        {buttonLabel}
-      </button>
-    </>
-  );
+  return button;
 }
 
 function App() {
@@ -179,7 +206,7 @@ function App() {
   const landingOpacity = useMemo(() => 1 - landingFadeOutProgress, [landingFadeOutProgress]);
   const bgOpacity = useMemo(() => (1 - crossfadeProgress) * landingOpacity, [crossfadeProgress, landingOpacity]);
   const bgScale = useMemo(() => 1 + (heroScrollProgress * 0.08), [heroScrollProgress]);
-  const snowOpacity = useMemo(() => crossfadeProgress * landingOpacity, [crossfadeProgress, landingOpacity]);
+  const snowOpacity = useMemo(() => crossfadeProgress, [crossfadeProgress]);
 
   const [openProject, setOpenProject] = useState<string | null>(null);
   //const [isCoursesOpen, setIsCoursesOpen] = useState(false);
@@ -294,6 +321,22 @@ function App() {
     }
   }, []);
 
+  const updateStoredRenderMode = useCallback((value: string | null) => {
+    if (typeof window === "undefined") return;
+
+    try {
+      if (value === null) {
+        window.localStorage.removeItem(RENDER_MODE_STORAGE_KEY);
+      } else {
+        window.localStorage.setItem(RENDER_MODE_STORAGE_KEY, value);
+      }
+
+      window.localStorage.removeItem(LEGACY_RENDER_MODE_STORAGE_KEY);
+    } catch {
+      // Ignore storage failures in restricted browser contexts.
+    }
+  }, []);
+
   const closeSkillTooltipSoon = useCallback(() => {
     clearSkillTooltipCloseTimeout();
     skillTooltipHideTimeoutRef.current = window.setTimeout(() => {
@@ -304,6 +347,14 @@ function App() {
   }, [clearSkillTooltipCloseTimeout]);
 
   const switchToSimplifiedMode = useCallback((reason: SimplifiedModeReason) => {
+    if (reason === "manual") {
+      updateStoredRenderMode("simple");
+    } else if (reason === "compatibility") {
+      updateStoredRenderMode("simple-compatibility");
+    } else {
+      updateStoredRenderMode(null);
+    }
+
     setRenderModeState(prev => {
       if (prev.mode === "simple" && prev.reason === reason) {
         return prev;
@@ -314,15 +365,16 @@ function App() {
         reason
       };
     });
-  }, []);
+  }, [updateStoredRenderMode]);
 
   const switchToFullMode = useCallback(() => {
+    updateStoredRenderMode("full");
     setFullRenderAttempt(prev => prev + 1);
     setRenderModeState({
       mode: "full",
       reason: null
     });
-  }, []);
+  }, [updateStoredRenderMode]);
 
   const toggleRenderMode = useCallback(() => {
     if (isSimplifiedMode) {
@@ -528,16 +580,6 @@ function App() {
       controller.abort();
     };
   }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    try {
-      window.localStorage.setItem(RENDER_MODE_STORAGE_KEY, renderMode);
-    } catch {
-      // Ignore storage failures in restricted browser contexts.
-    }
-  }, [renderMode]);
 
   useEffect(() => {
     if (!isSimplifiedMode) return;
@@ -879,7 +921,7 @@ function App() {
                         title: project.title,
                         description: project.description,
                         label: project.date || "Featured",
-                        color: "#060010",
+                        color: BENTO_CARD_BACKGROUND,
                         imageSrc: project.imageSrc,
                         link: project.link,
                         techStack: project.techStack,
@@ -890,6 +932,9 @@ function App() {
                         projectTag
                       };
                     })}
+                    tabletColumns={2}
+                    desktopColumns={featuredProjects.length}
+                    desktopBreakpoint={1024}
                     enableBorderGlow
                     glowColor="51, 178, 51"
                     enableTilt
@@ -1233,7 +1278,7 @@ function App() {
                   title: exp.role,
                   description: exp.description,
                   label: exp.duration,
-                  color: "#060010",
+                  color: BENTO_CARD_BACKGROUND,
                   logoSrc: exp.logoSrc,
                   techStack: exp.technologies,
                   date: exp.company

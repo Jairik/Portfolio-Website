@@ -32,46 +32,55 @@ export interface BentoProps {
   clickEffect?: boolean;
   enableMagnetism?: boolean;
   cards?: BentoCardProps[];
+  tabletColumns?: number;
+  desktopColumns?: number;
+  tabletBreakpoint?: number;
+  desktopBreakpoint?: number;
 }
 
 const DEFAULT_PARTICLE_COUNT = 12;
 const DEFAULT_SPOTLIGHT_RADIUS = 300;
 const DEFAULT_GLOW_COLOR = '51, 178, 51';
 const MOBILE_BREAKPOINT = 768;
+const DEFAULT_TABLET_COLUMNS = 2;
+const DEFAULT_DESKTOP_COLUMNS = 3;
+const DEFAULT_TABLET_BREAKPOINT = 700;
+const DEFAULT_DESKTOP_BREAKPOINT = 1100;
+const CARD_GAP_REM = 2;
 
 const defaultCardData: BentoCardProps[] = [
   {
-    color: '#060010',
+    color: '#1d1f22',
     title: 'Analytics',
     description: 'Track user behavior',
     label: 'Insights'
   },
   {
-    color: '#060010',
+    color: '#1d1f22',
     title: 'Dashboard',
     description: 'Centralized data view',
     label: 'Overview'
   },
   {
-    color: '#060010',
+    color: '#1d1f22',
     title: 'Collaboration',
     description: 'Work together seamlessly',
     label: 'Teamwork'
   },
   {
-    color: '#060010',
+    color: '#1d1f22',
     title: 'Automation',
     description: 'Streamline workflows',
     label: 'Efficiency'
   },
   {
-    color: '#060010',
+    color: '#1d1f22',
     title: 'Integration',
     description: 'Connect favorite tools',
     label: 'Connectivity'
   },
   {
-    color: '#060010',
+    color: '#1d1f22',
     title: 'Security',
     description: 'Enterprise-grade protection',
     label: 'Protection'
@@ -834,6 +843,23 @@ const useMobileDetection = () => {
   return isMobile;
 };
 
+const useViewportWidth = () => {
+  const [viewportWidth, setViewportWidth] = useState(
+    typeof window === 'undefined' ? DEFAULT_DESKTOP_BREAKPOINT : window.innerWidth
+  );
+
+  useEffect(() => {
+    const handleResize = () => setViewportWidth(window.innerWidth);
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return viewportWidth;
+};
+
 const MagicBento: React.FC<BentoProps> = ({
   enableStars = true,
   enableSpotlight = true,
@@ -845,12 +871,27 @@ const MagicBento: React.FC<BentoProps> = ({
   glowColor = DEFAULT_GLOW_COLOR,
   clickEffect = true,
   enableMagnetism = true,
-  cards
+  cards,
+  tabletColumns = DEFAULT_TABLET_COLUMNS,
+  desktopColumns = DEFAULT_DESKTOP_COLUMNS,
+  tabletBreakpoint = DEFAULT_TABLET_BREAKPOINT,
+  desktopBreakpoint = DEFAULT_DESKTOP_BREAKPOINT
 }) => {
   const gridRef = useRef<HTMLDivElement>(null);
   const isMobile = useMobileDetection();
+  const viewportWidth = useViewportWidth();
   const shouldDisableAnimations = disableAnimations || isMobile;
   const cardsToRender = cards && cards.length > 0 ? cards : defaultCardData;
+  const safeTabletColumns = Math.max(1, Math.min(tabletColumns, cardsToRender.length));
+  const safeDesktopColumns = Math.max(1, Math.min(desktopColumns, cardsToRender.length));
+  const activeColumns = viewportWidth >= desktopBreakpoint
+    ? safeDesktopColumns
+    : viewportWidth >= tabletBreakpoint
+      ? safeTabletColumns
+      : 1;
+  const cardWidth = activeColumns === 1
+    ? '100%'
+    : `calc((100% - ${(activeColumns - 1) * CARD_GAP_REM}rem) / ${activeColumns})`;
 
   return (
     <>
@@ -863,7 +904,7 @@ const MagicBento: React.FC<BentoProps> = ({
             --glow-radius: 200px;
             --glow-color: ${glowColor};
             --border-color: #245224;
-            --background-dark: #1a1a1a;
+            --background-dark: #1d1f22;
             --white: hsl(0, 0%, 100%);
             --accent-primary: rgba(51, 178, 51, 1);
             --accent-glow: rgba(51, 178, 51, 0.2);
@@ -875,7 +916,7 @@ const MagicBento: React.FC<BentoProps> = ({
             flex-wrap: wrap;
             justify-content: center;
             width: 100%;
-            gap: 2rem;
+            gap: ${CARD_GAP_REM}rem;
           }
           
           .card-responsive .card {
@@ -884,18 +925,6 @@ const MagicBento: React.FC<BentoProps> = ({
             display: flex;
             flex-direction: column;
             width: 100%;
-          }
-          
-          @media (min-width: 700px) {
-            .card-responsive .card {
-              width: calc(50% - 1rem);
-            }
-          }
-          
-          @media (min-width: 1100px) {
-            .card-responsive .card {
-              width: calc(33.333% - 1.33rem);
-            }
           }
           
           .card--border-glow::after {
@@ -962,7 +991,6 @@ const MagicBento: React.FC<BentoProps> = ({
           
           @media (max-width: 599px) {
             .card-responsive {
-              grid-template-columns: 1fr;
               width: 100%;
               margin: 0 auto;
               padding: 0;
@@ -994,9 +1022,11 @@ const MagicBento: React.FC<BentoProps> = ({
             }`;
 
             const cardStyle = {
+              flex: `0 0 ${cardWidth}`,
               backgroundColor: card.color || 'var(--background-dark)',
               borderColor: 'var(--border-color)',
               color: 'var(--white)',
+              width: cardWidth,
               '--glow-x': '50%',
               '--glow-y': '50%',
               '--glow-intensity': '0',

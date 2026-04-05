@@ -122,20 +122,18 @@ export default function SimplePortfolio() {
   );
 
   return (
-    <main className="min-h-screen bg-[#1b1c1f] pt-32 text-white">
-      <section className="mx-auto max-w-6xl px-5 pb-8 pt-8 sm:px-8">
+    <main className="min-h-screen bg-[#1b1c1f] pt-0 text-white">
+      <section className="mx-auto max-w-6xl px-5 pb-8 pt-5 sm:px-8 sm:pt-6">
         <motion.div
           initial={{ opacity: 0, y: 22 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
           className="rounded-3xl border border-white/10 bg-white/[0.04] p-4 sm:p-5"
         >
-          <div className="space-y-2">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.32em] text-[rgb(134,230,134)]/85 sm:text-[11px]">
-              simplified view
-            </p>
+          <div>
             <h1 className="text-2xl font-semibold leading-tight text-white sm:text-3xl">
-              JJ McCauley - Full Stack Developer
+              <span className="text-[rgb(134,230,134)]">JJ McCauley</span>
+              <span> - Full Stack Developer</span>
             </h1>
           </div>
         </motion.div>

@@ -2,6 +2,7 @@ export type RenderMode = "full" | "simple";
 export type SimplifiedModeReason = "manual" | "compatibility" | "accessibility";
 
 export const RENDER_MODE_STORAGE_KEY = "portfolio-render-mode";
+export const LEGACY_RENDER_MODE_STORAGE_KEY = "portfolio-render-mode-preference";
 export const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 
 const WEBGL_CONTEXT_NAMES = ["webgl2", "webgl", "experimental-webgl"] as const;
@@ -51,10 +52,17 @@ export const getInitialRenderState = (): {
   let storedMode: string | null = null;
   try {
     storedMode = window.localStorage.getItem(RENDER_MODE_STORAGE_KEY);
+    if (storedMode === null) {
+      storedMode = window.localStorage.getItem(LEGACY_RENDER_MODE_STORAGE_KEY);
+    }
   } catch {
     storedMode = null;
   }
   const prefersReducedMotion = window.matchMedia?.(REDUCED_MOTION_QUERY).matches ?? false;
+
+  if (storedMode === "simple-compatibility") {
+    return { mode: "simple", reason: "compatibility" };
+  }
 
   if (!detectWebGLSupport()) {
     return { mode: "simple", reason: "compatibility" };
