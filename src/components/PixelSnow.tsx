@@ -13,6 +13,43 @@ import {
 
 import './PixelSnow.css';
 
+const TARGET_FRAME_MS = 1000 / 45;
+
+const canCreateWebGLContext = () => {
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
+    return true;
+  }
+
+  try {
+    const canvas = document.createElement('canvas');
+    const options: WebGLContextAttributes = {
+      alpha: true,
+      antialias: false,
+      depth: false,
+      powerPreference: 'high-performance',
+      premultipliedAlpha: false,
+      stencil: false
+    };
+    const contexts = ['webgl2', 'webgl', 'experimental-webgl'] as const;
+
+    for (const contextName of contexts) {
+      const context = canvas.getContext(
+        contextName,
+        options
+      ) as WebGLRenderingContext | WebGL2RenderingContext | null;
+      if (!context) continue;
+
+      const loseContext = context.getExtension?.('WEBGL_lose_context');
+      loseContext?.loseContext();
+      return true;
+    }
+  } catch {
+    return false;
+  }
+
+  return false;
+};
+
 const vertexShader = `
 void main() {
   gl_Position = vec4(position, 1.0);
@@ -187,6 +224,7 @@ interface PixelSnowProps {
   active?: boolean;
   className?: string;
   style?: React.CSSProperties;
+  onError?: (message: string) => void;
 }
 
 export default function PixelSnow({
@@ -204,19 +242,33 @@ export default function PixelSnow({
   direction = 125,
   active = true,
   className = '',
-  style = {}
+  style = {},
+  onError
 }: PixelSnowProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number>(0);
   const isVisibleRef = useRef(true);
   const isActiveRef = useRef(active);
+  const isDocumentVisibleRef = useRef(true);
   const rendererRef = useRef<WebGLRenderer | null>(null);
   const materialRef = useRef<ShaderMaterial | null>(null);
   const resizeTimeoutRef = useRef<number | null>(null);
+  const hasReportedErrorRef = useRef(false);
 
   useEffect(() => {
     isActiveRef.current = active;
   }, [active]);
+
+  useEffect(() => {
+    const updateVisibility = () => {
+      isDocumentVisibleRef.current = document.visibilityState === 'visible';
+    };
+
+    updateVisibility();
+    document.addEventListener('visibilitychange', updateVisibility);
+
+    return () => document.removeEventListener('visibilitychange', updateVisibility);
+  }, []);
 
   // Memoize shader variant value
   const variantValue = useMemo(() => {
@@ -268,22 +320,54 @@ export default function PixelSnow({
     const container = containerRef.current;
     if (!container) return;
 
+    const reportFailure = (message: string, error?: unknown) => {
+      if (hasReportedErrorRef.current) return;
+      hasReportedErrorRef.current = true;
+
+      if (error) {
+        console.error(message, error);
+      } else {
+        console.warn(message);
+      }
+
+      onError?.(message);
+    };
+
+    if (!canCreateWebGLContext()) {
+      reportFailure('PixelSnow could not start because WebGL is unavailable.');
+      return;
+    }
+
     const scene = new Scene();
     const camera = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
-    const renderer = new WebGLRenderer({
-      antialias: false,
-      alpha: true,
-      premultipliedAlpha: false,
-      powerPreference: 'high-performance',
-      stencil: false,
-      depth: false
-    });
+    let renderer: WebGLRenderer;
 
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    try {
+      renderer = new WebGLRenderer({
+        antialias: false,
+        alpha: true,
+        premultipliedAlpha: false,
+        powerPreference: 'high-performance',
+        stencil: false,
+        depth: false
+      });
+    } catch (error) {
+      reportFailure('PixelSnow failed to create a WebGL renderer.', error);
+      return;
+    }
+
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
     renderer.setSize(container.offsetWidth, container.offsetHeight);
     renderer.setClearColor(0x000000, 0);
     container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
+
+    const handleContextLost = (event: Event) => {
+      event.preventDefault();
+      reportFailure('PixelSnow lost its WebGL context.');
+    };
+
+    renderer.domElement.addEventListener('webglcontextlost', handleContextLost, { once: true });
 
     const material = new ShaderMaterial({
       vertexShader,
@@ -314,20 +398,27 @@ export default function PixelSnow({
     window.addEventListener('resize', handleResize);
 
     const startTime = performance.now();
-    const animate = () => {
+    let lastFrameTime = startTime - TARGET_FRAME_MS;
+    const animate = (now: number) => {
       animationRef.current = requestAnimationFrame(animate);
 
-      // Only render if visible
-      if (isVisibleRef.current && isActiveRef.current) {
-        material.uniforms.uTime.value = (performance.now() - startTime) * 0.001;
+      if (now - lastFrameTime < TARGET_FRAME_MS) {
+        return;
+      }
+
+      lastFrameTime = now;
+
+      if (isVisibleRef.current && isActiveRef.current && isDocumentVisibleRef.current) {
+        material.uniforms.uTime.value = (now - startTime) * 0.001;
         renderer.render(scene, camera);
       }
     };
-    animate();
+    animate(startTime);
 
     return () => {
       cancelAnimationFrame(animationRef.current);
       window.removeEventListener('resize', handleResize);
+      renderer.domElement.removeEventListener('webglcontextlost', handleContextLost);
       if (resizeTimeoutRef.current) {
         clearTimeout(resizeTimeoutRef.current);
       }
@@ -341,7 +432,7 @@ export default function PixelSnow({
       rendererRef.current = null;
       materialRef.current = null;
     };
-  }, [handleResize]); // Only recreate scene when handleResize changes
+  }, [handleResize, onError]); // Only recreate scene when handleResize changes
 
   // Update material uniforms when props change
   useEffect(() => {

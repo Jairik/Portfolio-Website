@@ -7,6 +7,8 @@ import { menuItems, socialItems, mePictures } from "./assets/constantVars";
 import { getProjectItems, type ProjectItem } from "./assets/projects";
 import Stack from "./components/Stack";
 import CountUp from "./components/CountUp";
+import FullExperienceBoundary from "./components/FullExperienceBoundary";
+import SimplePortfolio from "./components/SimplePortfolio";
 import {
   experienceItems,
   technologyItems,
@@ -17,6 +19,11 @@ import {
   type TechnologyItem
   /*, completedCourses*/
 } from "./assets/experience";
+import {
+  RENDER_MODE_STORAGE_KEY,
+  getInitialRenderState,
+  type SimplifiedModeReason
+} from "./lib/renderMode";
 
 // Lazy-loaded heavy components to split initial bundle
 const DecryptedText = lazy(() => import("./components/DecryptedText"));
@@ -103,10 +110,63 @@ type SkillProjectsTooltip = {
   y: number;
 };
 
+const getSimplifiedBannerMessage = (reason: SimplifiedModeReason | null) => {
+  switch (reason) {
+    case "compatibility":
+      return "Simplified view for compatibility.";
+    case "accessibility":
+      return "Simplified view for reduced motion.";
+    default:
+      return "Simplified view active.";
+  }
+};
+
+function RenderModeControls({
+  isSimplifiedMode,
+  simplifiedModeReason,
+  onToggle
+}: {
+  isSimplifiedMode: boolean;
+  simplifiedModeReason: SimplifiedModeReason | null;
+  onToggle: () => void;
+}) {
+  const buttonLabel = isSimplifiedMode
+    ? simplifiedModeReason === "compatibility"
+      ? "Retry Full View"
+      : "Full View"
+    : "Simple View";
+  const buttonTitle = buttonLabel === "Retry Full View" ? "See all pictures and full content" : undefined;
+
+  return (
+    <>
+      {isSimplifiedMode && (
+        <div className="fixed inset-x-0 top-0 z-[260] bg-[#121315] px-3 py-1 text-center text-[10px] font-medium uppercase tracking-[0.2em] text-white/55">
+          {getSimplifiedBannerMessage(simplifiedModeReason)}
+        </div>
+      )}
+
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-pressed={isSimplifiedMode}
+        aria-label={isSimplifiedMode ? "Switch back to the full portfolio view" : "Switch to the simplified accessible portfolio view"}
+        title={buttonTitle}
+        className={`fixed right-3 z-[270] rounded-full border border-white/12 bg-[#101112]/90 px-3 py-2 text-xs font-medium tracking-wide text-white/85 shadow-lg backdrop-blur-md transition-colors hover:bg-[#1a1c1f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[rgb(51,178,51)]/70 ${
+          isSimplifiedMode ? "top-10 sm:top-11" : "top-3 sm:top-4"
+        }`}
+      >
+        {buttonLabel}
+      </button>
+    </>
+  );
+}
+
 function App() {
   const heroRef = useRef<HTMLDivElement | null>(null);
   const skillTooltipHideTimeoutRef = useRef<number | null>(null);
   const isSkillTooltipHoveredRef = useRef(false);
+  const [{ mode: renderMode, reason: simplifiedModeReason }, setRenderModeState] = useState(getInitialRenderState);
+  const [fullRenderAttempt, setFullRenderAttempt] = useState(0);
   const [heroScrollProgress, setHeroScrollProgress] = useState(0);
   const crossfadeProgress = useMemo(
     () => clamp((heroScrollProgress - HERO_CROSSFADE_START) / HERO_CROSSFADE_DURATION, 0, 1),
@@ -129,6 +189,7 @@ function App() {
   const [commitCount, setCommitCount] = useState(0);
   const [techTooltip, setTechTooltip] = useState<FloatingTooltip | null>(null);
   const [skillProjectsTooltip, setSkillProjectsTooltip] = useState<SkillProjectsTooltip | null>(null);
+  const isSimplifiedMode = renderMode === "simple";
   const sortedMePictures = useMemo(() => [...mePictures].sort((a, b) => a.order - b.order), []);
   const aboutMePictureCards = useMemo(
     () =>
@@ -241,6 +302,46 @@ function App() {
       }
     }, 120);
   }, [clearSkillTooltipCloseTimeout]);
+
+  const switchToSimplifiedMode = useCallback((reason: SimplifiedModeReason) => {
+    setRenderModeState(prev => {
+      if (prev.mode === "simple" && prev.reason === reason) {
+        return prev;
+      }
+
+      return {
+        mode: "simple",
+        reason
+      };
+    });
+  }, []);
+
+  const switchToFullMode = useCallback(() => {
+    setFullRenderAttempt(prev => prev + 1);
+    setRenderModeState({
+      mode: "full",
+      reason: null
+    });
+  }, []);
+
+  const toggleRenderMode = useCallback(() => {
+    if (isSimplifiedMode) {
+      switchToFullMode();
+      return;
+    }
+
+    switchToSimplifiedMode("manual");
+  }, [isSimplifiedMode, switchToFullMode, switchToSimplifiedMode]);
+
+  const handlePixelSnowError = useCallback((message: string) => {
+    console.warn("PixelSnow failed, switching to simplified mode.", message);
+    switchToSimplifiedMode("compatibility");
+  }, [switchToSimplifiedMode]);
+
+  const handleFullExperienceError = useCallback((error: Error) => {
+    console.error("Full experience crashed, switching to simplified mode.", error);
+    switchToSimplifiedMode("compatibility");
+  }, [switchToSimplifiedMode]);
 
   const openSkillTooltip = useCallback((skillName: string, x: number, y: number) => {
     const matchingProjects = getProjectsForSkill(skillName);
@@ -429,13 +530,35 @@ function App() {
   }, []);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    try {
+      window.localStorage.setItem(RENDER_MODE_STORAGE_KEY, renderMode);
+    } catch {
+      // Ignore storage failures in restricted browser contexts.
+    }
+  }, [renderMode]);
+
+  useEffect(() => {
+    if (!isSimplifiedMode) return;
+
+    setOpenProject(null);
+    setTechTooltip(null);
+    setSkillProjectsTooltip(null);
+  }, [isSimplifiedMode]);
+
+  useEffect(() => {
+    if (isSimplifiedMode) return;
+
     const updateViewportFlag = () => setIsMobileViewport(window.innerWidth < 768);
     updateViewportFlag();
     window.addEventListener("resize", updateViewportFlag);
     return () => window.removeEventListener("resize", updateViewportFlag);
-  }, []);
+  }, [isSimplifiedMode]);
 
   useEffect(() => {
+    if (isSimplifiedMode) return;
+
     let animationFrameId = 0;
 
     const updateHeroProgress = () => {
@@ -458,10 +581,10 @@ function App() {
       window.removeEventListener("scroll", onScrollOrResize);
       window.removeEventListener("resize", onScrollOrResize);
     };
-  }, []);
+  }, [isSimplifiedMode]);
 
   useEffect(() => {
-    if (!openProject || isAutoPlayPaused) return;
+    if (isSimplifiedMode || !openProject || isAutoPlayPaused) return;
     
     const project = [...currentProjects, ...otherProjects].find(p => p.title === openProject);
     if (!project || !project.imageSrc || project.imageSrc.length <= 1) return;
@@ -473,14 +596,34 @@ function App() {
     }, 10000);
 
     return () => clearInterval(interval);
-  }, [openProject, isAutoPlayPaused, currentProjects, otherProjects, changeImage]);
+  }, [isSimplifiedMode, openProject, isAutoPlayPaused, currentProjects, otherProjects, changeImage]);
 
   useEffect(() => {
     return () => clearSkillTooltipCloseTimeout();
   }, [clearSkillTooltipCloseTimeout]);
 
+  if (isSimplifiedMode) {
+    return (
+      <>
+        <RenderModeControls
+          isSimplifiedMode={isSimplifiedMode}
+          simplifiedModeReason={simplifiedModeReason}
+          onToggle={toggleRenderMode}
+        />
+        <SimplePortfolio />
+      </>
+    );
+  }
+
   return (
     <Suspense fallback={<main className="relative min-h-screen bg-black" />}>
+      <>
+      <RenderModeControls
+        isSimplifiedMode={isSimplifiedMode}
+        simplifiedModeReason={simplifiedModeReason}
+        onToggle={toggleRenderMode}
+      />
+      <FullExperienceBoundary key={`full-experience-${fullRenderAttempt}`} onError={handleFullExperienceError}>
       <main className="relative min-h-[220vh] bg-black text-white">
       {/* Hero Section */}
       <section ref={heroRef} className="relative w-full h-screen overflow-hidden">
@@ -594,6 +737,7 @@ function App() {
             density={0.33}
             brightness={1.05}
             active={snowOpacity >= 0.01}
+            onError={handlePixelSnowError}
           />
         </Suspense>
       </motion.div>
@@ -1236,6 +1380,8 @@ function App() {
         </div>
       )}
       </main>
+      </FullExperienceBoundary>
+      </>
     </Suspense>
   );
 }
