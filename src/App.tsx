@@ -33,6 +33,7 @@ const GlowCard = lazy(() => import("./components/GlowCard"));
 const Dither = lazy(() => import("./components/Dither"));
 const MagicBento = lazy(() => import("./components/MagicBento"));
 const PixelSnow = lazy(() => import("./components/PixelSnow"));
+const SolarSystemPortfolio = lazy(() => import("./components/SolarSystemPortfolio"));
 
 const toProjectTag = (title: string) =>
   `project-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`;
@@ -42,6 +43,7 @@ const HERO_CROSSFADE_DURATION = 0.2;
 const HERO_BACKGROUND_FADE_START = 0.82;
 const HERO_BACKGROUND_FADE_DURATION = 0.18;
 const BENTO_CARD_BACKGROUND = "#1d1f22";
+const FULL_VIEW_MODE_STORAGE_KEY = "portfolio-full-view-mode";
 const COMMIT_COUNT_ENDPOINT = "https://jairik--e9c872b823b611f1845142dde27851f2.web.val.run";  // Returns just the total commits
 const COMMIT_COUNT_FIELDS = [
   "totalCommits",
@@ -111,6 +113,8 @@ type SkillProjectsTooltip = {
   x: number;
   y: number;
 };
+type FullViewMode = "full" | "solar";
+type ViewMode = FullViewMode | "simple";
 
 const getSimplifiedBannerMessage = (reason: SimplifiedModeReason | null) => {
   switch (reason) {
@@ -123,69 +127,56 @@ const getSimplifiedBannerMessage = (reason: SimplifiedModeReason | null) => {
   }
 };
 
-function RenderModeControls({
-  isSimplifiedMode,
-  simplifiedModeReason,
-  onToggle
-}: {
-  isSimplifiedMode: boolean;
-  simplifiedModeReason: SimplifiedModeReason | null;
-  onToggle: () => void;
-}) {
-  const buttonLabel = isSimplifiedMode
-    ? simplifiedModeReason === "compatibility"
-      ? "Retry Full View"
-      : "Full View"
-    : "Simple View";
-  const buttonTitle = buttonLabel === "Retry Full View" ? "See all pictures and full content" : undefined;
-  const button = (
-    <button
-      type="button"
-      onClick={onToggle}
-      aria-pressed={isSimplifiedMode}
-      aria-label={isSimplifiedMode ? "Switch back to the full portfolio view" : "Switch to the simplified accessible portfolio view"}
-      title={buttonTitle}
-      style={{
-        backgroundColor: "rgba(52, 52, 52, 0.70)",
-        borderColor: "rgba(52, 52, 52, 1)"
-      }}
-      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-[11px] font-medium tracking-wide text-white/85 transition-colors hover:bg-[rgba(52,52,52,0.82)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[rgb(51,178,51)]/70 ${
-        isSimplifiedMode ? "relative z-[270]" : "absolute right-3 top-3 z-[270] sm:top-4"
-      }`}
-    >
-      <svg
-        aria-hidden="true"
-        viewBox="0 0 24 24"
-        className="h-3.5 w-3.5 shrink-0"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <circle cx="12" cy="4.5" r="1.6" fill="currentColor" stroke="none" />
-        <path d="M5.5 8.5h13" />
-        <path d="M12 8.5v10" />
-        <path d="M8.25 19.5 12 13.5l3.75 6" />
-      </svg>
-      <span>{buttonLabel}</span>
-    </button>
-  );
+const getInitialFullViewMode = (): FullViewMode => {
+  if (typeof window === "undefined") return "full";
 
-  if (isSimplifiedMode) {
-    return (
-      <div className="sticky inset-x-0 top-0 z-[260] border-b border-white/5 bg-[#121315]/95 backdrop-blur-sm">
-        <div className="px-3 py-1 text-center text-[10px] font-medium uppercase tracking-[0.2em] text-white/55">
+  try {
+    const storedValue = window.localStorage.getItem(FULL_VIEW_MODE_STORAGE_KEY);
+    return storedValue === "solar" ? "solar" : "full";
+  } catch {
+    return "full";
+  }
+};
+
+function RenderModeControls({
+  selectedView,
+  simplifiedModeReason,
+  onSelect
+}: {
+  selectedView: ViewMode;
+  simplifiedModeReason: SimplifiedModeReason | null;
+  onSelect: (view: ViewMode) => void;
+}) {
+  const isSimplifiedMode = selectedView === "simple";
+
+  return (
+    <>
+      {isSimplifiedMode && (
+        <div className="fixed inset-x-0 top-0 z-[265] border-b border-white/8 bg-[#121315]/95 px-3 py-1 text-center text-[10px] font-medium uppercase tracking-[0.2em] text-white/55 backdrop-blur-sm">
           {getSimplifiedBannerMessage(simplifiedModeReason)}
         </div>
-        <div className="mx-auto flex max-w-6xl justify-end px-5 py-3 sm:px-8">
-          {button}
+      )}
+
+      <div className={`fixed right-3 z-[270] ${isSimplifiedMode ? "top-8 sm:top-9" : "top-3 sm:top-4"}`}>
+        <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-[#1a1b1f]/85 px-2.5 py-1.5 text-white/85 backdrop-blur-md">
+          <label htmlFor="view-mode" className="text-[10px] font-medium uppercase tracking-[0.16em] text-white/70">
+            View
+          </label>
+          <select
+            id="view-mode"
+            value={selectedView}
+            onChange={event => onSelect(event.target.value as ViewMode)}
+            className="rounded-full border border-white/20 bg-black/35 px-2.5 py-1 text-[11px] font-semibold tracking-wide text-white outline-none transition-colors hover:border-[rgb(51,178,51)]/50 focus-visible:border-[rgb(51,178,51)]/65"
+            aria-label="Select portfolio view mode"
+          >
+            <option value="full">Full</option>
+            <option value="solar">Solar</option>
+            <option value="simple">Simple</option>
+          </select>
         </div>
       </div>
-    );
-  }
-
-  return button;
+    </>
+  );
 }
 
 function App() {
@@ -193,6 +184,7 @@ function App() {
   const skillTooltipHideTimeoutRef = useRef<number | null>(null);
   const isSkillTooltipHoveredRef = useRef(false);
   const [{ mode: renderMode, reason: simplifiedModeReason }, setRenderModeState] = useState(getInitialRenderState);
+  const [fullViewMode, setFullViewMode] = useState<FullViewMode>(getInitialFullViewMode);
   const [fullRenderAttempt, setFullRenderAttempt] = useState(0);
   const [heroScrollProgress, setHeroScrollProgress] = useState(0);
   const crossfadeProgress = useMemo(
@@ -217,6 +209,7 @@ function App() {
   const [techTooltip, setTechTooltip] = useState<FloatingTooltip | null>(null);
   const [skillProjectsTooltip, setSkillProjectsTooltip] = useState<SkillProjectsTooltip | null>(null);
   const isSimplifiedMode = renderMode === "simple";
+  const selectedViewMode: ViewMode = isSimplifiedMode ? "simple" : fullViewMode;
   const sortedMePictures = useMemo(() => [...mePictures].sort((a, b) => a.order - b.order), []);
   const aboutMePictureCards = useMemo(
     () =>
@@ -337,6 +330,16 @@ function App() {
     }
   }, []);
 
+  const updateStoredFullViewMode = useCallback((mode: FullViewMode) => {
+    if (typeof window === "undefined") return;
+
+    try {
+      window.localStorage.setItem(FULL_VIEW_MODE_STORAGE_KEY, mode);
+    } catch {
+      // Ignore storage failures in restricted browser contexts.
+    }
+  }, []);
+
   const closeSkillTooltipSoon = useCallback(() => {
     clearSkillTooltipCloseTimeout();
     skillTooltipHideTimeoutRef.current = window.setTimeout(() => {
@@ -376,14 +379,19 @@ function App() {
     });
   }, [updateStoredRenderMode]);
 
-  const toggleRenderMode = useCallback(() => {
-    if (isSimplifiedMode) {
-      switchToFullMode();
+  const selectViewMode = useCallback((view: ViewMode) => {
+    if (view === "simple") {
+      switchToSimplifiedMode("manual");
       return;
     }
 
-    switchToSimplifiedMode("manual");
-  }, [isSimplifiedMode, switchToFullMode, switchToSimplifiedMode]);
+    setFullViewMode(view);
+    updateStoredFullViewMode(view);
+
+    if (renderMode !== "full") {
+      switchToFullMode();
+    }
+  }, [renderMode, switchToFullMode, switchToSimplifiedMode, updateStoredFullViewMode]);
 
   const handlePixelSnowError = useCallback((message: string) => {
     console.warn("PixelSnow failed, switching to simplified mode.", message);
@@ -392,6 +400,11 @@ function App() {
 
   const handleFullExperienceError = useCallback((error: Error) => {
     console.error("Full experience crashed, switching to simplified mode.", error);
+    switchToSimplifiedMode("compatibility");
+  }, [switchToSimplifiedMode]);
+
+  const handleSolarExperienceError = useCallback((message: string) => {
+    console.error("Solar experience crashed, switching to simplified mode.", message);
     switchToSimplifiedMode("compatibility");
   }, [switchToSimplifiedMode]);
 
@@ -582,24 +595,24 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (!isSimplifiedMode) return;
+    if (!isSimplifiedMode && fullViewMode === "full") return;
 
     setOpenProject(null);
     setTechTooltip(null);
     setSkillProjectsTooltip(null);
-  }, [isSimplifiedMode]);
+  }, [fullViewMode, isSimplifiedMode]);
 
   useEffect(() => {
-    if (isSimplifiedMode) return;
+    if (isSimplifiedMode || fullViewMode !== "full") return;
 
     const updateViewportFlag = () => setIsMobileViewport(window.innerWidth < 768);
     updateViewportFlag();
     window.addEventListener("resize", updateViewportFlag);
     return () => window.removeEventListener("resize", updateViewportFlag);
-  }, [isSimplifiedMode]);
+  }, [fullViewMode, isSimplifiedMode]);
 
   useEffect(() => {
-    if (isSimplifiedMode) return;
+    if (isSimplifiedMode || fullViewMode !== "full") return;
 
     let animationFrameId = 0;
 
@@ -623,10 +636,10 @@ function App() {
       window.removeEventListener("scroll", onScrollOrResize);
       window.removeEventListener("resize", onScrollOrResize);
     };
-  }, [isSimplifiedMode]);
+  }, [fullViewMode, isSimplifiedMode]);
 
   useEffect(() => {
-    if (isSimplifiedMode || !openProject || isAutoPlayPaused) return;
+    if (isSimplifiedMode || fullViewMode !== "full" || !openProject || isAutoPlayPaused) return;
     
     const project = [...currentProjects, ...otherProjects].find(p => p.title === openProject);
     if (!project || !project.imageSrc || project.imageSrc.length <= 1) return;
@@ -638,7 +651,7 @@ function App() {
     }, 10000);
 
     return () => clearInterval(interval);
-  }, [isSimplifiedMode, openProject, isAutoPlayPaused, currentProjects, otherProjects, changeImage]);
+  }, [isSimplifiedMode, fullViewMode, openProject, isAutoPlayPaused, currentProjects, otherProjects, changeImage]);
 
   useEffect(() => {
     return () => clearSkillTooltipCloseTimeout();
@@ -648,12 +661,29 @@ function App() {
     return (
       <>
         <RenderModeControls
-          isSimplifiedMode={isSimplifiedMode}
+          selectedView={selectedViewMode}
           simplifiedModeReason={simplifiedModeReason}
-          onToggle={toggleRenderMode}
+          onSelect={selectViewMode}
         />
         <SimplePortfolio />
       </>
+    );
+  }
+
+  if (fullViewMode === "solar") {
+    return (
+      <Suspense fallback={<main className="relative min-h-screen bg-black" />}>
+        <>
+          <RenderModeControls
+            selectedView={selectedViewMode}
+            simplifiedModeReason={simplifiedModeReason}
+            onSelect={selectViewMode}
+          />
+          <FullExperienceBoundary key={`solar-experience-${fullRenderAttempt}`} onError={handleFullExperienceError}>
+            <SolarSystemPortfolio onCompatibilityError={handleSolarExperienceError} />
+          </FullExperienceBoundary>
+        </>
+      </Suspense>
     );
   }
 
@@ -661,9 +691,9 @@ function App() {
     <Suspense fallback={<main className="relative min-h-screen bg-black" />}>
       <>
       <RenderModeControls
-        isSimplifiedMode={isSimplifiedMode}
+        selectedView={selectedViewMode}
         simplifiedModeReason={simplifiedModeReason}
-        onToggle={toggleRenderMode}
+        onSelect={selectViewMode}
       />
       <FullExperienceBoundary key={`full-experience-${fullRenderAttempt}`} onError={handleFullExperienceError}>
       <main className="relative min-h-[220vh] bg-black text-white">
