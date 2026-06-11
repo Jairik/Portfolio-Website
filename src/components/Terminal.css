@@ -1,0 +1,206 @@
+/* Terminal Pure — faithful port of the "Terminal Pure" design prototype.
+   All rules are scoped under `.tpure` so they never leak into the main app. */
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;0,800;1,400&display=swap');
+
+.tpure {
+  --bg: #070906;
+  --bg2: #0b0e09;
+  --panel: #0d110b;
+  --ink: #d9e8cf;
+  --mut: #76836b;
+  --line: #1d2417;
+  --acid: #a6f73a;
+  --acid-deep: #5fae12;
+  --acid-dim: rgba(166, 247, 58, .12);
+  --amber: #f7c13a;
+  --red: #f75e3a;
+  --disp: "Anton", sans-serif;
+  --mono: "JetBrains Mono", monospace;
+
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(8px, 2.5vw, 32px);
+  color-scheme: dark;
+}
+.tpure * { box-sizing: border-box; }
+.tpure ::selection { background: var(--acid); color: #070906; }
+.tpure a { color: inherit; }
+.tpure h1, .tpure h2, .tpure h3, .tpure p { margin: 0; }
+.tpure button { font: inherit; }
+
+.tpure .fx-scan {
+  position: fixed; inset: 0; z-index: 91; pointer-events: none; opacity: .28;
+  background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(0, 0, 0, .18) 3px, transparent 4px);
+}
+.tpure .fx-vig {
+  position: fixed; inset: 0; z-index: 90; pointer-events: none;
+  background: radial-gradient(ellipse 120% 110% at 50% 45%, transparent 62%, rgba(0, 0, 0, .5));
+}
+.tpure .grid-bg {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image: linear-gradient(var(--acid-dim) 1px, transparent 1px), linear-gradient(90deg, var(--acid-dim) 1px, transparent 1px);
+  background-size: 56px 56px; opacity: .4;
+  -webkit-mask-image: radial-gradient(ellipse 75% 70% at 50% 50%, #000 25%, transparent 78%);
+  mask-image: radial-gradient(ellipse 75% 70% at 50% 50%, #000 25%, transparent 78%);
+}
+
+/* ---------- terminal fills the stage ---------- */
+.tpure .term {
+  position: relative; z-index: 2; width: min(1180px, 100%); height: 100%; max-height: 860px;
+  display: flex; flex-direction: column; border: 1px solid var(--line);
+  background: rgba(13, 17, 11, .94);
+  box-shadow: 0 40px 90px rgba(0, 0, 0, .55), 0 0 70px rgba(166, 247, 58, .06);
+}
+.tpure .term .bar {
+  flex: none; display: flex; align-items: center; gap: 8px; padding: 10px 14px;
+  border-bottom: 1px solid var(--line); background: var(--bg2); font-size: 11.5px; color: var(--mut);
+}
+.tpure .term .bar .d { width: 11px; height: 11px; border-radius: 50%; }
+.tpure .term .bar .d.r { background: var(--red); }
+.tpure .term .bar .d.y { background: var(--amber); }
+.tpure .term .bar .d.g { background: var(--acid); }
+.tpure .term .bar .ttl { margin-left: 10px; letter-spacing: .06em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tpure .term .scr { flex: 1; display: flex; flex-direction: column; min-height: 0; padding: 20px clamp(14px, 3vw, 38px) 22px; }
+
+.tpure .tv {
+  flex: 1; min-height: 0; overflow-y: auto; font-size: 13px; line-height: 1.6;
+  scrollbar-width: thin; scrollbar-color: var(--line) transparent;
+}
+.tpure .tv .ln { white-space: pre-wrap; word-break: break-word; }
+.tpure .tv .pr { color: var(--acid); font-weight: 700; }
+.tpure .tv .dim { color: var(--mut); }
+.tpure .tv .ok { color: var(--acid); }
+.tpure .tv .warn { color: var(--amber); }
+.tpure .tv .err { color: var(--red); }
+.tpure .tv .dir { color: var(--acid); font-weight: 700; }
+.tpure .tv a { color: var(--acid); text-decoration: underline; text-underline-offset: 3px; }
+.tpure .tv kbd {
+  color: var(--ink); border: 1px solid var(--line); padding: 0 6px;
+  font-family: inherit; font-size: 12px; cursor: pointer;
+}
+.tpure .tv pre { margin: 0; font-family: inherit; font-size: 12px; line-height: 1.35; color: var(--ink); }
+.tpure .tv pre.ok { color: var(--acid); }
+/* keep any wide ASCII art (top, tree, cowsay, sl, matrix) inside its own
+   scrollable block instead of forcing the whole terminal to overflow */
+.tpure .tv pre {
+  max-width: 100%; overflow-x: auto; overflow-y: hidden;
+  scrollbar-width: thin; scrollbar-color: var(--line) transparent;
+}
+.tpure .tv pre::-webkit-scrollbar { height: 6px; }
+.tpure .tv pre::-webkit-scrollbar-thumb { background: var(--line); }
+.tpure .lscols { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 2px 24px; max-width: 760px; }
+.tpure .tname { font-family: var(--disp); text-transform: uppercase; line-height: .9; font-size: clamp(34px, 6vw, 84px); margin: 14px 0 8px; }
+.tpure .tname .hollow { color: transparent; -webkit-text-stroke: 2px var(--ink); }
+.tpure .tname .zap { color: var(--acid); text-shadow: 0 0 50px rgba(166, 247, 58, .4); }
+.tpure .tstat { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 4px; }
+.tpure .tstat span { border: 1px solid var(--line); background: var(--bg2); padding: 5px 11px; font-size: 11px; color: var(--mut); }
+.tpure .tstat b { color: var(--acid); font-weight: 700; }
+.tpure .tcur { display: inline-block; width: 8px; height: 15px; background: var(--acid); vertical-align: -2px; }
+@media (prefers-reduced-motion: no-preference) {
+  .tpure .blink { animation: tpure-blink 1.1s steps(1) infinite; }
+  @keyframes tpure-blink { 50% { opacity: 0; } }
+}
+.tpure .tin {
+  position: fixed; top: 0; left: 0; width: 2px; height: 2px; opacity: 0; border: none; background: none;
+  pointer-events: none; color: transparent;
+}
+
+/* neofetch / fastfetch: logo + info side-by-side, stacking on narrow screens */
+.tpure .nf { display: flex; gap: 22px; align-items: flex-start; flex-wrap: wrap; }
+.tpure .nf-logo { flex: none; margin: 0; white-space: pre; color: var(--acid); line-height: 1.15; overflow: visible; }
+.tpure .nf-info { flex: 1 1 240px; min-width: 0; }
+.tpure .nf-row { white-space: normal; word-break: break-word; }
+@media (max-width: 560px) {
+  .tpure .nf { gap: 6px; }
+  .tpure .nf-logo { font-size: 11px; }
+}
+
+/* ---------- TUI ---------- */
+.tpure .tui { display: none; flex-direction: column; flex: 1; min-height: 0; border: 1px solid var(--acid-deep); }
+.tpure .tui.on { display: flex; }
+.tpure .tui-top { flex: none; display: flex; border-bottom: 1px solid var(--acid-deep); font-size: 11px; letter-spacing: .06em; overflow-x: auto; }
+.tpure .tui-top span { padding: 7px 14px; color: var(--mut); border-right: 1px solid var(--line); cursor: pointer; white-space: nowrap; }
+.tpure .tui-top span.on { background: var(--acid); color: #070906; font-weight: 700; }
+.tpure .tui-main { flex: 1; display: grid; grid-template-columns: minmax(170px, 250px) 1fr; min-height: 0; }
+.tpure .tui-list {
+  overflow-y: auto; border-right: 1px solid var(--line); margin: 0; padding: 6px 0; list-style: none; font-size: 12.5px;
+  scrollbar-width: thin; scrollbar-color: var(--line) transparent;
+}
+.tpure .tui-list li { padding: 5px 14px; color: var(--mut); cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tpure .tui-list li::before { content: "  "; }
+.tpure .tui-list li.sel { background: var(--acid); color: #070906; font-weight: 700; }
+.tpure .tui-list li.sel::before { content: "> "; }
+.tpure .tui-view {
+  overflow-y: auto; padding: 16px 20px; font-size: 12.5px; min-width: 0;
+  scrollbar-width: thin; scrollbar-color: var(--line) transparent;
+}
+.tpure .tui-view h3 {
+  font-family: var(--disp); text-transform: uppercase; font-size: clamp(20px, 2.4vw, 30px); color: var(--acid);
+  margin-bottom: 8px; font-weight: 400; letter-spacing: .02em;
+}
+.tpure .tui-view .meta { color: var(--mut); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 12px; }
+.tpure .tui-view p { color: var(--ink); margin-bottom: 14px; max-width: 620px; font-size: 12.5px; }
+.tpure .tui-view img { max-width: min(440px, 100%); border: 1px solid var(--line); cursor: zoom-in; margin-bottom: 12px; display: block; }
+.tpure .tui-view .kv { color: var(--mut); margin-bottom: 5px; font-size: 12px; }
+.tpure .tui-view .kv b { color: var(--acid); font-weight: 700; }
+.tpure .tui-view a { color: var(--acid); text-decoration: underline; text-underline-offset: 3px; }
+.tpure .tui-foot {
+  flex: none; border-top: 1px solid var(--acid-deep); padding: 7px 14px; font-size: 10px; color: var(--mut);
+  letter-spacing: .06em; display: flex; gap: 12px; flex-wrap: wrap;
+}
+.tpure .tui-foot b { color: #070906; background: var(--acid); padding: 1px 6px; font-weight: 700; }
+@media (max-width: 760px) {
+  .tpure .tui-main { grid-template-columns: 1fr; }
+  .tpure .tui-view { display: none; border-top: 1px solid var(--line); }
+  .tpure .tui.mview .tui-list { display: none; }
+  .tpure .tui.mview .tui-view { display: block; }
+}
+
+/* ---------- vim: minimal modal editor ---------- */
+.tpure .ved {
+  display: none; flex: 1 1 auto; min-height: 0; height: min(58vh, 540px); flex-direction: column;
+  border: 1px solid var(--acid-deep); background: rgba(7, 9, 6, .65);
+}
+.tpure .ved.on { display: flex; }
+.tpure .ved-buf {
+  flex: 1; min-height: 0; overflow-y: auto; padding: 8px 0; font-size: 12.5px; line-height: 1.55;
+  scrollbar-width: thin; scrollbar-color: var(--line) transparent;
+}
+.tpure .vln { display: flex; }
+.tpure .vnum { flex: none; width: 44px; text-align: right; padding-right: 12px; color: var(--mut); user-select: none; }
+.tpure .vtx { flex: 1; white-space: pre-wrap; word-break: break-word; min-height: 1.55em; }
+.tpure .vcur { background: var(--acid); color: #070906; }
+.tpure .ved.ins .vcur { background: var(--amber); }
+.tpure .ved-status {
+  flex: none; display: flex; align-items: center; gap: 16px; border-top: 1px solid var(--line);
+  background: var(--bg2); padding: 4px 12px; font-size: 11px; color: var(--mut);
+}
+.tpure .ved-status .vmode { color: #070906; background: var(--acid); font-weight: 700; padding: 1px 8px; letter-spacing: .08em; }
+.tpure .ved.ins .ved-status .vmode { background: var(--amber); }
+.tpure .ved-status .vpos { margin-left: auto; }
+.tpure .ved-cmd { flex: none; padding: 3px 12px 5px; font-size: 12px; min-height: 24px; color: var(--ink); border-top: 1px solid var(--line); }
+.tpure .ved-cmd .err { color: var(--red); }
+
+/* ---------- lightbox ---------- */
+.tpure .lb {
+  position: fixed; inset: 0; z-index: 95; background: rgba(4, 5, 3, .92); display: none; align-items: center;
+  justify-content: center; flex-direction: column; gap: 14px; padding: 30px; cursor: zoom-out;
+}
+.tpure .lb.on { display: flex; }
+.tpure .lb img {
+  max-width: min(1100px, 92vw); max-height: 78vh; object-fit: contain; border: 1px solid var(--acid-deep);
+  box-shadow: 0 0 80px rgba(166, 247, 58, .15);
+}
+.tpure .lb .cap { font-size: 12px; color: var(--mut); max-width: 700px; text-align: center; }
+.tpure .lb .keys { font-size: 10.5px; color: var(--mut); letter-spacing: .14em; }
+.tpure .lb .keys b { color: var(--ink); border: 1px solid var(--line); padding: 2px 7px; margin: 0 3px; }

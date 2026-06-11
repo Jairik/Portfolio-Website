@@ -12,6 +12,7 @@ export class ProjectItem {
     demoVideoLink?: string = "";  // Link to demo video (if applicable)
     featured?: boolean = false;  // Whether the project is featured for the website
     current?: boolean = false;  // Whether the project is currently in progress
+    award?: string = "";  // Award/placement, if any (e.g. hackathon win)
 
     // Default constructor for easy creation
     constructor(
@@ -24,7 +25,8 @@ export class ProjectItem {
         demoLink?: string,
         demoVideoLink?: string,
         featured?: boolean,
-        current?: boolean
+        current?: boolean,
+        award?: string
     ) {
         this.title = title;
         this.date = date;
@@ -36,6 +38,7 @@ export class ProjectItem {
         this.demoVideoLink = demoVideoLink;
         this.featured = featured;
         this.current = current;
+        this.award = award;
     }
 }
 
@@ -56,7 +59,8 @@ export function getProjectItems(): ProjectItem[] {
         "",  // Demo Link (not applicable for this)
         "https://www.youtube.com/watch?v=ntU7dSQPw1w",  // Demo Video Link
         true,  // Featured
-        true   // Current
+        true,   // Current
+        "1st · Rutgers HealthHack 2025"  // Award
     ));
 
     // TestifAI
@@ -69,7 +73,9 @@ export function getProjectItems(): ProjectItem[] {
         ["/projects/TestIfAI-1.png", "/projects/TestIfAI-2.png", "/projects/TestIfAI-3.png", "/projects/TestIfAI-4.png"],  // Demo Image Sources
         "https://testifai.dustintobrien.com/",  // Demo Link
         "https://www.youtube.com/watch?v=DFYo5gKj0tA",  // Demo Video Link
-        false  // Featured
+        false,  // Featured
+        false,  // Current
+        "2nd Overall · HackUMBC 2024"  // Award
     ));
 
     // CapyMorph
@@ -224,7 +230,7 @@ export function getProjectItems(): ProjectItem[] {
         "https://github.com/Jairik/MOVE4WELLNESS-Android-App",  // GitHub Link
         ["Java", "Android Studio", "Firebase", "Figma"],  // Tech Stack
         "April 2024 - May 2024",  // Date
-        ["/projects/MOVE4WELLNESS-1.png", "/projects/MOVE4WELLNESS-2.png", "/projects/MOVE4WELLNESS-3.png", "/projects/MOVE4WELLNESS-3.png"],  // Demo Image Sources
+        ["/projects/MOVE4WELLNESS-1.png", "/projects/MOVE4WELLNESS-2.png", "/projects/MOVE4WELLNESS-3.png", "/projects/MOVE4WELLNESS-4.png"],  // Demo Image Sources
         "",  // Demo Link  (not applicable for this)
         "",  // Demo Video Link  (not applicable for this)
         false  // Featured
@@ -243,7 +249,6 @@ export function getProjectItems(): ProjectItem[] {
         false  // Featured
     ));
 
-    /* === CURRENT PROJECTS === */
     // Shakesperean LLM Chatbot
     allProjects.push(new ProjectItem(
         "Shakespearean Personality LLM Augmentation",  // Title
@@ -271,6 +276,8 @@ export function getProjectItems(): ProjectItem[] {
         false,  // Not featured
         true   // Current
     ));
+
+    /* === CURRENT PROJECTS === */
 
     return allProjects;
 }
