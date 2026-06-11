@@ -1020,12 +1020,22 @@ export default function Terminal() {
       focusTin();
     });
     /* clicking a kbd suggestion runs it */
+    function kbdToCmd(raw: string): string {
+      return raw
+        .split("—")[0]                    // drop any trailing description
+        .split(" / ")[0]                  // multi-command rows: take the first
+        .replace(/<([^>|]+)\|[^>]*>/g, "$1") // <a|b|c> -> first alternative
+        .replace(/<[^>]*>/g, "")          // <file>, <dir>, ... -> strip
+        .replace(/\[[^\]]*\]/g, "")       // [dir] optional args -> strip
+        .replace(/\s+/g, " ").trim();
+    }
     on(view, "click", e => {
       const k = (e.target as HTMLElement).closest("kbd");
       if (!k) return;
-      const cmd = (k.textContent || "").replace(/<.+?>/g, "").split("—")[0].trim();
+      const cmd = kbdToCmd(k.textContent || "");
+      if (!cmd) return;
       buffer = ""; tin.value = "";
-      exec(cmd.replace(/<(\w+)>/, "").trim());
+      exec(cmd);
       renderBuf();
       focusTin();
     });
