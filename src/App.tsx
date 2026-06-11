@@ -25,6 +25,7 @@ import {
   getInitialRenderState,
   type SimplifiedModeReason
 } from "./lib/renderMode";
+import { fetchCommitCount } from "./lib/commitCount";
 
 // Lazy-loaded heavy components to split initial bundle
 const DecryptedText = lazy(() => import("./components/DecryptedText"));
@@ -42,67 +43,6 @@ const HERO_CROSSFADE_DURATION = 0.2;
 const HERO_BACKGROUND_FADE_START = 0.82;
 const HERO_BACKGROUND_FADE_DURATION = 0.18;
 const BENTO_CARD_BACKGROUND = "#1d1f22";
-const COMMIT_COUNT_ENDPOINT = "https://jairik--e9c872b823b611f1845142dde27851f2.web.val.run";  // Returns just the total commits
-const COMMIT_COUNT_FIELDS = [
-  "totalCommits",
-  "total_commits",
-  "commitCount",
-  "commit_count",
-  "commits",
-  "total",
-  "count",
-  "value"
-] as const;
-
-const parseNumericValue = (value: unknown): number | null => {
-  if (typeof value === "number" && Number.isFinite(value)) {
-    return Math.max(0, Math.round(value));
-  }
-
-  if (typeof value === "string") {
-    const parsed = Number(value.trim().replace(/,/g, ""));
-    if (Number.isFinite(parsed)) {
-      return Math.max(0, Math.round(parsed));
-    }
-  }
-
-  return null;
-};
-
-const parseCommitCount = (payload: unknown): number | null => {
-  const directValue = parseNumericValue(payload);
-  if (directValue !== null) return directValue;
-
-  if (!payload || typeof payload !== "object") return null;
-
-  const queue: unknown[] = [payload];
-  const visited = new Set<object>();
-
-  while (queue.length > 0) {
-    const current = queue.shift();
-    if (!current || typeof current !== "object") continue;
-    if (visited.has(current as object)) continue;
-    visited.add(current as object);
-
-    const record = current as Record<string, unknown>;
-
-    for (const field of COMMIT_COUNT_FIELDS) {
-      if (field in record) {
-        const parsed = parseNumericValue(record[field]);
-        if (parsed !== null) return parsed;
-      }
-    }
-
-    Object.values(record).forEach(value => {
-      if (value && typeof value === "object") {
-        queue.push(value);
-      }
-    });
-  }
-
-  return null;
-};
-
 type FloatingTooltip = { name: string; x: number; y: number };
 type SkillProjectsTooltip = {
   skillName: string;
@@ -544,29 +484,7 @@ function App() {
 
     const loadCommitCount = async () => {
       try {
-        const response = await fetch(COMMIT_COUNT_ENDPOINT, {
-          method: "GET",
-          signal: controller.signal,
-          headers: {
-            Accept: "application/json, text/plain"
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error(`Commit endpoint returned ${response.status}`);
-        }
-
-        const contentType = response.headers.get("content-type") || "";
-        const payload: unknown = contentType.includes("application/json")
-          ? await response.json()
-          : await response.text();
-        const parsedCommitCount = parseCommitCount(payload);
-
-        if (parsedCommitCount === null) {
-          throw new Error("Commit endpoint response does not contain a numeric commit total.");
-        }
-
-        setCommitCount(parsedCommitCount);
+        setCommitCount(await fetchCommitCount(controller.signal));
       } catch (error) {
         if ((error as Error).name !== "AbortError") {
           console.error("Unable to load total commits.", error);

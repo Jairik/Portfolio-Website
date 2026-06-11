@@ -1,5 +1,5 @@
 import { useInView, useMotionValue, useSpring } from 'motion/react';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 
 interface CountUpProps {
   to: number;
@@ -69,7 +69,8 @@ export default function CountUp({
     [maxDecimals, separator]
   );
 
-  useEffect(() => {
+  // Set initial value before paint; effects own textContent so parent re-renders can't clobber the animation
+  useLayoutEffect(() => {
     if (ref.current) {
       ref.current.textContent = formatValue(direction === 'down' ? to : from);
     }
