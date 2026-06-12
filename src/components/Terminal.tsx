@@ -406,6 +406,10 @@ export default function Terminal() {
       print(rows.map(([c, d]) => `<kbd>${esc(c)}</kbd> <span class="dim">— ${d}</span>`).join("<br />"));
       print(`<span class="dim">psst: <kbd>sudo hire-me</kbd> is a valid command.</span>`);
     }
+    function exitTerminal() {
+      print(`logout — returning to the GUI…`, "ok");
+      later(() => navigate("/"), 650);
+    }
     function whoami() {
       print(`<h1 class="tname"><span class="hollow">Jairik 'JJ'</span><br /><span class="zap">McCauley</span></h1>` +
         `<span class="dim"><b style="color:var(--ink)">full-stack software engineer</b> — AI, data, shipping fast. CS (AI/SWE) + Data Science @ Salisbury. Thrower. Corgi guy.</span> <span class="ok">[STATUS: OPEN TO WORK]</span>` +
@@ -951,8 +955,7 @@ export default function Terminal() {
           later(() => { window.location.href = "/links"; }, 650);
           break;
         case "exit": case "logout": case "gui":
-          print(`logout — returning to the GUI…`, "ok");
-          later(() => navigate("/"), 650);
+          exitTerminal();
           break;
         case "vim": case "vi": case "nvim": case "neovim": enterVed(arg); break;
         case "nano": case "pico": print(`nano: command not found. we don't use nano around here — this is a <span class="ok">vim</span> household. <span class="dim">(the training wheels are in the bin out back. try <kbd>vim</kbd>.)</span>`, "err"); break;
