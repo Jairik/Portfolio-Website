@@ -1,0 +1,62 @@
+/* Featured project poster: window chrome, main shot + filmstrip, info column. */
+import { useState } from "react";
+import TechChips from "./TechChips";
+import ProjectLinks from "./ProjectLinks";
+import { slug, type HomeProject } from "../../lib/terminalHomeData";
+
+/* Renders one featured project window with a clickable screenshot filmstrip */
+export default function FeaturedWindow({ p }: { p: HomeProject }) {
+  // Index of the screenshot currently shown as the main image
+  const [mainIdx, setMainIdx] = useState(0);
+
+  return (
+    <article className="pwin rv">
+      {/* window chrome: traffic lights, fake path, optional award badge */}
+      <div className="bar">
+        <span className="d r" /><span className="d y" /><span className="d g" />
+        <span className="ttl">~/projects/{slug(p.title)} — {p.date}</span>
+        {p.award && <span className="award">★ {p.award}</span>}
+      </div>
+      <div className="body">
+        {/* screenshot pane: clicking the main image opens the lightbox */}
+        <div className="pshot">
+          <img
+            className="main"
+            src={p.images[mainIdx]}
+            alt={`${p.title} screenshot`}
+            loading="lazy"
+            data-lb={p.images[mainIdx]}
+            data-cap={p.title}
+            role="button"
+            tabIndex={0}
+            aria-label={`Open ${p.title} screenshot ${mainIdx + 1} in lightbox`}
+            style={{ cursor: "zoom-in" }}
+          />
+          <span className="count">IMG {mainIdx + 1}/{p.images.length}</span>
+          {p.images.length > 1 && (
+            <div className="strip">
+              {p.images.map((im, j) => (
+                <button
+                  key={im}
+                  className={j === mainIdx ? "on" : ""}
+                  aria-label={`screenshot ${j + 1}`}
+                  onClick={() => setMainIdx(j)}
+                >
+                  <img src={im} alt="" loading="lazy" />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+        {/* info column: date, title, description, tech pills, links */}
+        <div className="pinfo">
+          <span className="pdate">{p.date}</span>
+          <h3>{p.title}</h3>
+          <p className="pdesc">{p.desc}</p>
+          <TechChips tech={p.tech} />
+          <ProjectLinks p={p} />
+        </div>
+      </div>
+    </article>
+  );
+}
