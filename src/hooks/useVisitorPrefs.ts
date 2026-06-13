@@ -10,7 +10,7 @@ export interface Prefs { color: string; trail: boolean }
 function loadPrefs(): Prefs {
   let stored: Partial<Prefs> | null = null;
   try { stored = JSON.parse(window.localStorage.getItem(C.PREFS_STORAGE_KEY) || "null"); } catch { /* ignore */ }
-  return { color: "acid", trail: true, ...(stored || {}) };
+  return { color: "lime", trail: true, ...(stored || {}) };
 }
 
 /* Owns the visitor prefs: applies the accent CSS variables to the page root
@@ -23,7 +23,7 @@ export function useVisitorPrefs(rootRef: RefObject<HTMLDivElement | null>): [Pre
     const root = rootRef.current;
     if (!root) return;
     // Swap the accent CSS variables on the page root (everything derives from them)
-    const accent = C.ACCENTS[prefs.color] || C.ACCENTS.acid;
+    const accent = C.ACCENTS[prefs.color] || C.ACCENTS.lime;
     root.style.setProperty("--acid", accent.c);
     root.style.setProperty("--acid-deep", accent.deep);
   }, [rootRef, prefs]);

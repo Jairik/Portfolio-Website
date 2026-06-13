@@ -13,7 +13,7 @@
 /* ---------- top ribbon (escape hatch to the /terminal build) ---------- */
 export const ribbon = {
     // Bold segment is wrapped separately so the design's <b> styling applies
-    messageStart: "scroll-allergic? this site ships a ",
+    messageStart: "hate GUIs? this site ships a ",
     messageBold: "terminal-only",
     messageEnd: " build.",
     buttonLabel: "use the terminal",
@@ -42,7 +42,7 @@ export const hero = {
     typedCommand: "whoami",  // typed out character-by-character after load
     nameRows: ["JAIRIK 'JJ'", "McCAULEY"],  // first row hollow-stroked, second acid green
     // Output line under the typewriter: "// <blurb> <bold> — <location> <status>"
-    outBlurb: "// ships fast, breaks the right things. ",
+    outBlurb: "// moves fast and occasionally breaks the staging server. ",
     outBold: "CS (AI/SWE) + Data Science",
     outLocation: " — Salisbury, MD. ",
     outStatus: "● open to work",
@@ -55,7 +55,6 @@ export const heroRoles = [
     "lifelong learner",
     "absolute nerd",
     "computer science & data science",
-    "hackathon menace",
     "vim enjoyer"
 ];
 
@@ -74,24 +73,27 @@ export const buildHeroStats = (counts: { projects: number; commits: number; role
 /* ---------- marquees ---------- */
 // Loud (acid background) marquee between the hero and featured work
 export const marqueeLoud = [
-    "git push --force-with-confidence",
+    "git push --force",
     "1st place — rutgers healthhack",
     "2nd overall — hackumbc",
+    "most distinguished computer science award",
     "full-stack",
     "ai / ml",
     "ships fast",
-    "vim btw"
+    "arch & vim btw",
+    "when is the rust refactor?",
 ];
 
 // Quiet marquee between featured work and the archive
 export const marqueeQuiet = [
-    "the rest of the damage",
-    "hacks",
+    "more stuff",
+    "random utilities",
     "dashboards",
     "games",
     "crypto-chat",
+    "rag systems",
     "computer vision",
-    "distributed systems"
+    "distributed systems",
 ];
 
 /* ---------- section headers (comment line + big display title) ---------- */
@@ -113,7 +115,7 @@ export const arsenalNoMatches = "0 matches in public repos — coursework, consu
 /* ---------- archive flavor text ---------- */
 // Fallback line when an archive project has no screenshots on record
 export const archiveNoImagery = {
-    prefix: "no imagery on record — ",
+    prefix: "no images — ",
     closedSource: "source and assets are closed.",
     openSource: "this one lives in the code."
 };
@@ -133,25 +135,30 @@ export const aboutHighlights = ["nerd for this stuff", "Slay the Spire", "Corgi 
 export const footer = {
     yell: "GOT SOMETHING COOL? LET'S BUILD IT.",
     email: "mjairik@gmail.com",  // rendered as the giant hollow-stroke mailto link
-    fine: '© 2026 jairik "jj" mccauley — terminal edition · exit code 0'
+    fine: '© 2026 jairik "jj" mccauley — terminal edition · exit code one million'
 };
 
 /* ---------- ./config modal (visitor preferences) ---------- */
 export const configModal = {
-    barTitle: "nano ~/.jjrc — visitor preferences",
+    barTitle: "nvim ~/.jjrc — visitor preferences",
     comment: "your prefs — saved to this browser only",
     colorKey: "favorite_color",
     trailKey: "cursor_trail",
     saveLabel: ":wq",
-    saveHint: "save & quit"
+    saveHint: "type :wq · Enter"
 };
 
 // Accent palettes selectable in ./config; "deep" is the darker companion shade
 export const ACCENTS: Record<string, { c: string; deep: string }> = {
-    acid: { c: "#a6f73a", deep: "#5fae12" },
+    lime: { c: "#a6f73a", deep: "#5fae12" },
+    acid: { c: "#ff3af7", deep: "#c012ae" },
+    moss: { c: "#34d399", deep: "#065f46" },
     amber: { c: "#f7c13a", deep: "#b8860d" },
     cyan: { c: "#3af7d8", deep: "#0fae93" },
-    violet: { c: "#b07bff", deep: "#7a3ee8" }
+    violet: { c: "#b07bff", deep: "#7a3ee8" },
+    coral: { c: "#ff6b4a", deep: "#c2410c" },
+    ice: { c: "#67e8f9", deep: "#0891b2" },
+    rose: { c: "#fb7185", deep: "#be123c" }
 };
 
 // localStorage key holding the visitor's saved { color, trail } preferences

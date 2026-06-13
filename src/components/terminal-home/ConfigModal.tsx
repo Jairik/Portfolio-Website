@@ -1,7 +1,7 @@
 /* ./config modal: visitor accent + cursor trail prefs. The prefs themselves
    live in useVisitorPrefs (which persists to localStorage); this component
-   just renders the controls and closes on Escape / backdrop / ✕ / save. */
-import { useEffect } from "react";
+   renders the controls and closes on Escape / backdrop / ✕ / :wq. */
+import { useCallback, useEffect, useState } from "react";
 import type { Prefs } from "../../hooks/useVisitorPrefs";
 import * as C from "../../assets/terminalContent";
 
@@ -15,13 +15,69 @@ interface ConfigModalProps {
 
 /* Renders the prefs dialog; every string comes from terminalContent.ts */
 export default function ConfigModal({ open, onClose, prefs, onSave }: ConfigModalProps) {
-  // Escape closes the modal while it is open
+  const [cmdMode, setCmdMode] = useState(false);
+  const [cmdText, setCmdText] = useState("");
+
+  // Clear the vim command line whenever the modal closes
+  useEffect(() => {
+    if (open) return;
+    setCmdMode(false);
+    setCmdText("");
+  }, [open]);
+
+  // Persist current prefs and close (:wq / save button)
+  const saveAndQuit = useCallback(() => {
+    onSave(prefs);
+    onClose();
+  }, [onSave, onClose, prefs]);
+
+  // Keyboard: Escape, ':' command mode, and :wq to save & quit
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (cmdMode) {
+          e.preventDefault();
+          setCmdMode(false);
+          setCmdText("");
+        } else {
+          onClose();
+        }
+        return;
+      }
+
+      if (cmdMode) {
+        e.preventDefault();
+        if (e.key === "Enter") {
+          const cmd = cmdText.trim();
+          if (cmd === "wq" || cmd === "x") saveAndQuit();
+          else if (cmd === "q" || cmd === "q!") onClose();
+          setCmdMode(false);
+          setCmdText("");
+        } else if (e.key === "Backspace") {
+          const next = cmdText.slice(0, -1);
+          setCmdText(next);
+          if (!next) setCmdMode(false);
+        } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+          setCmdText(prev => prev + e.key);
+        }
+        return;
+      }
+
+      // ':' opens vim-style command entry (skip real text fields)
+      if (e.key === ":" && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        const tag = (e.target as HTMLElement)?.tagName;
+        if (tag === "INPUT" || tag === "TEXTAREA") return;
+        e.preventDefault();
+        setCmdMode(true);
+        setCmdText("");
+      }
+    };
+
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+  }, [open, onClose, cmdMode, cmdText, saveAndQuit]);
 
   return (
     <div className={`cfg${open ? " on" : ""}`} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
@@ -59,10 +115,20 @@ export default function ConfigModal({ open, onClose, prefs, onSave }: ConfigModa
               {prefs.trail ? "on" : "off"}
             </button>
           </div>
-          {/* save just closes — changes apply (and persist) immediately */}
+          {/* :wq saves prefs and closes; swatch/toggle changes persist immediately */}
           <div className="cfg-foot">
-            <button className="cfg-save" onClick={onClose}>{C.configModal.saveLabel}</button>
-            <span className="hint">{C.configModal.saveHint}</span>
+            {cmdMode ? (
+              <div className="cfg-cmd" aria-live="polite">
+                <span className="cfg-cmd-prompt">:</span>
+                <span className="cfg-cmd-text">{cmdText}</span>
+                <span className="cfg-cmd-cur blink" aria-hidden="true" />
+              </div>
+            ) : (
+              <>
+                <button className="cfg-save" onClick={saveAndQuit}>{C.configModal.saveLabel}</button>
+                <span className="hint">{C.configModal.saveHint}</span>
+              </>
+            )}
           </div>
         </div>
       </div>

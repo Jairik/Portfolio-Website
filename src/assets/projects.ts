@@ -52,7 +52,7 @@ export function getProjectItems(): ProjectItem[] {
         "Lunara",  // Title
         "AI-powered triage system for healthcare, winning 1st place at Rutgers HealthHack 2025. Currently working with Rutgers on a completer program to bring to production.",  // Brief Description
         "https://github.com/Jairik/RUHealthHack-25",  // GitHub Link
-        ["AWS", "React", "Vite", "Node.js", "FastAPI", "Python", "Scikit-Learn", "Terraform"],  // Tech Stack
+        ["AWS", "React", "JavaScript", "Vite", "Node.js", "FastAPI", "Python", "Scikit-Learn", "Terraform"],  // Tech Stack
         "October 2025 - Present",  // Date
         ["/projects/Lunara-1.png", "/projects/Lunara-2.png", "/projects/Lunara-3.png", "/projects/Lunara-4.png", "/projects/Lunara-5.png", 
             "/projects/Lunara-6.png", "/projects/Lunara-7.png", "/projects/Lunara-8.png"],// Demo Image Sources
@@ -83,7 +83,7 @@ export function getProjectItems(): ProjectItem[] {
         "CapyMorph",  // Title
         "Educational 2D game that facilitates interactive morpheme exercises.",  // Brief Description
         "https://github.com/Jairik/Capymorph",  // GitHub Link
-        ["React", "Vite", "Phaser.js", "Go", "MongoDB", "Docker", "Fly.io", "Zustand"],  // Tech Stack
+        ["React", "TypeScript", "Vite", "Phaser.js", "Go", "MongoDB", "Docker", "Fly.io", "Zustand"],  // Tech Stack
         "December 2025",  // Date
         ["/projects/CapyMorph-1.png", "/projects/CapyMorph-2.png", "/projects/CapyMorph-3.png"],  // Demo Image Sources
         "https://capymorph.fly.dev/",  // Demo Link 
@@ -96,7 +96,7 @@ export function getProjectItems(): ProjectItem[] {
         "PerishLess",  // Title
         "Food waste reduction platform that uses AI to predict spoilage and optimize inventory management for households.",  // Brief Description
         "https://github.com/Jairik/Perishless",  // GitHub Link
-        ["React", "Vite", "FastAPI", "Python", "Firebase Authentication", "FireStore", "Google Cloud", "Google Gemini", "Eleven Labs", "Docker", "Digital Ocean Droplet (VPS)", "Nginx"],  // Tech Stack
+        ["React", "TypeScript", "Vite", "FastAPI", "Python", "Firebase Authentication", "FireStore", "Google Cloud", "Google Gemini", "Eleven Labs", "Docker", "Digital Ocean Droplet (VPS)", "Nginx"],  // Tech Stack
         "March 2026",  // Date
         ["/projects/Perishless-1.png", "/projects/Perishless-2.png", "/projects/Perishless-3.png", "/projects/Perishless-4.png"],  // Demo Image Sources
         "", // "https://perishless.tech/",  // Demo Link TODO FIX - THIS IS CURRENTLY DOWN
@@ -122,7 +122,7 @@ export function getProjectItems(): ProjectItem[] {
         "Parallel Query Processing System",  // Title
         "Distributed system that optimizes SQL query execution across multiple nodes, significantly reducing processing time.",  // Brief Description
         "https://github.com/Jairik/Parallel-Query-Processing-System",  // GitHub Link
-        ["MPI", "OpenMP", "C"],  // Tech Stack
+        ["MPI", "OpenMP", "C", "Python", ],  // Tech Stack
         "November 2025 - December 2025",  // Date
         [],  // Demo Image Sources (TODO)
         "",  // Demo Link  (not applicable for this)
@@ -135,7 +135,7 @@ export function getProjectItems(): ProjectItem[] {
         "ClarityCash",  // Title
         "Data driven budgeting app that turns your financial data into clear insights and actionable plans.",  // Brief Description
         "https://github.com/aforti1/clarity-cash",  // GitHub Link
-        ["React", "Vite", "Firebase", "Plaid API", "FastAPI", "Gemini", "TailwindCSS", "Python"],  // Tech Stack
+        ["React", "TypeScript", "Vite", "Firebase", "Plaid API", "FastAPI", "Gemini", "TailwindCSS", "Python"],  // Tech Stack
         "November 2025",  // Date
         [],  // TODO Demo Image Sources
         "",  // Demo Link  (not applicable for this)
@@ -148,7 +148,7 @@ export function getProjectItems(): ProjectItem[] {
         "KnowYourUni",  // Title
         "Student analytics platform providing ML-derived insights into student performance.",  // Brief Description
         "https://github.com/ncorcoran771/KnowYourUni_",  // GitHub Link
-        ["React", "Vite", "Neo4J", "FastAPI", "Gemini", "Langchain", "Python"],  // Tech Stack
+        ["React", "TypeScript", "Vite", "Neo4J", "FastAPI", "Gemini", "Langchain", "Python"],  // Tech Stack
         "September 2025 - November 2025",  // Date
         ["/projects/KnowYourUni-1.png", "/projects/KnowYourUni-2.png", "/projects/KnowYourUni-3.png", "/projects/KnowYourUni-4.png",
             "/projects/KnowYourUni-5.png", "/projects/KnowYourUni-6.png"],  // Demo Image Sources
@@ -189,7 +189,7 @@ export function getProjectItems(): ProjectItem[] {
         "Data Science Stuff",  // Title
         "Data science project collection showcasing different ETL and ML techniques on numerous different datasets.",  // Brief Description
         "https://github.com/Jairik/Data-Science-Fundementals",  // GitHub Link
-        ["Python", "Pandas", "Numpy", "Scikit-Learn", "Tensorflow", "Seaborn", "Plotly", "Jupyter"],  // Tech Stack
+        ["Python", "Pandas", "Numpy", "Scikit-Learn", "Tensorflow", "Seaborn", "Plotly", "Jupyter", "MKDocs"],  // Tech Stack
         "August 2025 - December 2025",  // Date
         [],  // Demo Image Sources (not applicable for this)
         "https://jairik.github.io/Data-Science-Fundementals/",  // Demo Link  (basic dsci portfolio website)
@@ -239,9 +239,9 @@ export function getProjectItems(): ProjectItem[] {
     // Portfolio Website
     allProjects.push(new ProjectItem(
         "Portfolio Website",  // Title
-        "Personal portfolio website featuring interactive visuals and project storytelling.",  // Brief Description
+        "Personal portfolio website (no way who would've known!).",  // Brief Description
         "https://github.com/Jairik/Portfolio-Website",  // GitHub Link
-        ["React", "Vite", "TailwindCSS", "Three.js"],  // Tech Stack
+        ["React", "TypeScript", "Vite", "TailwindCSS", "Three.js", "Cloudflare", "GitHub Actions"],  // Tech Stack
         "January 2026 - Present",  // Date
         ["/projects/Portfolio-Website.png"],  // Demo Image Sources
         "https://jjmccauley.com",  // Demo Link
@@ -249,35 +249,63 @@ export function getProjectItems(): ProjectItem[] {
         false  // Featured
     ));
 
-    // Shakesperean LLM Chatbot
+    // Shakespearean LLM Chatbot (DSCI490)
     allProjects.push(new ProjectItem(
         "Shakespearean Personality LLM Augmentation",  // Title
-        "Develops and evaluates methods for persona-consistent AI, focusing on Shakespear's works of Hamlet and Macbeth to acheive four-way conversations among language models.",  // Brief Description
+        "Develops and evaluates persona-consistent LLMs grounded in Hamlet and Macbeth via LoRA fine-tuning, RAG, and a FastAPI + React demo for single-character and multi-model dialogues.",  // Brief Description
         "https://github.com/bmccorison/DSCI490-Shakespearean-Personality-LLM-Augmentation-",  // GitHub Link
-        ["Python", "HuggingFace", "Pinecone", "React", "Vite"],  // Tech Stack
-        "January 2026 - Present",  // Date
-        [],  // Demo Image Sources (not applicable for this)
-        "",  // Demo Link  (not applicable for this)
+        ["Python", "PyTorch", "Tensorflow", "HuggingFace", "RAG", "FastAPI", "React", "TypeScript", "Vite", "TailwindCSS", "Docker"],  // Tech Stack
+        "January 2026 - May 2026",  // Date
+        ["/projects/Shakespearean-LLM-1.png"],  // Demo Image Sources
+        "",  // Demo Link  (local web demo via runWebDemo.sh)
         "",  // Demo Video Link  (not applicable for this)
         false,  // Not featured
-        true   // Current
+        false   // Past
     ));
 
-    // Poultry Farm Data Analytics Dashboard
+    // Poultry Farm Data Analytics Dashboard (COSC495)
     allProjects.push(new ProjectItem(
         "Poultry Farm Data Analytics Dashboard",  // Title
-        "Dashboard for poultry farmers that provides real-time insights and analytics on farm operations, focusing on litter quality and living conditions.",  // Brief Description
+        "Decision-support dashboard for a poultry farm client that analyzes litter survey data to highlight what drives performance and flag farms at risk of underperformance.",  // Brief Description
         "",  // GitHub Link (Closed Source)
-        ["Quarto", "Python", "Scikit-Learn", "Tensorflow", "Seaborn", "Plotly"],  // Tech Stack
-        "January 2026 - Present",  // Date
-        [],  // Demo Image Sources (not applicable for this, closed source)
+        ["Quarto", "Python", "PostgreSQL", "Pandas", "NumPy", "SciPy", "Scikit-learn", "Plotly"],  // Tech Stack
+        "January 2026 - May 2026",  // Date
+        ["/projects/Poultry-Analytics-1.png", "/projects/Poultry-Analytics-2-Redacted.png", "/projects/Poultry-Analytics-3.png"],  // Demo Image Sources (not applicable for this, closed source)
         "",  // Demo Link  (not applicable for this)
         "",  // Demo Video Link  (not applicable for this)
         false,  // Not featured
-        true   // Current
+        false   // Past
     ));
 
     /* === CURRENT PROJECTS === */
+
+    // Vault Assistant
+    allProjects.push(new ProjectItem(
+        "Vault Assistant",  // Title
+        "Agent-oriented assistant that ties into a user's local obsidian vault.",  // Brief Description
+        "https://github.com/Jairik/vault-assistant",  // GitHub Link
+        ["TypeScript", "Bun", "React", "RAG", "Claude", "Codex", "Cursor Agents", "Antigravity"],  // Tech Stack
+        "January 2026 - Present",  // Date
+        [],  // Demo Image Sources
+        "",  // Demo Link
+        "",  // Demo Video Link
+        false,  // Not featured
+        true   // Current
+    ));
+
+    // Rova
+    allProjects.push(new ProjectItem(
+        "Rova",  // Title
+        "Voice-first AI learning platform that turns uploaded material or any topic into a personalized roadmap with guided lessons, practice, assessments, and progress tracking.",  // Brief Description
+        "",  // GitHub Link (Closed Source)
+        ["React", "TypeScript", "Vite", "D3.js", "Tailwind CSS", "Auth0", "FastAPI", "MongoDB", "Gemini", "LangChain", "OpenAI", "Tavily", "ElevenLabs", "AWS", "Docker"],  // Tech Stack
+        "March 2026 - Present",  // Date
+        ["/projects/Rova-1.png", "/projects/Rova-2.png", "/projects/Rova-3.png", "/projects/Rova-4.png", "/projects/Rova-5.png"],  // Demo Image Sources
+        "",  // Demo Link
+        "",  // Demo Video Link
+        false,  // Not featured
+        true   // Current
+    ));
 
     return allProjects;
 }

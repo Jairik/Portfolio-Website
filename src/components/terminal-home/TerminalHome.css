@@ -362,8 +362,13 @@
   font-size: 12px; padding: 8px 18px; cursor: pointer; transition: transform .15s, box-shadow .15s; }
 .thome .cfg-save:hover { transform: scale(1.05); box-shadow: 4px 4px 0 rgba(7,9,6,.85); }
 .thome .cfg-foot .hint { color: var(--mut); font-size: 11px; letter-spacing: .06em; }
+.thome .cfg-cmd { display: flex; align-items: center; gap: 0; width: 100%; min-height: 32px;
+  font-family: var(--mono); font-size: 12px; background: var(--bg2); border: 1px solid var(--line); padding: 6px 10px; }
+.thome .cfg-cmd-prompt { color: var(--acid); font-weight: 800; }
+.thome .cfg-cmd-text { color: var(--text); }
+.thome .cfg-cmd-cur { display: inline-block; width: 8px; height: 14px; background: var(--acid); margin-left: 1px; vertical-align: -2px; }
 
 /* ---------- reveal-on-scroll ---------- */
 .thome .rv { opacity: 0; transform: translateY(30px); }
-.thome .rv.in { opacity: 1; transform: none; transition: opacity .65s ease, transform .65s ease; }
+.thome .rv[data-in] { opacity: 1; transform: none; transition: opacity .65s ease, transform .65s ease; }
 @media (prefers-reduced-motion: reduce) { .thome .rv { opacity: 1; transform: none; } }
