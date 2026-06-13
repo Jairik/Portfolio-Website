@@ -2,3 +2,5 @@
 *AGENTS.md
 *.claude
 *.codex
+**.cursor
+*skill-mapping.md

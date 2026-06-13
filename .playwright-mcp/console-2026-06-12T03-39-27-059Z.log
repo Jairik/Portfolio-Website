@@ -1,6 +1,0 @@
-[     398ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=ef3d1f23:19834
-[   76132ms] [WARNING] THREE.THREE.Clock: This module has been deprecated. Please use THREE.Timer instead. @ http://localhost:5173/node_modules/.vite/deps/chunk-K6OMFBVL.js?v=ef3d1f23:745
-[   76887ms] [WARNING] [.WebGL-0x1cec000b5000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels @ http://localhost:5173/:0
-[   77318ms] [WARNING] [.WebGL-0x1cec000b5000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels @ http://localhost:5173/:0
-[   77501ms] [WARNING] [.WebGL-0x1cec000b5000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels @ http://localhost:5173/:0
-[   77741ms] [WARNING] [.WebGL-0x1cec000b5000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat) @ http://localhost:5173/:0
