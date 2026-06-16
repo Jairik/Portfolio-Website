@@ -1,13 +1,5 @@
 /* Constants used throughout the components */
 
-// Different components of the page
-export const menuItems = [
-    { label: "About Me", ariaLabel: 'Learn more about me', link: "#about" },
-    { label: "Projects", ariaLabel: 'See projects', link: "#projects" },
-    { label: "Experience", ariaLabel: 'See experience', link: "#experience" },  // Experienc and skills
-    { label: "Contact", ariaLabel: 'Get in touch', link: "#contact" }
-]
-
 // Different social links to show up at the footer
 export const socialItems = [
     //{ label: "GitHub", link: "https://github.com/Jairik" },

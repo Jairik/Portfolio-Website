@@ -1,14 +1,31 @@
 /* Resume viewer — full-page embed of the PDF served from /public, styled to
    match the terminal-home aesthetic. Reached via the /resume route; on GitHub
    Pages a direct hit loads the SPA through the 404.html fallback and lands here. */
-import { useEffect } from "react";
+import { useEffect, useMemo, type CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import "./Resume.css";
+import { ACCENTS, PREFS_STORAGE_KEY } from "../assets/terminalContent";
 
 const RESUME_PATH = "/Jairik_McCauley_Resume.pdf";
 const RESUME_FILE = "Jairik_McCauley_Resume.pdf";
 
+/* Reads the visitor's saved accent color (chosen via ./config on the home page
+   and persisted under jjrc) so the résumé chrome matches their theme. Falls
+   back to the site default (lime) when nothing valid is cached. */
+function cachedAccent(): string {
+  try {
+    const stored = JSON.parse(window.localStorage.getItem(PREFS_STORAGE_KEY) || "null");
+    const accent = ACCENTS[stored?.color];
+    if (accent) return accent.c;
+  } catch { /* unreadable storage — fall through to default */ }
+  return ACCENTS.lime.c;
+}
+
 export default function Resume() {
+  // Seed the --acid var from the visitor's cached favorite color (inline so it
+  // overrides the CSS default with no flash); everything in the bar derives from it.
+  const accent = useMemo(cachedAccent, []);
+
   useEffect(() => {
     const prevTitle = document.title;
     document.title = "résumé · JJ McCauley";
@@ -18,7 +35,7 @@ export default function Resume() {
   }, []);
 
   return (
-    <div className="rez">
+    <div className="rez" style={{ "--acid": accent } as CSSProperties}>
       <header className="rez-bar">
         <Link className="rez-home" to="/" aria-label="Back to home">
           <span className="rez-prompt">jj@portfolio</span>

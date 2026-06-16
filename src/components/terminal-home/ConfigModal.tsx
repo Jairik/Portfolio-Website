@@ -35,40 +35,39 @@ export default function ConfigModal({ open, onClose, prefs, onSave }: ConfigModa
   useEffect(() => {
     if (!open) return;
 
+    const clearCommand = () => {
+      setCmdMode(false);
+      setCmdText("");
+    };
+    const runCommand = () => {
+      const cmd = cmdText.trim();
+      if (cmd === "wq" || cmd === "x") saveAndQuit();
+      else if (cmd === "q" || cmd === "q!") onClose();
+      clearCommand();
+    };
+    const handleCommandKey = (e: KeyboardEvent) => {
+      e.preventDefault();
+      if (e.key === "Enter") runCommand();
+      else if (e.key === "Backspace") {
+        const next = cmdText.slice(0, -1);
+        setCmdText(next);
+        if (!next) setCmdMode(false);
+      } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        setCmdText(prev => prev + e.key);
+      }
+    };
+    const shouldStartCommand = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName;
+      return e.key === ":" && !e.ctrlKey && !e.metaKey && !e.altKey && tag !== "INPUT" && tag !== "TEXTAREA";
+    };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        if (cmdMode) {
-          e.preventDefault();
-          setCmdMode(false);
-          setCmdText("");
-        } else {
-          onClose();
-        }
+        if (cmdMode) { e.preventDefault(); clearCommand(); }
+        else onClose();
         return;
       }
-
-      if (cmdMode) {
-        e.preventDefault();
-        if (e.key === "Enter") {
-          const cmd = cmdText.trim();
-          if (cmd === "wq" || cmd === "x") saveAndQuit();
-          else if (cmd === "q" || cmd === "q!") onClose();
-          setCmdMode(false);
-          setCmdText("");
-        } else if (e.key === "Backspace") {
-          const next = cmdText.slice(0, -1);
-          setCmdText(next);
-          if (!next) setCmdMode(false);
-        } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
-          setCmdText(prev => prev + e.key);
-        }
-        return;
-      }
-
-      // ':' opens vim-style command entry (skip real text fields)
-      if (e.key === ":" && !e.ctrlKey && !e.metaKey && !e.altKey) {
-        const tag = (e.target as HTMLElement)?.tagName;
-        if (tag === "INPUT" || tag === "TEXTAREA") return;
+      if (cmdMode) { handleCommandKey(e); return; }
+      if (shouldStartCommand(e)) {
         e.preventDefault();
         setCmdMode(true);
         setCmdText("");

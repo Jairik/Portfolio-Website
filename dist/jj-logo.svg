@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="jj terminal prompt">
+  <rect width="100" height="100" rx="20" fill="#070906"></rect>
+  <rect x="3.5" y="3.5" width="93" height="93" rx="17" fill="none" stroke="#1d2417" stroke-width="3"></rect>
+  <path d="M27 31 L52 50 L27 69" fill="none" stroke="#a6f73a" stroke-width="11" stroke-linecap="square" stroke-linejoin="miter"></path>
+  <rect x="58" y="58" width="20" height="11" fill="#a6f73a"></rect>
+</svg>

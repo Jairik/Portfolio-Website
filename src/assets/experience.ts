@@ -127,7 +127,7 @@ export const technologyItems: TechnologyItem[] = [
   - Key: `experienceItems[].id`
   - Value: skills that should surface that experience as "related"
 */
-export const EXPERIENCE_TECH_LINKS: Record<string, string[]> = {
+const EXPERIENCE_TECH_LINKS: Record<string, string[]> = {
     "booz-allen-intern": ["React", "Vite", "Node.js", "Express", "Redis", "Docker", "Nginx", "WebSockets", "D3.js", "Elastic Stack", "Confluence"],
     "salisbury-tutor-lab-assistant": ["C", "C++", "Java", "JavaScript", "Python", "Linux", "Git", "Valgrind"]
 };
@@ -256,19 +256,19 @@ const EXTRA_TECH_ICON_MAP: Record<string, string> = {
     vercel: "/tech-icons/vercel.svg"
 };
 
-export const normalizeTechnologyKey = (value: string) =>
+const normalizeTechnologyKey = (value: string) =>
     value
         .toLowerCase()
         .replace(/\+\+/g, "plusplus")
         .replace(/#/g, "sharp")
         .replace(/[^a-z0-9]+/g, "");
 
-export const canonicalizeTechnologyKey = (value: string) => {
+const canonicalizeTechnologyKey = (value: string) => {
     const normalized = normalizeTechnologyKey(value);
     return TECH_KEY_ALIASES[normalized] || normalized;
 };
 
-export const technologyIconByKey = (() => {
+const technologyIconByKey = (() => {
     const iconMap = new Map<string, string>();
 
     technologyItems.forEach(tech => {
@@ -314,25 +314,3 @@ export const getLinkedExperiencesForTechnology = (techName: string): ExperienceI
         return configuredSkills.some(skill => technologiesMatch(skill, techName));
     });
 };
-
-// Completed Coursework
-export const completedCourses = [
-    "High Performance Computing (A)",
-    "Data Science Fundamentals (A)",
-    "Software Engineering I & II (A)",
-    "Computer Networks (A)",
-    "Database Design & Implementation (A)",
-    "Operating Systems (B)",
-    "Systems Software (A)",
-    "Data Visualization & Machine Learning (A)",
-    "Artificial Intelligence (A)",
-    "Advanced Data Structures & Algorithms (B)",
-    "OOP, Design Patterns, & Android Development (B)",
-    "Theory of Computation (A)",
-    "Microcomputer Organization and Architecture (A)",
-    "Linear Algebra (A)",
-    "Discrete Mathematics (A)",
-    "Introduction to Data Structures & Algorithms (B)",
-    "Computer Science I & II (A)",
-    "Programming Fundamentals (A)"
-];

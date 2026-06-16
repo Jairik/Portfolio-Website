@@ -1,4 +1,7 @@
 /node_modules
+/fallow-report.json
+/playwright-report
+/test-results
 *AGENTS.md
 *.claude
 *.codex

@@ -1,4 +1,4 @@
-export const COMMIT_COUNT_ENDPOINT = "https://jairik--e9c872b823b611f1845142dde27851f2.web.val.run";
+const COMMIT_COUNT_ENDPOINT = "https://jairik--e9c872b823b611f1845142dde27851f2.web.val.run";
 
 const COMMIT_COUNT_FIELDS = [
   "totalCommits",
@@ -26,7 +26,7 @@ const parseNumericValue = (value: unknown): number | null => {
   return null;
 };
 
-export const parseCommitCount = (payload: unknown): number | null => {
+const parseCommitCount = (payload: unknown): number | null => {
   const directValue = parseNumericValue(payload);
   if (directValue !== null) return directValue;
 

@@ -108,7 +108,7 @@ const THEMES: Record<string, { acid: string; deep: string; dim: string }> = {
 const THEME_KEY = "jj-term-theme";
 
 const COMMANDS = [
-  "help", "ls", "cd", "pwd", "cat", "less", "head", "tail", "open", "whoami", "neofetch", "tui",
+  "help", "ls", "cd", "pwd", "cat", "less", "head", "tail", "open", "resume", "cv", "whoami", "neofetch", "tui",
   "clear", "history", "echo", "contact", "sudo", "exit", "vim", "nvim", "grep", "tree", "top",
   "touch", "mkdir", "fortune", "cowsay", "corgisay", "matrix", "sl", "hack", "caffeine", "theme",
   "roll", "coinflip", "ping", "links", "./links"
@@ -129,6 +129,10 @@ const FORTUNES = [
 interface VFile { name: string; lines?: string[]; binary?: boolean; fresh?: boolean }
 interface TuiItem { label: string; html: () => string; enter?: () => void }
 interface TuiSection { label: string; items: TuiItem[] }
+type VedMode = "n" | "i" | "c";
+type CommandHandler = (arg: string) => void;
+
+const TUI_KEYS = new Set(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Tab", "Enter", "Escape", "q", "1", "2", "3", "4", "5"]);
 
 export default function Terminal() {
   const navigate = useNavigate();
@@ -276,6 +280,12 @@ export default function Terminal() {
       return PROJECTS.find(p => slug(p.title) === n) ||
         PROJECTS.find(p => p.title.toLowerCase().includes(n.toLowerCase()));
     }
+    function cleanPath(arg: string) {
+      return arg.replace(/^~\//, "").replace(/^\.\//, "");
+    }
+    function inCurrentDir(dir: string) {
+      return cwd === dir;
+    }
     function projCat(p: TermProject) {
       const badges = [
         p.award ? `★ ${p.award}` : "", p.group === "current" ? "RUNNING" : "", p.closed ? "CLOSED SRC" : ""
@@ -287,56 +297,70 @@ export default function Terminal() {
         [p.code ? `<a href="${esc(p.code)}" target="_blank" rel="noopener">code ↗</a>` : "",
          p.demo ? `<a href="${esc(p.demo)}" target="_blank" rel="noopener">live ↗</a>` : "",
          p.video ? `<a href="${esc(p.video)}" target="_blank" rel="noopener">video ↗</a>` : ""].filter(Boolean).join(" · ") +
-        (p.images.length ? `<br /><span class="dim">${p.images.length} image(s) on file — run <kbd>tui</kbd> to view them</span>` : "")
+          (p.images.length ? `<br /><span class="dim">${p.images.length} image(s) on file — run <kbd>tui</kbd> to view them</span>` : "")
       );
+    }
+    function catAboutFile() {
+      aboutParagraphs.forEach(p => print(esc(p)));
+    }
+    function catContactFile() {
+      print(CONTACT_LINES.map(([label, link]) =>
+        `${label}: <a href="${esc(link)}"${link.startsWith("http") ? ' target="_blank" rel="noopener"' : ""}>${esc(link.replace(/^mailto:/, ""))}</a>`).join("<br />"));
+    }
+    function catExperienceFile() {
+      XP.forEach(x => print(
+        `<span class="ok">[${esc(x.duration)}]</span> ${esc(x.role)} <span class="dim">@ ${esc(x.company)}</span><br /><span class="dim">${esc(x.desc)}</span>`));
+    }
+    function catResumeFile() {
+      print(`binary file — try <kbd>resume</kbd> or <kbd>open resume</kbd>`, "warn");
+    }
+    function catLinksFile() {
+      print(`<pre>${esc(LINKS_SCRIPT.join("\n"))}</pre>`);
+      print(`<span class="dim">executable — run it: <kbd>./links</kbd></span>`);
+    }
+    const CAT_EXACT: Record<string, () => void> = {
+      "about.md": catAboutFile,
+      "contact.txt": catContactFile,
+      "experience.log": catExperienceFile,
+      "resume.pdf": catResumeFile,
+      resume: catResumeFile,
+      links: catLinksFile
+    };
+    function catProjectFile(path: string, originalArg: string) {
+      const match = path.match(/^(?:projects\/)?(.+?\.md)$/);
+      if (!match || (!path.startsWith("projects/") && !inCurrentDir("~/projects"))) return false;
+      const project = findProject(match[1]);
+      if (project) projCat(project);
+      else print(`cat: ${esc(originalArg)}: no such file`, "err");
+      return true;
+    }
+    function catSkillFile(path: string, originalArg: string) {
+      const match = path.match(/^(?:skills\/)?(.+?\.txt)$/);
+      if (!match || (!path.startsWith("skills/") && !inCurrentDir("~/skills"))) return false;
+      const group = SKILL_GROUPS.find(g => slug(g) + ".txt" === match[1]);
+      if (!group) {
+        print(`cat: ${esc(originalArg)}: no such file`, "err");
+        return true;
+      }
+      print(`<span class="ok"># ${esc(group)}</span><br />` +
+        SKILLS[group].map(s => `· ${esc(s.name)}${s.note ? ` <span class="dim">(${esc(s.note)})</span>` : ""}`).join("<br />"));
+      return true;
+    }
+    function catMediaFile(path: string) {
+      if (!path.startsWith("media/") && !inCurrentDir("~/media")) return false;
+      const name = path.replace(/^media\//, "");
+      const media = MEDIA.find(m => base(m.src) === name);
+      if (!media) return false;
+      print(`<span class="dim">binary image — opening viewer…</span>`);
+      showLb(media.src, `${media.title} — ${media.cap}`);
+      return true;
     }
     function catFile(arg: string) {
       if (!arg) { print("cat: missing operand", "err"); return; }
-      const a = arg.replace(/^~\//, "").replace(/^\.\//, "");
-      const inDir = (d: string) => cwd === d;
-      if (a === "about.md") {
-        aboutParagraphs.forEach(p => print(esc(p)));
-        return;
-      }
-      if (a === "contact.txt") {
-        print(CONTACT_LINES.map(([label, link]) =>
-          `${label}: <a href="${esc(link)}"${link.startsWith("http") ? ' target="_blank" rel="noopener"' : ""}>${esc(link.replace(/^mailto:/, ""))}</a>`).join("<br />"));
-        return;
-      }
-      if (a === "experience.log") {
-        XP.forEach(x => print(
-          `<span class="ok">[${esc(x.duration)}]</span> ${esc(x.role)} <span class="dim">@ ${esc(x.company)}</span><br /><span class="dim">${esc(x.desc)}</span>`));
-        return;
-      }
-      if (a === "resume.pdf") { print(`binary file — try <kbd>open resume.pdf</kbd>`, "warn"); return; }
-      if (a === "links") {
-        print(`<pre>${esc(LINKS_SCRIPT.join("\n"))}</pre>`);
-        print(`<span class="dim">executable — run it: <kbd>./links</kbd></span>`);
-        return;
-      }
-      const pm = a.match(/^(?:projects\/)?(.+?\.md)$/);
-      if (pm && (a.startsWith("projects/") || inDir("~/projects"))) {
-        const p = findProject(pm[1]);
-        if (p) projCat(p); else print(`cat: ${esc(arg)}: no such file`, "err");
-        return;
-      }
-      const sm = a.match(/^(?:skills\/)?(.+?\.txt)$/);
-      if (sm && (a.startsWith("skills/") || inDir("~/skills"))) {
-        const g = SKILL_GROUPS.find(g2 => slug(g2) + ".txt" === sm[1]);
-        if (!g) { print(`cat: ${esc(arg)}: no such file`, "err"); return; }
-        print(`<span class="ok"># ${esc(g)}</span><br />` +
-          SKILLS[g].map(s => `· ${esc(s.name)}${s.note ? ` <span class="dim">(${esc(s.note)})</span>` : ""}`).join("<br />"));
-        return;
-      }
-      if (a.startsWith("media/") || inDir("~/media")) {
-        const name = a.replace(/^media\//, "");
-        const m = MEDIA.find(m2 => base(m2.src) === name);
-        if (m) {
-          print(`<span class="dim">binary image — opening viewer…</span>`);
-          showLb(m.src, `${m.title} — ${m.cap}`);
-          return;
-        }
-      }
+      const a = cleanPath(arg);
+      const exactReader = CAT_EXACT[a];
+      if (exactReader) { exactReader(); return; }
+      if (catProjectFile(a, arg) || catSkillFile(a, arg) || catMediaFile(a)) return;
       const p = findProject(a);
       if (p) { projCat(p); return; }
       print(`cat: ${esc(arg)}: no such file`, "err");
@@ -390,6 +414,7 @@ export default function Terminal() {
         ["cat <file>", "read — <kbd>cat about.md</kbd>, <kbd>cat projects/lunara.md</kbd>"],
         ["less / head / tail <file>", "pagers — <kbd>head experience.log</kbd>, <kbd>tail 3 about.md</kbd>"],
         ["open <thing>", "open resume / github / a project"],
+        ["resume", "open my résumé (pdf) — same as <kbd>open resume</kbd>"],
         ["./links", "all my links, one page"],
         ["tui", "<span class='ok'>arrow-key browser — the good stuff</span>"],
         ["whoami / neofetch", "identity checks"],
@@ -629,7 +654,7 @@ export default function Terminal() {
     const vedpos = ved.querySelector(".vpos") as HTMLElement;
     const vedcmd = ved.querySelector(".ved-cmd") as HTMLElement;
 
-    let vedOn = false, vlines = [""], vr = 0, vc = 0, vmode = "n", vcmd = "", vmsg = "",
+    let vedOn = false, vlines = [""], vr = 0, vc = 0, vmode: VedMode = "n", vcmd = "", vmsg = "",
       vfile = "", vdirty = false, vpend = "";
 
     function wrapText(t: string, w = 74) {
@@ -746,60 +771,118 @@ export default function Terminal() {
       else if (c !== "") vmsg = `E492: Not an editor command: ${c}`;
       renderVed();
     }
+    function vedCommandKey(k: string) {
+      if (k === "Enter") { runVedCmd(vcmd); return; }
+      if (k === "Escape") { vmode = "n"; vcmd = ""; }
+      else if (k === "Backspace") {
+        vcmd = vcmd.slice(0, -1);
+        if (!vcmd) vmode = "n";
+      }
+      else if (k.length === 1) vcmd += k;
+      renderVed();
+    }
+    function splitVedLine(ln: string) {
+      vlines.splice(vr + 1, 0, ln.slice(vc));
+      vlines[vr] = ln.slice(0, vc);
+      vr++; vc = 0; vdirty = true;
+    }
+    function deleteVedBackward(ln: string) {
+      if (vc > 0) {
+        vlines[vr] = ln.slice(0, vc - 1) + ln.slice(vc);
+        vc--; vdirty = true;
+        return;
+      }
+      if (vr > 0) {
+        vc = vlines[vr - 1].length;
+        vlines[vr - 1] += ln;
+        vlines.splice(vr, 1);
+        vr--; vdirty = true;
+      }
+    }
+    function vedInsertKey(k: string) {
+      const ln = vlines[vr];
+      switch (k) {
+        case "Escape": vmode = "n"; vc = Math.max(0, vc - 1); break;
+        case "Enter": splitVedLine(ln); break;
+        case "Backspace": deleteVedBackward(ln); break;
+        case "Tab": vlines[vr] = ln.slice(0, vc) + "  " + ln.slice(vc); vc += 2; vdirty = true; break;
+        case "ArrowLeft": vc--; break;
+        case "ArrowRight": vc++; break;
+        case "ArrowUp": vr--; break;
+        case "ArrowDown": vr++; break;
+        default:
+          if (k.length === 1) { vlines[vr] = ln.slice(0, vc) + k + ln.slice(vc); vc++; vdirty = true; }
+      }
+      renderVed();
+    }
+    function deleteVedLine() {
+      vlines.splice(vr, 1);
+      if (!vlines.length) vlines = [""];
+      vdirty = true;
+    }
+    function openVedLineBelow() {
+      vlines.splice(vr + 1, 0, "");
+      vr++; vc = 0; vmode = "i"; vdirty = true;
+    }
+    function openVedLineAbove() {
+      vlines.splice(vr, 0, "");
+      vc = 0; vmode = "i"; vdirty = true;
+    }
+    function deleteVedChar() {
+      const ln = vlines[vr];
+      if (!ln.length) return;
+      vlines[vr] = ln.slice(0, vc) + ln.slice(vc + 1);
+      vdirty = true;
+    }
+    function consumeVedPendingKey(k: string) {
+      if (!vpend) return false;
+      const pending = vpend;
+      vpend = "";
+      if (pending === "d" && k === "d") deleteVedLine();
+      if (pending === "g" && k === "g") { vr = 0; vc = 0; }
+      renderVed();
+      return true;
+    }
+    const VED_NORMAL_ACTIONS: Record<string, () => void> = {
+      h: () => { vc--; },
+      ArrowLeft: () => { vc--; },
+      l: () => { vc++; },
+      ArrowRight: () => { vc++; },
+      j: () => { vr++; },
+      ArrowDown: () => { vr++; },
+      k: () => { vr--; },
+      ArrowUp: () => { vr--; },
+      "0": () => { vc = 0; },
+      Home: () => { vc = 0; },
+      "$": () => { vc = vlines[vr].length; },
+      End: () => { vc = vlines[vr].length; },
+      i: () => { vmode = "i"; },
+      a: () => { vmode = "i"; vc = Math.min(vlines[vr].length, vc + 1); },
+      A: () => { vmode = "i"; vc = vlines[vr].length; },
+      o: openVedLineBelow,
+      O: openVedLineAbove,
+      x: deleteVedChar,
+      d: () => { vpend = "d"; },
+      g: () => { vpend = "g"; },
+      G: () => { vr = vlines.length - 1; vc = 0; },
+      u: () => { vmsg = "undo? bold of you to assume there's history."; },
+      ":": () => { vmode = "c"; vcmd = ":"; },
+      Escape: () => {}
+    };
+    function vedNormalKey(k: string) {
+      if (consumeVedPendingKey(k)) return;
+      VED_NORMAL_ACTIONS[k]?.();
+      renderVed();
+    }
     function vedKey(e: KeyboardEvent) {
       if (e.ctrlKey || e.metaKey || e.altKey) return;
       const k = e.key;
       if (k === "Shift" || k === "CapsLock") return;
       e.preventDefault();
-      vmsg = vmode === "c" ? vmsg : "";
-      if (vmode === "c") {
-        if (k === "Enter") { runVedCmd(vcmd); return; }
-        if (k === "Escape") { vmode = "n"; vcmd = ""; }
-        else if (k === "Backspace") { vcmd = vcmd.slice(0, -1); if (!vcmd) vmode = "n"; }
-        else if (k.length === 1) vcmd += k;
-        renderVed(); return;
-      }
-      if (vmode === "i") {
-        const ln = vlines[vr];
-        if (k === "Escape") { vmode = "n"; vc = Math.max(0, vc - 1); }
-        else if (k === "Enter") { vlines.splice(vr + 1, 0, ln.slice(vc)); vlines[vr] = ln.slice(0, vc); vr++; vc = 0; vdirty = true; }
-        else if (k === "Backspace") {
-          if (vc > 0) { vlines[vr] = ln.slice(0, vc - 1) + ln.slice(vc); vc--; vdirty = true; }
-          else if (vr > 0) { vc = vlines[vr - 1].length; vlines[vr - 1] += ln; vlines.splice(vr, 1); vr--; vdirty = true; }
-        }
-        else if (k === "Tab") { vlines[vr] = ln.slice(0, vc) + "  " + ln.slice(vc); vc += 2; vdirty = true; }
-        else if (k === "ArrowLeft") vc--;
-        else if (k === "ArrowRight") vc++;
-        else if (k === "ArrowUp") vr--;
-        else if (k === "ArrowDown") vr++;
-        else if (k.length === 1) { vlines[vr] = ln.slice(0, vc) + k + ln.slice(vc); vc++; vdirty = true; }
-        renderVed(); return;
-      }
-      /* normal mode */
-      if (vpend === "d") { vpend = ""; if (k === "d") { vlines.splice(vr, 1); if (!vlines.length) vlines = [""]; vdirty = true; } renderVed(); return; }
-      if (vpend === "g") { vpend = ""; if (k === "g") { vr = 0; vc = 0; } renderVed(); return; }
-      switch (k) {
-        case "h": case "ArrowLeft": vc--; break;
-        case "l": case "ArrowRight": vc++; break;
-        case "j": case "ArrowDown": vr++; break;
-        case "k": case "ArrowUp": vr--; break;
-        case "0": case "Home": vc = 0; break;
-        case "$": case "End": vc = vlines[vr].length; break;
-        case "i": vmode = "i"; break;
-        case "a": vmode = "i"; vc = Math.min(vlines[vr].length, vc + 1); break;
-        case "A": vmode = "i"; vc = vlines[vr].length; break;
-        case "o": vlines.splice(vr + 1, 0, ""); vr++; vc = 0; vmode = "i"; vdirty = true; break;
-        case "O": vlines.splice(vr, 0, ""); vc = 0; vmode = "i"; vdirty = true; break;
-        case "x": { const ln = vlines[vr]; if (ln.length) { vlines[vr] = ln.slice(0, vc) + ln.slice(vc + 1); vdirty = true; } break; }
-        case "d": vpend = "d"; break;
-        case "g": vpend = "g"; break;
-        case "G": vr = vlines.length - 1; vc = 0; break;
-        case "u": vmsg = "undo? bold of you to assume there's history."; break;
-        case ":": vmode = "c"; vcmd = ":"; break;
-        case "Escape": break;
-        default: break;
-      }
-      renderVed();
+      if (vmode !== "c") vmsg = "";
+      if (vmode === "c") vedCommandKey(k);
+      else if (vmode === "i") vedInsertKey(k);
+      else vedNormalKey(k);
     }
 
     /* ---------- TUI ---------- */
@@ -876,27 +959,43 @@ export default function Terminal() {
       view!.scrollTop = view!.scrollHeight;
       focusTin();
     }
+    function selectTuiSection(index: number) {
+      tSec = (index + SECS.length) % SECS.length;
+      tIdx = 0;
+    }
+    function activateTuiItem(section: TuiSection) {
+      const item = section.items[tIdx];
+      if (window.matchMedia("(max-width:760px)").matches && !tuiEl!.classList.contains("mview")) {
+        tuiEl!.classList.add("mview");
+      } else if (item.enter) {
+        item.enter();
+      }
+    }
+    function closeTuiView() {
+      if (tuiEl!.classList.contains("mview")) {
+        tuiEl!.classList.remove("mview");
+        return true;
+      }
+      exitTui();
+      return false;
+    }
     function tuiKey(e: KeyboardEvent) {
       if (lb!.classList.contains("on")) return; /* lightbox owns keys */
-      const sec = SECS[tSec];
-      const handled = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Tab", "Enter", "Escape", "q", "1", "2", "3", "4", "5"];
-      if (!handled.includes(e.key)) return;
+      if (!TUI_KEYS.has(e.key)) return;
       e.preventDefault();
-      if (e.key === "ArrowUp") tIdx = (tIdx - 1 + sec.items.length) % sec.items.length;
-      else if (e.key === "ArrowDown") tIdx = (tIdx + 1) % sec.items.length;
-      else if (e.key === "ArrowLeft") { tSec = (tSec - 1 + SECS.length) % SECS.length; tIdx = 0; }
-      else if (e.key === "ArrowRight" || e.key === "Tab") { tSec = (tSec + 1) % SECS.length; tIdx = 0; }
-      else if (e.key === "Enter") {
-        const it = sec.items[tIdx];
-        if (window.matchMedia("(max-width:760px)").matches && !tuiEl!.classList.contains("mview")) tuiEl!.classList.add("mview");
-        else if (it.enter) it.enter();
-      }
-      else if (e.key === "Escape" || e.key === "q") {
-        if (tuiEl!.classList.contains("mview")) tuiEl!.classList.remove("mview");
-        else { exitTui(); return; }
-      }
-      else if ("12345".includes(e.key)) { tSec = +e.key - 1; tIdx = 0; }
-      renderTui();
+      const section = SECS[tSec];
+      const actions: Record<string, () => boolean | void> = {
+        ArrowUp: () => { tIdx = (tIdx - 1 + section.items.length) % section.items.length; },
+        ArrowDown: () => { tIdx = (tIdx + 1) % section.items.length; },
+        ArrowLeft: () => { selectTuiSection(tSec - 1); },
+        ArrowRight: () => { selectTuiSection(tSec + 1); },
+        Tab: () => { selectTuiSection(tSec + 1); },
+        Enter: () => { activateTuiItem(section); },
+        Escape: closeTuiView,
+        q: closeTuiView
+      };
+      const action = actions[e.key] || (/\d/.test(e.key) ? () => { selectTuiSection(Number(e.key) - 1); } : undefined);
+      if (action?.() !== false) renderTui();
     }
     /* tap/click support in TUI */
     on(tuiEl, "click", e => {
@@ -915,6 +1014,78 @@ export default function Terminal() {
     });
 
     /* ---------- command dispatch ---------- */
+    function clearScrollback() {
+      view!.querySelectorAll(".ln").forEach(el => { if (el !== promptEl) el.remove(); });
+    }
+    function sudoCmd(arg: string) {
+      if (arg.includes("hire")) print(`[sudo] permission granted. → <a href="mailto:${EMAIL}">${EMAIL}</a> <span class="ok">✔</span>`);
+      else print(`jj is not in the sudoers file. this incident will be reported.`, "warn");
+    }
+    function linksCmd() {
+      print(`opening <span class="ok">jjmccauley.com/links</span> — everything jj, one page …`);
+      later(() => { window.location.href = "/links"; }, 650);
+    }
+    function themeCmd(arg: string) {
+      if (applyTheme(arg.toLowerCase())) print(`theme set: <span class="ok">${esc(arg.toLowerCase())}</span> — whole rig recolored.`);
+      else print(`usage: theme &lt;${Object.keys(THEMES).join("|")}&gt;`, "warn");
+    }
+    function rollCmd() {
+      print(`you rolled a <span class="ok">${1 + ((Math.random() * 6) | 0)}</span> — ${Math.random() < 0.5 ? "ship it." : "reroll? coward."}`);
+    }
+    function registerCommands(names: string[], handler: CommandHandler) {
+      names.forEach(name => commandHandlers.set(name, handler));
+    }
+    const commandHandlers = new Map<string, CommandHandler>();
+    registerCommands(["help", "?"], () => help());
+    registerCommands(["ls", "ll", "dir"], arg => lsOut(arg ? (resolveDir(arg) || arg) : cwd));
+    registerCommands(["cd"], arg => {
+      const dir = resolveDir(arg);
+      if (dir) { cwd = dir; renderBuf(); }
+      else print(`cd: no such directory: ${esc(arg)}`, "err");
+    });
+    registerCommands(["pwd"], () => print(esc(cwd.replace("~", "/home/jj"))));
+    registerCommands(["cat", "bat"], catFile);
+    registerCommands(["less", "more"], lessCmd);
+    registerCommands(["head"], arg => headTail("head", arg));
+    registerCommands(["tail"], arg => headTail("tail", arg));
+    registerCommands(["open", "xdg-open"], openCmd);
+    registerCommands(["resume", "cv"], () => openCmd("resume"));
+    registerCommands(["whoami"], whoami);
+    registerCommands(["neofetch", "fastfetch"], neofetch);
+    registerCommands(["tui", "browse", "explore"], enterTui);
+    registerCommands(["clear", "cls"], clearScrollback);
+    registerCommands(["history"], () => hist.forEach((h, i) => print(`<span class="dim">${i + 1}</span>  ${esc(h)}`)));
+    registerCommands(["echo"], arg => print(esc(arg)));
+    registerCommands(["contact"], () => catFile("contact.txt"));
+    registerCommands(["sudo"], sudoCmd);
+    registerCommands(["links", "./links"], linksCmd);
+    registerCommands(["exit", "logout", "gui"], exitTerminal);
+    registerCommands(["vim", "vi", "nvim", "neovim"], enterVed);
+    registerCommands(["nano", "pico"], () => print(`nano: command not found. we don't use nano around here — this is a <span class="ok">vim</span> household. <span class="dim">(the training wheels are in the bin out back. try <kbd>vim</kbd>.)</span>`, "err"));
+    registerCommands(["emacs"], () => print(`emacs: insufficient memory (needed: all of it, plus a foot pedal). try <kbd>vim</kbd>.`, "warn"));
+    registerCommands(["grep", "rg", "ack"], grepCmd);
+    registerCommands(["tree"], treeCmd);
+    registerCommands(["top", "htop", "btop", "ps"], topCmd);
+    registerCommands(["touch"], arg => print(`touch: cannot touch '${esc(arg || "file")}': read-only filesystem <span class="dim">(write access is granted upon hiring — <kbd>sudo hire-me</kbd>)</span>`, "err"));
+    registerCommands(["mkdir"], arg => print(`mkdir: cannot create '${esc(arg || "dir")}': read-only filesystem <span class="dim">(this portfolio ships sealed)</span>`, "err"));
+    registerCommands(["rm"], () => print(`rm: permission denied — this portfolio is load-bearing.`, "err"));
+    registerCommands(["git"], () => print(`git: ${commitCountHtml()} commits and counting. <a href="${GITHUB_URL}" target="_blank" rel="noopener">see github ↗</a>`));
+    registerCommands(["fortune"], () => print(esc(FORTUNES[(Math.random() * FORTUNES.length) | 0]), "ok"));
+    registerCommands(["cowsay"], arg => cowsay(arg || "moo. hire jj."));
+    registerCommands(["corgisay", "corgi", "woof", "bork"], arg => corgisay(arg || "bork bork. hire jj."));
+    registerCommands(["matrix"], matrix);
+    registerCommands(["sl"], sl);
+    registerCommands(["hack"], hack);
+    registerCommands(["caffeine", "monster", "brew"], caffeine);
+    registerCommands(["coffee"], () => print(`coffee? we run on the white monster around here — try <kbd>caffeine</kbd>.`, "warn"));
+    registerCommands(["roll", "dice"], rollCmd);
+    registerCommands(["coinflip", "flip"], () => print(`<span class="ok">${Math.random() < 0.5 ? "HEADS" : "TAILS"}</span> — the coin has spoken.`));
+    registerCommands(["ping"], ping);
+    registerCommands(["theme"], themeCmd);
+    registerCommands(["date"], () => print(esc(new Date().toString())));
+    registerCommands(["uptime"], () => print(`up 23 years · load average: chaotic good · processes: too many side projects`));
+    registerCommands(["man"], arg => print(`no manual entry for ${esc(arg || "man")} — real ones use <kbd>help</kbd>.`));
+
     function exec(raw: string) {
       const line = raw.trim();
       echoCmd(raw);
@@ -922,71 +1093,9 @@ export default function Terminal() {
       hist.push(line); histI = hist.length;
       const [cmd, ...args] = line.split(/\s+/);
       const arg = args.filter(a => !a.startsWith("-")).join(" ");
-      switch (cmd.toLowerCase()) {
-        case "help": case "?": help(); break;
-        case "ls": case "ll": case "dir": lsOut(arg ? (resolveDir(arg) || arg) : cwd); break;
-        case "cd": {
-          const d = resolveDir(arg);
-          if (d) { cwd = d; renderBuf(); }
-          else print(`cd: no such directory: ${esc(arg)}`, "err");
-          break;
-        }
-        case "pwd": print(esc(cwd.replace("~", "/home/jj"))); break;
-        case "cat": case "bat": catFile(arg); break;
-        case "less": case "more": lessCmd(arg); break;
-        case "head": headTail("head", arg); break;
-        case "tail": headTail("tail", arg); break;
-        case "open": case "xdg-open": openCmd(arg); break;
-        case "whoami": whoami(); break;
-        case "neofetch": case "fastfetch": neofetch(); break;
-        case "tui": case "browse": case "explore": enterTui(); break;
-        case "clear": case "cls":
-          view!.querySelectorAll(".ln").forEach(el => { if (el !== promptEl) el.remove(); });
-          break;
-        case "history": hist.forEach((h, i) => print(`<span class="dim">${i + 1}</span>  ${esc(h)}`)); break;
-        case "echo": print(esc(arg)); break;
-        case "contact": catFile("contact.txt"); break;
-        case "sudo":
-          if (arg.includes("hire")) print(`[sudo] permission granted. → <a href="mailto:${EMAIL}">${EMAIL}</a> <span class="ok">✔</span>`);
-          else print(`jj is not in the sudoers file. this incident will be reported.`, "warn");
-          break;
-        case "links": case "./links":
-          print(`opening <span class="ok">jjmccauley.com/links</span> — everything jj, one page …`);
-          later(() => { window.location.href = "/links"; }, 650);
-          break;
-        case "exit": case "logout": case "gui":
-          exitTerminal();
-          break;
-        case "vim": case "vi": case "nvim": case "neovim": enterVed(arg); break;
-        case "nano": case "pico": print(`nano: command not found. we don't use nano around here — this is a <span class="ok">vim</span> household. <span class="dim">(the training wheels are in the bin out back. try <kbd>vim</kbd>.)</span>`, "err"); break;
-        case "emacs": print(`emacs: insufficient memory (needed: all of it, plus a foot pedal). try <kbd>vim</kbd>.`, "warn"); break;
-        case "grep": case "rg": case "ack": grepCmd(arg); break;
-        case "tree": treeCmd(); break;
-        case "top": case "htop": case "btop": case "ps": topCmd(); break;
-        case "touch": print(`touch: cannot touch '${esc(arg || "file")}': read-only filesystem <span class="dim">(write access is granted upon hiring — <kbd>sudo hire-me</kbd>)</span>`, "err"); break;
-        case "mkdir": print(`mkdir: cannot create '${esc(arg || "dir")}': read-only filesystem <span class="dim">(this portfolio ships sealed)</span>`, "err"); break;
-        case "rm": print(`rm: permission denied — this portfolio is load-bearing.`, "err"); break;
-        case "git": print(`git: ${commitCountHtml()} commits and counting. <a href="${GITHUB_URL}" target="_blank" rel="noopener">see github ↗</a>`); break;
-        case "fortune": print(esc(FORTUNES[(Math.random() * FORTUNES.length) | 0]), "ok"); break;
-        case "cowsay": cowsay(arg || "moo. hire jj."); break;
-        case "corgisay": case "corgi": case "woof": case "bork": corgisay(arg || "bork bork. hire jj."); break;
-        case "matrix": matrix(); break;
-        case "sl": sl(); break;
-        case "hack": hack(); break;
-        case "caffeine": case "monster": case "brew": caffeine(); break;
-        case "coffee": print(`coffee? we run on the white monster around here — try <kbd>caffeine</kbd>.`, "warn"); break;
-        case "roll": case "dice": print(`you rolled a <span class="ok">${1 + ((Math.random() * 6) | 0)}</span> — ${Math.random() < 0.5 ? "ship it." : "reroll? coward."}`); break;
-        case "coinflip": case "flip": print(`<span class="ok">${Math.random() < 0.5 ? "HEADS" : "TAILS"}</span> — the coin has spoken.`); break;
-        case "ping": ping(arg); break;
-        case "theme":
-          if (applyTheme(arg.toLowerCase())) print(`theme set: <span class="ok">${esc(arg.toLowerCase())}</span> — whole rig recolored.`);
-          else print(`usage: theme &lt;${Object.keys(THEMES).join("|")}&gt;`, "warn");
-          break;
-        case "date": print(esc(new Date().toString())); break;
-        case "uptime": print(`up 23 years · load average: chaotic good · processes: too many side projects`); break;
-        case "man": print(`no manual entry for ${esc(arg || "man")} — real ones use <kbd>help</kbd>.`); break;
-        default: print(`zsh: command not found: ${esc(cmd)} — try <kbd>help</kbd>`, "err");
-      }
+      const handler = commandHandlers.get(cmd.toLowerCase());
+      if (handler) handler(arg);
+      else print(`zsh: command not found: ${esc(cmd)} — try <kbd>help</kbd>`, "err");
     }
 
     /* ---------- tab completion ---------- */

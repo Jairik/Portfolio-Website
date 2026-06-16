@@ -3,6 +3,8 @@ import './index.css'  // Global Styling
 import { StrictMode, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
+console.log("What's up fellow developer!");
+
 const TerminalHome = lazy(() => import('./components/terminal-home/TerminalHome.tsx'));  // Terminal-styled main page
 const Terminal = lazy(() => import('./components/Terminal.tsx'));  // Terminal alternate view
 const SimplePortfolio = lazy(() => import('./components/SimplePortfolio.tsx'));  // Lightweight view (hidden URL, no toggle)
