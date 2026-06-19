@@ -2,7 +2,7 @@
    from the shared assets files (projects.ts, experience.ts, constantVars.ts,
    terminalContent.ts), so content edits in src/assets/ flow straight through
    to the page without touching any component code. */
-import { getProjectItems } from "../assets/projects";
+import { getProjectItems, personImageAlt, projectImageAlt } from "../assets/projects";
 import { technologyItems, type TechnologyCategory } from "../assets/experience";
 import { mePictures } from "../assets/constantVars";
 import * as C from "../assets/terminalContent";
@@ -55,14 +55,16 @@ export const SKILLS: [string, { name: string; icon: string; note?: string }[]][]
   ]);
 
 // Every image on the site (project screenshots + personal photos) for /dev/media
-export interface MediaItem { src: string; cat: "projects" | "me"; title: string; cap: string }
+export interface MediaItem { src: string; cat: "projects" | "me"; title: string; cap: string; alt: string }
 export const MEDIA: MediaItem[] = [
   ...PROJECTS.flatMap(p => p.images.map((im, j) => ({
     src: im, cat: "projects" as const, title: p.title,
-    cap: `screenshot ${j + 1} of ${p.images.length} · ${p.date}`
+    cap: `screenshot ${j + 1} of ${p.images.length} · ${p.date}`,
+    alt: projectImageAlt(p.title, p.desc, j, p.images.length)
   }))),
   ...mePictures.map(pic => ({
-    src: pic.path, cat: "me" as const, title: C.media.mePicturesTitle, cap: pic.label
+    src: pic.path, cat: "me" as const, title: C.media.mePicturesTitle, cap: pic.label,
+    alt: personImageAlt(pic.label)
   }))
 ];
 

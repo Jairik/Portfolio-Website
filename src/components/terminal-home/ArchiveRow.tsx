@@ -3,6 +3,7 @@ import { useState } from "react";
 import TechChips from "./TechChips";
 import ProjectLinks from "./ProjectLinks";
 import { slug, type HomeProject } from "../../lib/terminalHomeData";
+import { projectImageAlt } from "../../assets/projects";
 import * as C from "../../assets/terminalContent";
 
 /* Renders one expandable project row in the ~/history archive tree */
@@ -38,7 +39,7 @@ export default function ArchiveRow({ p }: { p: HomeProject }) {
               <img
                 key={im}
                 src={im}
-                alt={`${p.title} screenshot`}
+                alt={projectImageAlt(p.title, p.desc, j, p.images.length)}
                 loading="lazy"
                 data-lb={im}
                 data-cap={p.title}

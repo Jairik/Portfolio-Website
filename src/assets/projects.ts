@@ -42,6 +42,36 @@ export class ProjectItem {
     }
 }
 
+/* Short, keyword-rich descriptors for image alt text (SEO). Unlisted projects
+   fall back to the first clause of their description. */
+const ALT_SUMMARIES: Record<string, string> = {
+    "Lunara": "AI-powered healthcare triage system",
+    "TestifAI": "LLM quiz and test generator",
+    "CapyMorph": "educational 2D morpheme learning game",
+    "PerishLess": "AI food-waste reduction platform",
+    "KnowYourUni": "ML student analytics platform",
+    "Stock Portfolio Management System": "stock portfolio tracking web app",
+    "Encrypted P2P Chatroom": "end-to-end encrypted peer-to-peer chat app",
+    "AI Puzzle Game": "A* search 15-puzzle solver",
+    "Move4Wellness Fitness App": "fitness and workout tracking mobile app",
+    "Portfolio Website": "personal developer portfolio website",
+    "Shakespearean Personality LLM Augmentation": "persona-consistent Shakespeare LLM demo",
+    "Poultry Farm Data Analytics Dashboard": "poultry farm data analytics dashboard",
+    "Rova": "voice-first AI learning platform"
+};
+
+/* Builds a unique (per-image), keyword-rich alt string for a project screenshot. */
+export function projectImageAlt(title: string, description: string, index: number, total: number): string {
+    const summary = ALT_SUMMARIES[title] || description.split(/[.,—]/)[0].trim();
+    const position = total > 1 ? `, screenshot ${index + 1} of ${total}` : " screenshot";
+    return `${title} — ${summary}${position}`;
+}
+
+/* Builds an alt string for a personal photo, anchored to the full name for entity SEO. */
+export function personImageAlt(label: string): string {
+    return `Jairik "JJ" McCauley — ${label}`;
+}
+
 // Gets all project items, appending each to an array and returning it
 export function getProjectItems(): ProjectItem[] {
     const allProjects: ProjectItem[] = [];  // Array to hold all project items

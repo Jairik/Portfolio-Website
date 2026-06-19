@@ -18,8 +18,8 @@ export const aboutParagraphs = [
 // Paths to different personal pictures to feature in the about me section
 export const mePictures = [
     { label: "Professional headshot from summer 2025 internship with Booz Allen", path: "/me-pictures/BAH-Professional.png", order: 0 },
-    { label: "Amazing Hackathon team that developed initial verisons of Lunara", path: "/me-pictures/Rutgers-Team-Win.png", order: 1 },
-    { label: "Shotput picture taken in 2025 at our last  home track & field meet", path: "/me-pictures/Cool-Shot.png", order: 2 },
+    { label: "Amazing Hackathon team that developed initial versions of Lunara", path: "/me-pictures/Rutgers-Team-Win.png", order: 1 },
+    { label: "Shotput picture taken in 2025 at our last home track & field meet", path: "/me-pictures/Cool-Shot.png", order: 2 },
     { label: "Me with this awesome nutcracker guy at a 2025 formal for Girls on Top of the World", path: "/me-pictures/Cool-Nutcracker-Guy.png", order: 3 },
     { label: "Sweet pirate at 2025 summer Annapolis RenFair", path: "/me-pictures/ARRRRRR.png", order: 4 },
 ]

@@ -6,7 +6,7 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Terminal.css";
-import { getProjectItems } from "../assets/projects";
+import { getProjectItems, personImageAlt, projectImageAlt } from "../assets/projects";
 import {
   experienceItems,
   technologyItems,
@@ -69,12 +69,13 @@ const XP: TermXp[] = experienceItems.map(x => ({
   role: x.role, company: x.company, duration: x.duration, desc: x.description, tech: x.technologies
 }));
 
-interface MediaItem { src: string; title: string; cap: string }
+interface MediaItem { src: string; title: string; cap: string; alt: string }
 const MEDIA: MediaItem[] = [
   ...PROJECTS.flatMap(p => p.images.map((im, j) => ({
-    src: im, title: p.title, cap: `screenshot ${j + 1}/${p.images.length} · ${p.date}`
+    src: im, title: p.title, cap: `screenshot ${j + 1}/${p.images.length} · ${p.date}`,
+    alt: projectImageAlt(p.title, p.desc, j, p.images.length)
   }))),
-  ...mePictures.map(pic => ({ src: pic.path, title: "JJ — field records", cap: pic.label }))
+  ...mePictures.map(pic => ({ src: pic.path, title: "JJ — field records", cap: pic.label, alt: personImageAlt(pic.label) }))
 ];
 
 const CONTACT_LINES: [string, string][] = [
@@ -890,7 +891,7 @@ export default function Terminal() {
     function projDetail(p: TermProject) {
       return `<h3>${esc(p.title)}</h3>` +
         `<div class="meta">${esc(p.date)}${p.award ? " · ★ " + esc(p.award) : ""}${p.group === "current" ? " · RUNNING" : ""}${p.closed ? " · CLOSED SRC" : ""}</div>` +
-        (p.images[0] ? `<img src="${esc(p.images[0])}" alt="${esc(p.title)}" data-lb="${esc(p.images[0])}" data-cap="${esc(p.title)}" loading="lazy" />` : "") +
+        (p.images[0] ? `<img src="${esc(p.images[0])}" alt="${esc(projectImageAlt(p.title, p.desc, 0, p.images.length))}" data-lb="${esc(p.images[0])}" data-cap="${esc(p.title)}" loading="lazy" />` : "") +
         `<p>${esc(p.desc)}</p>` +
         `<div class="kv"><b>tech</b> ${p.tech.map(esc).join(", ")}</div>` +
         `<div class="kv">${[p.code ? `<a href="${esc(p.code)}" target="_blank" rel="noopener">code ↗</a>` : "",
@@ -919,7 +920,7 @@ export default function Terminal() {
       { label: "4:media", items: MEDIA.map(m => ({
           label: base(m.src), html: () =>
             `<h3>${esc(m.title)}</h3><div class="meta">${esc(m.cap)}</div>` +
-            `<img src="${esc(m.src)}" alt="${esc(m.title)}" data-lb="${esc(m.src)}" data-cap="${esc(m.title)} — ${esc(m.cap)}" loading="lazy" />` +
+            `<img src="${esc(m.src)}" alt="${esc(m.alt)}" data-lb="${esc(m.src)}" data-cap="${esc(m.title)} — ${esc(m.cap)}" loading="lazy" />` +
             `<div class="kv"><b>↵</b> fullscreen</div>`,
           enter: () => showLb(m.src, `${m.title} — ${m.cap}`) })) },
       { label: "5:about", items: [{ label: "about.md", html: () =>

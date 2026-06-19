@@ -3,6 +3,7 @@ import { useState } from "react";
 import TechChips from "./TechChips";
 import ProjectLinks from "./ProjectLinks";
 import { slug, type HomeProject } from "../../lib/terminalHomeData";
+import { projectImageAlt } from "../../assets/projects";
 
 /* Renders one featured project window with a clickable screenshot filmstrip */
 export default function FeaturedWindow({ p }: { p: HomeProject }) {
@@ -23,7 +24,7 @@ export default function FeaturedWindow({ p }: { p: HomeProject }) {
           <img
             className="main"
             src={p.images[mainIdx]}
-            alt={`${p.title} screenshot`}
+            alt={projectImageAlt(p.title, p.desc, mainIdx, p.images.length)}
             loading="lazy"
             data-lb={p.images[mainIdx]}
             data-cap={p.title}

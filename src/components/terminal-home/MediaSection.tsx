@@ -44,7 +44,7 @@ export default function MediaSection() {
               tabIndex={0}
               aria-label={`Open ${m.title}: ${m.cap} in lightbox`}
             >
-              <img src={m.src} alt={`${m.title}: ${m.cap}`} loading="lazy" />
+              <img src={m.src} alt={m.alt} loading="lazy" />
               <figcaption><b>{m.title}</b>{m.cap}</figcaption>
             </figure>
           ))}

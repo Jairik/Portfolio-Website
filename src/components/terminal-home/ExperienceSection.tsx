@@ -12,7 +12,10 @@ export default function ExperienceSection() {
       <div className="inner xp">
         {experienceItems.map(x => (
           <div className="xrow rv" key={x.id}>
-            <div><span className="xwhen">{x.duration}</span></div>
+            <div className="xmeta">
+              <span className="xwhen">{x.duration}</span>
+              <img className="xlogo" src={x.logoSrc} alt={`${x.company} logo`} loading="lazy" />
+            </div>
             <div>
               <h3>{x.role}</h3>
               <span className="xco">{x.company}</span>
