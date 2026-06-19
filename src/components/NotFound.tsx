@@ -10,7 +10,7 @@ const T = () => <span className="t">[ 404.040404]</span>;
 export default function NotFound() {
   useEffect(() => {
     const prevTitle = document.title;
-    document.title = "kernel panic — 404 not found · JJ McCauley";
+    document.title = "404 | JJ McCauley";
     return () => {
       document.title = prevTitle;
     };

@@ -1,7 +1,7 @@
 /* Resume viewer — full-page embed of the PDF served from /public, styled to
    match the terminal-home aesthetic. Reached via the /resume route; on GitHub
    Pages a direct hit loads the SPA through the 404.html fallback and lands here. */
-import { useEffect, useMemo, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import "./Resume.css";
 import { ACCENTS, PREFS_STORAGE_KEY } from "../assets/terminalContent";
@@ -13,6 +13,8 @@ const RESUME_FILE = "Jairik_McCauley_Resume.pdf";
    and persisted under jjrc) so the résumé chrome matches their theme. Falls
    back to the site default (lime) when nothing valid is cached. */
 function cachedAccent(): string {
+  if (typeof window === "undefined") return ACCENTS.lime.c;
+
   try {
     const stored = JSON.parse(window.localStorage.getItem(PREFS_STORAGE_KEY) || "null");
     const accent = ACCENTS[stored?.color];
@@ -24,11 +26,12 @@ function cachedAccent(): string {
 export default function Resume() {
   // Seed the --acid var from the visitor's cached favorite color (inline so it
   // overrides the CSS default with no flash); everything in the bar derives from it.
-  const accent = useMemo(cachedAccent, []);
+  const [accent, setAccent] = useState(ACCENTS.lime.c);
 
   useEffect(() => {
     const prevTitle = document.title;
-    document.title = "résumé · JJ McCauley";
+    document.title = "Resume | JJ McCauley";
+    setAccent(cachedAccent());
     return () => {
       document.title = prevTitle;
     };

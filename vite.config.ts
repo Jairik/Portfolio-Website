@@ -40,8 +40,39 @@ function publicDirIndex(): Plugin {
   }
 }
 
+// Preview-only: serve prerendered extensionless routes from their generated
+// .html aliases so hydration tests exercise the same route HTML users request.
+function previewStaticRoutes(): Plugin {
+  const aliases: Record<string, string> = {
+    '/terminal': '/terminal.html',
+    '/simple': '/simple.html',
+    '/resume': '/resume.html',
+    '/links': '/links/index.html'
+  };
+  const knownPaths = new Set(['/', '/terminal/', '/simple/', '/resume/', '/links/']);
+
+  return {
+    name: 'preview-static-routes',
+    configurePreviewServer(server) {
+      server.middlewares.use((req, _res, next) => {
+        const originalUrl = req.url || '/';
+        const url = new URL(originalUrl, 'http://localhost');
+        const alias = aliases[url.pathname];
+
+        if (alias) {
+          req.url = `${alias}${url.search}`;
+        } else if (!url.pathname.includes('.') && !knownPaths.has(url.pathname)) {
+          req.url = `/404.html${url.search}`;
+        }
+
+        next();
+      });
+    }
+  };
+}
+
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), spaFallback(), publicDirIndex()],
+  plugins: [react(), spaFallback(), publicDirIndex(), previewStaticRoutes()],
   base: '/',  // Set base path for GitHub Pages deployment
 })

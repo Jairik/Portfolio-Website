@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && npm run build:client && npm run build:ssr && node scripts/prerender.mjs",
+    "build:client": "vite build",
+    "build:ssr": "vite build --ssr src/entry-server.tsx --outDir dist-ssr",
     "lint": "eslint .",
     "test:smoke": "playwright test",
     "preview": "vite preview"
@@ -14,6 +16,7 @@
     "motion": "^12.38.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-router": "^7.9.4",
     "react-router-dom": "^7.9.4"
   },
   "devDependencies": {

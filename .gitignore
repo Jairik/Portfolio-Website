@@ -1,4 +1,5 @@
 /node_modules
+/dist-ssr
 /fallow-report.json
 /playwright-report
 /test-results

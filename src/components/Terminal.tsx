@@ -152,7 +152,7 @@ export default function Terminal() {
   useEffect(() => {
     const prevTitle = document.title;
     const prevBodyBg = document.body.style.background;
-    document.title = "jj@portfolio:~ — JJ McCauley";
+    document.title = "Interactive Terminal Portfolio | JJ McCauley";
     document.body.style.background = "#070906";
     return () => {
       document.title = prevTitle;

@@ -37,7 +37,7 @@ export default function TerminalHome() {
   const [cfgOpen, setCfgOpen] = useState(false);
 
   // Page-level behaviors (each hook documents and owns its own concern)
-  usePageChrome("#070906", "jj@portfolio:~ — terminal edition");
+  usePageChrome("#070906", "JJ McCauley | Full Stack Developer");
   const [prefs, savePrefs] = useVisitorPrefs(rootRef);
   const { lb, handleRootClick, handleRootKeyDown } = useLightbox(rootRef);
   useRevealOnScroll(rootRef);

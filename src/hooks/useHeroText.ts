@@ -6,8 +6,10 @@ import { useEffect, useState } from "react";
 import { SCRAMBLE_GLYPHS, prefersReducedMotion } from "../lib/motion";
 import * as C from "../assets/terminalContent";
 
-const scrambledNameRows = () => C.hero.nameRows.map(row =>
-  row.replace(/\S/g, () => SCRAMBLE_GLYPHS[(Math.random() * SCRAMBLE_GLYPHS.length) | 0])
+const scrambledNameRows = () => C.hero.nameRows.map((row, rowIndex) =>
+  row.replace(/\S/g, (_char, charIndex: number) =>
+    SCRAMBLE_GLYPHS[(rowIndex * 17 + charIndex * 7) % SCRAMBLE_GLYPHS.length]
+  )
 );
 
 /* Types out the hero's command one character at a time with human jitter */

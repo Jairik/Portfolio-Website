@@ -6,17 +6,25 @@ import * as C from "../assets/terminalContent";
 // Shape persisted to localStorage and held in state
 export interface Prefs { color: string; trail: boolean }
 
+const DEFAULT_PREFS: Prefs = { color: "lime", trail: true };
+
 /* Reads saved visitor prefs from localStorage, falling back to the defaults */
 function loadPrefs(): Prefs {
+  if (typeof window === "undefined") return DEFAULT_PREFS;
+
   let stored: Partial<Prefs> | null = null;
   try { stored = JSON.parse(window.localStorage.getItem(C.PREFS_STORAGE_KEY) || "null"); } catch { /* ignore */ }
-  return { color: "lime", trail: true, ...(stored || {}) };
+  return { ...DEFAULT_PREFS, ...(stored || {}) };
 }
 
 /* Owns the visitor prefs: applies the accent CSS variables to the page root
    whenever they change, and returns a setter that also persists to storage */
 export function useVisitorPrefs(rootRef: RefObject<HTMLDivElement | null>): [Prefs, (next: Prefs) => void] {
-  const [prefs, setPrefs] = useState<Prefs>(loadPrefs);
+  const [prefs, setPrefs] = useState<Prefs>(DEFAULT_PREFS);
+
+  useEffect(() => {
+    setPrefs(loadPrefs());
+  }, []);
 
   // Apply the accent whenever prefs change (everything derives from these vars)
   useEffect(() => {
@@ -31,6 +39,7 @@ export function useVisitorPrefs(rootRef: RefObject<HTMLDivElement | null>): [Pre
   /* Persists a prefs change to localStorage and state in one step */
   const savePrefs = useCallback((next: Prefs) => {
     setPrefs(next);
+    if (typeof window === "undefined") return;
     try { window.localStorage.setItem(C.PREFS_STORAGE_KEY, JSON.stringify(next)); } catch { /* ignore */ }
   }, []);
 
