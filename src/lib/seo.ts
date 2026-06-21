@@ -14,13 +14,13 @@ export interface SeoRoute {
   robots?: "index,follow" | "noindex";
 }
 
-export const SITE_URL = "https://jjmccauley.com";
-export const SITE_NAME = "JJ McCauley";
-export const DEFAULT_SOCIAL_IMAGE = "/projects/Portfolio-Website.png";
+const SITE_URL = "https://jjmccauley.com";
+const SITE_NAME = "JJ McCauley";
+const DEFAULT_SOCIAL_IMAGE = "/projects/Portfolio-Website.png";
 const PERSON_ID = `${SITE_URL}/#person`;
 const WEBSITE_ID = `${SITE_URL}/#website`;
 
-export const absoluteUrl = (path: string) => new URL(path, `${SITE_URL}/`).toString();
+const absoluteUrl = (path: string) => new URL(path, `${SITE_URL}/`).toString();
 
 export const seoRoutes: SeoRoute[] = [
   {
@@ -168,7 +168,7 @@ const breadcrumbNode = (route: SeoRoute) => {
   };
 };
 
-export const buildJsonLd = (route: SeoRoute) => ({
+const buildJsonLd = (route: SeoRoute) => ({
   "@context": "https://schema.org",
   "@graph": [personNode, websiteNode, webPageNode(route), breadcrumbNode(route)]
 });

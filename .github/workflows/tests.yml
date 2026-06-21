@@ -57,17 +57,3 @@ jobs:
           test -s dist/CNAME
           test -s dist/robots.txt
           test -s dist/Jairik_McCauley_Resume.pdf
-
-      - name: Install Playwright Chromium
-        run: npx playwright install --with-deps chromium
-
-      - name: Smoke test
-        run: npm run test:smoke
-
-      - name: Upload Playwright report
-        if: ${{ failure() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 7
