@@ -313,7 +313,7 @@ export function getProjectItems(): ProjectItem[] {
     // Vault Assistant
     allProjects.push(new ProjectItem(
         "Vault Assistant",  // Title
-        "Local AI assistant for Obsidian that answers questions from your notes with BM25 search. Runs on localhost with multi-tab sessions, job-app drafting, and swap-in agent backends like Claude Code or Codex.",  // Brief Description
+        "Local AI assistant for Obsidian that answers from your notes with BM25 search. Runs on localhost with multi-tab sessions and swap-in backends like Claude Code or Codex.",  // Brief Description
         "https://github.com/Jairik/vault-assistant",  // GitHub Link
         ["TypeScript", "Bun", "React", "BM25 RAG", "Claude Code", "Codex", "SearXNG", "Tauri", "Tailwind CSS"],  // Tech Stack
         "January 2026 - Present",  // Date
