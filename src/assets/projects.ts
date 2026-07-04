@@ -57,7 +57,8 @@ const ALT_SUMMARIES: Record<string, string> = {
     "Portfolio Website": "personal developer portfolio website",
     "Shakespearean Personality LLM Augmentation": "persona-consistent Shakespeare LLM demo",
     "Poultry Farm Data Analytics Dashboard": "poultry farm data analytics dashboard",
-    "Rova": "voice-first AI learning platform"
+    "Rova": "voice-first AI learning platform",
+    "Vault Assistant": "local-first Obsidian vault AI assistant"
 };
 
 /* Builds a unique (per-image), keyword-rich alt string for a project screenshot. */
@@ -118,7 +119,7 @@ export function getProjectItems(): ProjectItem[] {
         ["/projects/CapyMorph-1.png", "/projects/CapyMorph-2.png", "/projects/CapyMorph-3.png"],  // Demo Image Sources
         "https://capymorph.fly.dev/",  // Demo Link 
         "",  // Demo Video Link  (not applicable for this)
-        true  // Featured
+        false  // Featured
     ));
 
     // PerishLess
@@ -312,14 +313,14 @@ export function getProjectItems(): ProjectItem[] {
     // Vault Assistant
     allProjects.push(new ProjectItem(
         "Vault Assistant",  // Title
-        "Agent-oriented assistant that ties into a user's local obsidian vault.",  // Brief Description
+        "Local AI assistant for Obsidian that answers from your notes with BM25 search. Runs on localhost with multi-tab sessions and swap-in backends like Claude Code or Codex.",  // Brief Description
         "https://github.com/Jairik/vault-assistant",  // GitHub Link
-        ["TypeScript", "Bun", "React", "RAG", "Claude", "Codex", "Cursor Agents", "Antigravity"],  // Tech Stack
+        ["TypeScript", "Bun", "React", "BM25 RAG", "Claude Code", "Codex", "SearXNG", "Tauri", "Tailwind CSS"],  // Tech Stack
         "January 2026 - Present",  // Date
-        [],  // Demo Image Sources
-        "",  // Demo Link
+        ["/projects/Vault-Assistant-1.png", "/projects/Vault-Assistant-2.png", "/projects/Vault-Assistant-3.png", "/projects/Vault-Assistant-4.png"],  // Demo Image Sources
+        "https://jairik.github.io/vault-assistant/",  // Demo Link
         "",  // Demo Video Link
-        false,  // Not featured
+        true,  // Featured
         true   // Current
     ));
 
