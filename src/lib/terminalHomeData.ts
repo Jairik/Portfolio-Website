@@ -1,11 +1,10 @@
 /* Site data reshaped for the terminal home page. Everything here derives
    from the shared assets files (projects.ts, experience.ts, constantVars.ts,
-   terminalContent.ts), so content edits in src/assets/ flow straight through
-   to the page without touching any component code. */
+   myPictures.ts, terminalContent.ts), so content edits in src/assets/ flow
+   straight through to the page without touching any component code. */
 import { getProjectItems, personImageAlt, projectImageAlt } from "../assets/projects";
 import { technologyItems, type TechnologyCategory } from "../assets/experience";
-import { mePictures } from "../assets/constantVars";
-import * as C from "../assets/terminalContent";
+import { mePictures } from "../assets/myPictures";
 
 /* Converts a project title into its fake "~/projects/<slug>" directory name */
 export const slug = (s: string) =>
@@ -63,17 +62,16 @@ export const MEDIA: MediaItem[] = [
     alt: projectImageAlt(p.title, p.desc, j, p.images.length)
   }))),
   ...mePictures.map(pic => ({
-    src: pic.path, cat: "me" as const, title: C.media.mePicturesTitle, cap: pic.label,
+    src: pic.path, cat: "me" as const, title: pic.label, cap: "",
     alt: personImageAlt(pic.label)
   }))
 ];
 
-// Media filter tabs with live counts
+// Media filter tabs with live counts — "me" leads and is the default
 export const MEDIA_CATS = [
-  { id: "all", label: `all (${MEDIA.length})` },
-  { id: "projects", label: `projects (${MEDIA.filter(m => m.cat === "projects").length})` },
-  { id: "me", label: `me (${MEDIA.filter(m => m.cat === "me").length})` }
+  { id: "me", label: `me (${MEDIA.filter(m => m.cat === "me").length})` },
+  { id: "projects", label: `projects (${MEDIA.filter(m => m.cat === "projects").length})` }
 ] as const;
 
-// Union of the media filter tab ids ("all" | "projects" | "me")
+// Union of the media filter tab ids ("me" | "projects")
 export type MediaCatId = (typeof MEDIA_CATS)[number]["id"];

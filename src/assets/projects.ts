@@ -315,7 +315,7 @@ export function getProjectItems(): ProjectItem[] {
         "Vault Assistant",  // Title
         "Local AI assistant for Obsidian that answers from your notes with BM25 search. Runs on localhost with multi-tab sessions and swap-in backends like Claude Code or Codex.",  // Brief Description
         "https://github.com/Jairik/vault-assistant",  // GitHub Link
-        ["TypeScript", "Bun", "React", "BM25 RAG", "Claude Code", "Codex", "SearXNG", "Tauri", "Tailwind CSS"],  // Tech Stack
+        ["TypeScript", "Bun", "React", "RAG", "Claude Code", "Codex", "OpenCode", "SearXNG", "Tauri", "Tailwind CSS"],  // Tech Stack
         "January 2026 - Present",  // Date
         ["/projects/Vault-Assistant-1.png", "/projects/Vault-Assistant-2.png", "/projects/Vault-Assistant-3.png", "/projects/Vault-Assistant-4.png"],  // Demo Image Sources
         "https://jairik.github.io/vault-assistant/",  // Demo Link

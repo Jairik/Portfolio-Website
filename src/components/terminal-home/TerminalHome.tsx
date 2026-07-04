@@ -74,8 +74,8 @@ export default function TerminalHome() {
       <ArchiveSection />
       <ArsenalSection />
       <ExperienceSection />
-      <MediaSection />
       <AboutSection />
+      <MediaSection />
       <SiteFooter />
 
       {/* ./config modal: visitor accent + cursor trail prefs (localStorage) */}

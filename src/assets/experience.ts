@@ -382,6 +382,21 @@ export const technologyItems: TechnologyItem[] = [
     category: "Data, AI & Productivity",
     note: "daily use",
   },
+  {
+    name: "Codex",
+    iconSrc: "/tech-icons/codex.svg",
+    category: "Data, AI & Productivity",
+  },
+  {
+    name: "Claude Code",
+    iconSrc: "/tech-icons/claude.svg",
+    category: "Data, AI & Productivity",
+  },
+  {
+    name: "OpenCode",
+    iconSrc: "/tech-icons/opencode.svg",
+    category: "Data, AI & Productivity",
+  },
 ];
 
 /*
@@ -489,6 +504,7 @@ const TECH_KEY_ALIASES: Record<string, string> = {
   // Agent / productivity tooling (project-only chips)
   cursoragents: "cursor",
   mkdocsmaterial: "mkdocs",
+  claudecode: "claude",
 };
 
 const EXTRA_TECH_ICON_MAP: Record<string, string> = {

@@ -33,8 +33,8 @@ export const navItems = [
     { label: "archive", target: "#archive" },
     { label: "arsenal", target: "#arsenal" },
     { label: "xp", target: "#xp" },
-    { label: "media", target: "#media" },
-    { label: "about", target: "#about" }
+    { label: "about", target: "#about" },
+    { label: "media", target: "#media" }
 ];
 
 /* ---------- hero ---------- */
@@ -123,8 +123,7 @@ export const archiveNoImagery = {
 /* ---------- media gallery ---------- */
 export const media = {
     // Template for the count line; {n} is replaced with the total image count
-    countLine: 'find ~/assets -name "*.png" → {n} files found',
-    mePicturesTitle: "JJ — field records"  // mosaic caption title for personal photos
+    countLine: 'find ~/assets -name "*.png" → {n} files found'
 };
 
 /* ---------- about ---------- */

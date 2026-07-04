@@ -14,7 +14,8 @@ import {
   getLinkedExperiencesForTechnology,
   type TechnologyCategory
 } from "../assets/experience";
-import { socialItems, aboutParagraphs, mePictures } from "../assets/constantVars";
+import { socialItems, aboutParagraphs } from "../assets/constantVars";
+import { mePictures } from "../assets/myPictures";
 import { fetchCommitCount } from "../lib/commitCount";
 
 const GITHUB_URL = "https://github.com/Jairik";

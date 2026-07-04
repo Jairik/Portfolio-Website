@@ -7,11 +7,11 @@ import * as C from "../../assets/terminalContent";
 
 /* Renders the filter tabs and the mosaic for the active category */
 export default function MediaSection() {
-  // Active filter tab ("all" | "projects" | "me")
-  const [mediaCat, setMediaCat] = useState<MediaCatId>("all");
+  // Active filter tab ("me" | "projects") — defaults to the personal photos
+  const [mediaCat, setMediaCat] = useState<MediaCatId>("me");
 
   // Images shown in the mosaic for the active filter tab
-  const mosaicItems = MEDIA.filter(m => mediaCat === "all" || m.cat === mediaCat);
+  const mosaicItems = MEDIA.filter(m => m.cat === mediaCat);
 
   return (
     <section id="media">
@@ -35,19 +35,24 @@ export default function MediaSection() {
         </div>
         {/* mosaic: every figure is lightboxable via data-lb */}
         <div className="mosaic">
-          {mosaicItems.map(m => (
-            <figure
-              key={m.src}
-              data-lb={m.src}
-              data-cap={`${m.title} — ${m.cap}`}
-              role="button"
-              tabIndex={0}
-              aria-label={`Open ${m.title}: ${m.cap} in lightbox`}
-            >
-              <img src={m.src} alt={m.alt} loading="lazy" />
-              <figcaption><b>{m.title}</b>{m.cap}</figcaption>
-            </figure>
-          ))}
+          {mosaicItems.map(m => {
+            // Personal photos carry only a title (their myPictures.ts label), so
+            // fold the caption in only when there is one to avoid dangling separators.
+            const caption = m.cap ? `${m.title} — ${m.cap}` : m.title;
+            return (
+              <figure
+                key={m.src}
+                data-lb={m.src}
+                data-cap={caption}
+                role="button"
+                tabIndex={0}
+                aria-label={`Open ${caption || m.alt} in lightbox`}
+              >
+                <img src={m.src} alt={m.alt} loading="lazy" />
+                <figcaption><b>{m.title}</b>{m.cap}</figcaption>
+              </figure>
+            );
+          })}
         </div>
       </div>
     </section>
