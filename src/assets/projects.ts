@@ -119,7 +119,7 @@ export function getProjectItems(): ProjectItem[] {
         ["/projects/CapyMorph-1.png", "/projects/CapyMorph-2.png", "/projects/CapyMorph-3.png"],  // Demo Image Sources
         "https://capymorph.fly.dev/",  // Demo Link 
         "",  // Demo Video Link  (not applicable for this)
-        true  // Featured
+        false  // Featured
     ));
 
     // PerishLess
@@ -313,14 +313,14 @@ export function getProjectItems(): ProjectItem[] {
     // Vault Assistant
     allProjects.push(new ProjectItem(
         "Vault Assistant",  // Title
-        "Local-first AI assistant for Obsidian vaults that answers questions with per-tab BM25 RAG grounded strictly in your notes — no hallucination. Supports multi-tab sessions, job-application drafting with humanized follow-ups, extensible SKILL.md plugins, pluggable engines (Claude Code, Codex, Gemini Antigravity, OpenCode, Cursor, Copilot), optional SearXNG web research, and a polished OKLCH design system — all running on localhost.",  // Brief Description
+        "Local AI assistant for Obsidian that answers questions from your notes with BM25 search. Runs on localhost with multi-tab sessions, job-app drafting, and swap-in agent backends like Claude Code or Codex.",  // Brief Description
         "https://github.com/Jairik/vault-assistant",  // GitHub Link
         ["TypeScript", "Bun", "React", "BM25 RAG", "Claude Code", "Codex", "SearXNG", "Tauri", "Tailwind CSS"],  // Tech Stack
         "January 2026 - Present",  // Date
         ["/projects/Vault-Assistant-1.png", "/projects/Vault-Assistant-2.png", "/projects/Vault-Assistant-3.png", "/projects/Vault-Assistant-4.png"],  // Demo Image Sources
         "https://jairik.github.io/vault-assistant/",  // Demo Link
         "",  // Demo Video Link
-        false,  // Not featured
+        true,  // Featured
         true   // Current
     ));
 
