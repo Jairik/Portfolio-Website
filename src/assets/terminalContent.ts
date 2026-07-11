@@ -30,7 +30,7 @@ export const topbar = {
 // In-page anchor links rendered in the top bar nav (config + contact are appended after)
 export const navItems = [
     { label: "featured", target: "#featured" },
-    { label: "archive", target: "#archive" },
+    { label: "projects", target: "#projects" },
     { label: "arsenal", target: "#arsenal" },
     { label: "xp", target: "#xp" },
     { label: "about", target: "#about" },

@@ -1,7 +1,10 @@
 /* Hero text animation hooks: the typed "whoami" command, the glyph scramble
    that resolves into the name, and the looping role typewriter. All copy
-   comes from src/assets/terminalContent.ts; every hook renders its final
-   text immediately when the visitor prefers reduced motion. */
+   comes from src/assets/terminalContent.ts.
+
+   Initial state is always the final text so SSR/prerender HTML ships readable
+   copy (and matches the first client render). Animations start after mount
+   unless the visitor prefers reduced motion. */
 import { useEffect, useState } from "react";
 import { SCRAMBLE_GLYPHS, prefersReducedMotion } from "../lib/motion";
 import * as C from "../assets/terminalContent";
@@ -14,14 +17,16 @@ const scrambledNameRows = () => C.hero.nameRows.map((row, rowIndex) =>
 
 /* Types out the hero's command one character at a time with human jitter */
 export function useTypedCommand(): string {
-  const [typed, setTyped] = useState("");
+  // Start with the full command so prerendered HTML is not an empty span
+  const [typed, setTyped] = useState(C.hero.typedCommand);
 
   useEffect(() => {
     const text = C.hero.typedCommand;
     if (prefersReducedMotion()) { setTyped(text); return; }
+    // Reset and type from scratch after mount
+    setTyped("");
     let i = 0;
     let timer: ReturnType<typeof setTimeout>;
-    // Type one character at a time with a little human jitter
     const tick = () => {
       setTyped(text.slice(0, ++i));
       if (i < text.length) timer = setTimeout(tick, 55 + Math.random() * 40);
@@ -35,17 +40,17 @@ export function useTypedCommand(): string {
 
 /* Resolves random glyphs into the hero name rows over 24 animation frames */
 export function useNameScramble(): string[] {
-  const [nameRows, setNameRows] = useState<string[]>(() =>
-    prefersReducedMotion() ? C.hero.nameRows : scrambledNameRows()
-  );
+  // Start with the real name so crawlers/prerender see "JAIRIK" / "MCCAULEY"
+  const [nameRows, setNameRows] = useState<string[]>(C.hero.nameRows);
 
   useEffect(() => {
     if (prefersReducedMotion()) return;
     const finals = C.hero.nameRows;
+    // Jump to scrambled glyphs, then decrypt over 24 frames
+    setNameRows(scrambledNameRows());
     let frame = 0;
     const total = 24;
     let timer: ReturnType<typeof setTimeout>;
-    // Each frame solves a few more leading characters, the rest stay random glyphs
     const tick = () => {
       frame++;
       setNameRows(finals.map(final => {
@@ -68,10 +73,12 @@ export function useNameScramble(): string[] {
 
 /* Loops through the role phrases forever: type → pause → delete → next */
 export function useRoleTypewriter(): string {
-  const [roleText, setRoleText] = useState("");
+  // Start with the first role so prerendered HTML has a real subtitle
+  const [roleText, setRoleText] = useState(C.heroRoles[0]);
 
   useEffect(() => {
     if (prefersReducedMotion()) { setRoleText(C.heroRoles[0]); return; }
+    setRoleText("");
     let ri = 0, ci = 0, deleting = false;
     let timer: ReturnType<typeof setTimeout>;
     const loop = () => {

@@ -1,0 +1,98 @@
+/*
+  PressPage — /press. Scoped under .prpage; palette, CRT overlays and base
+  .thome styles come from TerminalHome.css (imported by the component). A single
+  centered terminal window listing the press coverage.
+*/
+
+.prpage { min-height: 100vh; position: relative; overflow-x: hidden; }
+
+/* background grid (fixed, masked) */
+.prpage .pr-grid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--acid-dim) 1px, transparent 1px),
+    linear-gradient(90deg, var(--acid-dim) 1px, transparent 1px);
+  background-size: 56px 56px;
+  opacity: .45;
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, #000 20%, transparent 72%);
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, #000 20%, transparent 72%);
+}
+
+.prpage .pr-main { position: relative; z-index: 1; display: flex; justify-content: center; align-items: flex-start; padding: 48px 20px 80px; }
+.prpage .pr-win {
+  width: 100%;
+  max-width: 800px;
+  border: 1px solid var(--line);
+  background: rgba(13, 17, 11, .94);
+  box-shadow: 0 40px 90px rgba(0, 0, 0, .6), 0 0 70px color-mix(in srgb, var(--acid) 6%, transparent);
+}
+
+/* window title bar */
+.prpage .pr-bar { display: flex; align-items: center; gap: 8px; padding: 11px 15px; border-bottom: 1px solid var(--line); background: var(--bg2); font-size: 11.5px; color: var(--mut); }
+.prpage .pr-bar .d { width: 11px; height: 11px; border-radius: 50%; flex: none; }
+.prpage .pr-bar .d.r { background: var(--red); }
+.prpage .pr-bar .d.y { background: var(--amber); }
+.prpage .pr-bar .d.g { background: var(--acid); }
+.prpage .pr-wttl { margin-left: 10px; letter-spacing: .06em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.prpage .pr-body { padding: 26px 34px 30px; }
+@media (max-width: 560px) { .prpage .pr-body { padding: 22px 18px 24px; } }
+
+.prpage .pr-prompt { margin: 0; color: var(--mut); font-size: 13px; }
+.prpage .pr-prompt .pr { color: var(--acid); font-weight: 700; }
+.prpage .pr-prompt .cmd { color: var(--ink); }
+.prpage .pr-cat { margin: 26px 0 12px; }
+
+.prpage .pr-title {
+  margin: 14px 0 12px;
+  font-family: var(--disp);
+  text-transform: uppercase;
+  line-height: .9;
+  letter-spacing: .01em;
+  font-size: clamp(40px, 9vw, 62px);
+}
+.prpage .pr-title .hollow { color: transparent; -webkit-text-stroke: 2px var(--ink); }
+.prpage .pr-title .acid { color: var(--acid); text-shadow: 0 0 50px color-mix(in srgb, var(--acid) 40%, transparent); }
+
+.prpage .pr-lead { margin: 0 0 6px; color: var(--mut); font-size: 13px; max-width: 650px; text-wrap: pretty; }
+.prpage .pr-lead .s { color: var(--acid-deep); }
+.prpage .pr-lead b { color: var(--ink); font-weight: 500; }
+
+.prpage .pr-stats { display: flex; flex-wrap: wrap; gap: 7px; margin: 16px 0 4px; }
+.prpage .pr-stat { border: 1px solid var(--line); background: var(--bg2); padding: 5px 11px; font-size: 11px; color: var(--mut); }
+.prpage .pr-stat b { color: var(--acid); font-weight: 700; }
+
+/* story list */
+.prpage .pr-list { display: flex; flex-direction: column; border: 1px solid var(--line); background: #0d110b; }
+.prpage .pr-item {
+  display: grid;
+  grid-template-columns: 52px 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--line);
+  transition: background .15s;
+}
+.prpage .pr-item:last-child { border-bottom: none; }
+.prpage .pr-item:hover { background: color-mix(in srgb, var(--acid) 12%, transparent); }
+
+.prpage .pr-ico { width: 52px; height: 52px; object-fit: cover; border: 1px solid var(--line); background: #070906; }
+.prpage .pr-ico.svg { object-fit: contain; padding: 10px; box-sizing: border-box; background: var(--bg2); }
+
+.prpage .pr-info { min-width: 0; }
+.prpage .pr-head { display: block; font-weight: 700; font-size: 13px; color: var(--ink); letter-spacing: .01em; }
+.prpage .pr-src { display: block; font-size: 11px; color: var(--mut); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px; }
+.prpage .pr-src .op { opacity: .6; }
+
+.prpage .pr-read { font-size: 11px; font-weight: 700; letter-spacing: .08em; color: var(--mut); border: 1.5px solid var(--line); padding: 6px 11px; text-transform: uppercase; white-space: nowrap; transition: color .15s, border-color .15s; }
+.prpage .pr-item:hover .pr-read { color: var(--acid); border-color: var(--acid-deep); }
+@media (max-width: 460px) { .prpage .pr-read { display: none; } } /* drop the badge when the row gets tight */
+
+.prpage .pr-foot { margin-top: 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 11px; color: var(--mut); letter-spacing: .04em; }
+.prpage .pr-cd { color: var(--mut); transition: color .15s; }
+.prpage .pr-cd .op { opacity: .6; }
+.prpage .pr-cd:hover { color: var(--acid); }
+.prpage .pr-foot b { color: var(--acid); font-weight: 700; }

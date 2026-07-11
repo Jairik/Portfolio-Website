@@ -1,4 +1,20 @@
+import { getProjectItems, projectImageAlt } from "../assets/projects";
+import { topics, topicOrder } from "../assets/topics";
+import { slug } from "./terminalHomeData";
+
 export type SitemapChangeFrequency = "weekly" | "monthly" | "yearly";
+
+// JSON-LD source for a project detail page (CreativeWork / SoftwareSourceCode)
+export interface SeoProject {
+  name: string;
+  description: string;
+  keywords: string[];
+  image: string;
+  code: string;
+  demo: string;
+  video: string;
+  date: string;
+}
 
 export interface SeoRoute {
   path: string;
@@ -12,6 +28,10 @@ export interface SeoRoute {
   changeFrequency?: SitemapChangeFrequency;
   priority?: number;
   robots?: "index,follow" | "noindex";
+  socialImage?: string; // og/twitter image (defaults to the site screenshot)
+  imageAlt?: string; // alt text for the social image
+  project?: SeoProject; // present on /projects/<slug> routes
+  pageType?: string; // schema.org WebPage subtype (e.g. CollectionPage, AboutPage)
 }
 
 const SITE_URL = "https://jjmccauley.com";
@@ -22,7 +42,7 @@ const WEBSITE_ID = `${SITE_URL}/#website`;
 
 const absoluteUrl = (path: string) => new URL(path, `${SITE_URL}/`).toString();
 
-export const seoRoutes: SeoRoute[] = [
+const staticRoutes: SeoRoute[] = [
   {
     path: "/",
     outputPath: "index.html",
@@ -84,6 +104,32 @@ export const seoRoutes: SeoRoute[] = [
     priority: 0.6
   },
   {
+    path: "/about/",
+    outputPath: "about/index.html",
+    title: "About | JJ McCauley",
+    description:
+      "About Jairik \"JJ\" McCauley — a full-stack software engineer and Computer Science/Data Science grad: background, education, awards, leadership, and life beyond the terminal.",
+    breadcrumbName: "About",
+    includeInSitemap: true,
+    prerender: true,
+    changeFrequency: "monthly",
+    priority: 0.7,
+    pageType: "AboutPage"
+  },
+  {
+    path: "/press/",
+    outputPath: "press/index.html",
+    title: "Press | JJ McCauley",
+    description:
+      "Press and coverage of JJ McCauley's work — hackathon wins, awards, and features from Salisbury University and beyond.",
+    breadcrumbName: "Press",
+    includeInSitemap: true,
+    prerender: true,
+    changeFrequency: "monthly",
+    priority: 0.6,
+    pageType: "CollectionPage"
+  },
+  {
     path: "/404",
     outputPath: "404.html",
     title: "404 | JJ McCauley",
@@ -94,6 +140,75 @@ export const seoRoutes: SeoRoute[] = [
     robots: "noindex"
   }
 ];
+
+// One prerendered, sitemap-listed route per project. Titles/descriptions/images
+// derive from src/assets/projects/, so adding a project adds its detail page.
+const truncate = (value: string, max = 160) =>
+  value.length > max ? `${value.slice(0, max - 1).trimEnd()}…` : value;
+
+const projectRoutes: SeoRoute[] = getProjectItems().map(project => {
+  const projectSlug = slug(project.title);
+  const images = project.imageSrc ?? [];
+  const socialImage = images[0] || DEFAULT_SOCIAL_IMAGE;
+  const imageAlt = images.length
+    ? projectImageAlt(project.title, project.description, 0, images.length)
+    : `${project.title} — project by JJ McCauley`;
+
+  return {
+    path: `/projects/${projectSlug}/`,
+    outputPath: `projects/${projectSlug}/index.html`,
+    title: `${project.title} — JJ McCauley`,
+    description: truncate(project.description),
+    breadcrumbName: project.title,
+    includeInSitemap: true,
+    prerender: true,
+    changeFrequency: "monthly",
+    priority: 0.6,
+    socialImage,
+    imageAlt,
+    project: {
+      name: project.title,
+      description: project.description,
+      keywords: project.techStack,
+      image: socialImage,
+      code: project.link || "",
+      demo: project.demoLink || "",
+      video: project.demoVideoLink || "",
+      date: project.date || ""
+    }
+  };
+});
+
+// One prerendered, sitemap-listed route per topic, plus a bare /topics/ that
+// prerenders the default topic (kept out of the sitemap to avoid a duplicate).
+const DEFAULT_TOPIC = topicOrder[0];
+
+const topicRoutes: SeoRoute[] = [
+  {
+    path: "/topics/",
+    outputPath: "topics/index.html",
+    title: `${topics[DEFAULT_TOPIC].title} — JJ McCauley`,
+    description: truncate(topics[DEFAULT_TOPIC].intro),
+    breadcrumbName: topics[DEFAULT_TOPIC].title,
+    includeInSitemap: false,
+    prerender: true,
+    pageType: "CollectionPage"
+  },
+  ...topicOrder.map(key => ({
+    path: `/topics/${key}/`,
+    outputPath: `topics/${key}/index.html`,
+    title: `${topics[key].title} — JJ McCauley`,
+    description: truncate(topics[key].intro),
+    breadcrumbName: topics[key].title,
+    includeInSitemap: true,
+    prerender: true,
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+    pageType: "CollectionPage"
+  }))
+];
+
+export const seoRoutes: SeoRoute[] = [...staticRoutes, ...projectRoutes, ...topicRoutes];
 
 export const prerenderRoutes = seoRoutes.filter(
   (route): route is SeoRoute & { outputPath: string } => route.prerender && Boolean(route.outputPath)
@@ -139,7 +254,7 @@ const websiteNode = {
 };
 
 const webPageNode = (route: SeoRoute) => ({
-  "@type": "WebPage",
+  "@type": route.pageType ?? "WebPage",
   "@id": `${absoluteUrl(route.path)}#webpage`,
   url: absoluteUrl(route.path),
   name: route.title,
@@ -168,14 +283,43 @@ const breadcrumbNode = (route: SeoRoute) => {
   };
 };
 
+const projectNode = (route: SeoRoute) => {
+  const project = route.project!;
+  const hasCode = Boolean(project.code);
+
+  return {
+    // Open-source projects are SoftwareSourceCode; closed ones are CreativeWork
+    "@type": hasCode ? "SoftwareSourceCode" : "CreativeWork",
+    "@id": `${absoluteUrl(route.path)}#project`,
+    name: project.name,
+    headline: project.name,
+    description: project.description,
+    url: absoluteUrl(route.path),
+    image: absoluteUrl(project.image),
+    author: { "@id": PERSON_ID },
+    creator: { "@id": PERSON_ID },
+    isPartOf: { "@id": WEBSITE_ID },
+    ...(project.keywords.length ? { keywords: project.keywords.join(", ") } : {}),
+    ...(hasCode ? { codeRepository: project.code, programmingLanguage: project.keywords } : {})
+  };
+};
+
 const buildJsonLd = (route: SeoRoute) => ({
   "@context": "https://schema.org",
-  "@graph": [personNode, websiteNode, webPageNode(route), breadcrumbNode(route)]
+  "@graph": [
+    personNode,
+    websiteNode,
+    webPageNode(route),
+    breadcrumbNode(route),
+    ...(route.project ? [projectNode(route)] : [])
+  ]
 });
 
 export const renderSeoHead = (route: SeoRoute) => {
   const canonical = absoluteUrl(route.path);
-  const image = absoluteUrl(DEFAULT_SOCIAL_IMAGE);
+  const image = absoluteUrl(route.socialImage ?? DEFAULT_SOCIAL_IMAGE);
+  const imageAlt = route.imageAlt ?? "Screenshot of JJ McCauley's portfolio website.";
+  const ogType = route.project ? "article" : "website";
   const robots = route.robots ?? "index,follow";
   const jsonLd = buildJsonLd(route);
 
@@ -184,17 +328,18 @@ export const renderSeoHead = (route: SeoRoute) => {
     `<meta name="description" content="${escapeHtml(route.description)}" />`,
     `<meta name="robots" content="${robots}" />`,
     `<link rel="canonical" href="${canonical}" />`,
-    `<meta property="og:type" content="website" />`,
+    `<meta property="og:type" content="${ogType}" />`,
     `<meta property="og:site_name" content="${escapeHtml(SITE_NAME)}" />`,
     `<meta property="og:title" content="${escapeHtml(route.title)}" />`,
     `<meta property="og:description" content="${escapeHtml(route.description)}" />`,
     `<meta property="og:url" content="${canonical}" />`,
     `<meta property="og:image" content="${image}" />`,
-    `<meta property="og:image:alt" content="Screenshot of JJ McCauley's portfolio website." />`,
+    `<meta property="og:image:alt" content="${escapeHtml(imageAlt)}" />`,
     `<meta name="twitter:card" content="summary_large_image" />`,
     `<meta name="twitter:title" content="${escapeHtml(route.title)}" />`,
     `<meta name="twitter:description" content="${escapeHtml(route.description)}" />`,
     `<meta name="twitter:image" content="${image}" />`,
+    `<meta name="twitter:image:alt" content="${escapeHtml(imageAlt)}" />`,
     `<script type="application/ld+json">${escapeJsonLd(jsonLd)}</script>`
   ].join("\n    ");
 };

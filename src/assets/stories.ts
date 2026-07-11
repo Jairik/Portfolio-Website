@@ -2,7 +2,7 @@
  * May redo this structure later for nesting stuff by similar things, but will see
  * */
 
-const BASE_IMAGE_PATH = "tech-icons/";
+const BASE_IMAGE_PATH = "/tech-icons/";  // site-root absolute so icons resolve on any route
 const SU_TODAY_PATH = BASE_IMAGE_PATH + "su-today-icon.png";
 export const SLIDES_ICON_PATH = BASE_IMAGE_PATH + "google-slides.svg";
 

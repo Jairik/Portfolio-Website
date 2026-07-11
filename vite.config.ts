@@ -7,13 +7,20 @@ import { fileURLToPath } from 'node:url'
 // package.json sets "type": "module", so __dirname is unavailable here
 const configDir = dirname(fileURLToPath(import.meta.url))
 
-// Emit a 404.html that mirrors index.html so GitHub Pages serves the SPA for
-// client-side routes (e.g. /terminal) on direct navigation or refresh.
+// Seed a SPA 404.html during the *client* build so GitHub Pages can serve the
+// app shell for unknown routes. scripts/prerender.mjs then overwrites it with
+// the real noindex 404 page. Skip the SSR build — its closeBundle would otherwise
+// clobber that prerendered 404 after a full `npm run build`.
 function spaFallback(): Plugin {
+  let isSsr = false
   return {
     name: 'spa-404-fallback',
     apply: 'build',
+    configResolved(config) {
+      isSsr = Boolean(config.build.ssr)
+    },
     closeBundle() {
+      if (isSsr) return
       const dist = resolve(configDir, 'dist')
       const index = resolve(dist, 'index.html')
       if (existsSync(index)) {
@@ -50,6 +57,7 @@ function previewStaticRoutes(): Plugin {
     '/links': '/links/index.html'
   };
   const knownPaths = new Set(['/', '/terminal/', '/simple/', '/resume/', '/links/']);
+  const dist = resolve(configDir, 'dist');
 
   return {
     name: 'preview-static-routes',
@@ -61,8 +69,18 @@ function previewStaticRoutes(): Plugin {
 
         if (alias) {
           req.url = `${alias}${url.search}`;
-        } else if (!url.pathname.includes('.') && !knownPaths.has(url.pathname)) {
-          req.url = `/404.html${url.search}`;
+        } else if (!url.pathname.includes('.') && url.pathname !== '/') {
+          // Mirror GitHub Pages directory-index serving: if a prerendered
+          // <path>/index.html exists (e.g. /projects/<slug>/), serve it;
+          // otherwise fall back to the SPA 404 page.
+          const withSlash = url.pathname.endsWith('/') ? url.pathname : `${url.pathname}/`;
+          const indexFile = resolve(dist, `.${withSlash}index.html`);
+
+          if (existsSync(indexFile)) {
+            req.url = `${withSlash}index.html${url.search}`;
+          } else if (!knownPaths.has(url.pathname)) {
+            req.url = `/404.html${url.search}`;
+          }
         }
 
         next();

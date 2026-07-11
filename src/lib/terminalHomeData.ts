@@ -14,7 +14,7 @@ export const slug = (s: string) =>
 export interface HomeProject {
   title: string; date: string; desc: string; tech: string[]; images: string[];
   code: string; demo: string; video: string; award: string; closed: boolean;
-  group: "featured" | "current" | "past";
+  current: boolean; group: "featured" | "current" | "past";
 }
 
 // All projects, grouped featured → current → past (matches the design's ordering)
@@ -31,6 +31,7 @@ export const PROJECTS: HomeProject[] = getProjectItems()
     video: p.demoVideoLink || "",
     award: p.award || "",
     closed: !p.link,  // empty GitHub link means the source is closed
+    current: Boolean(p.current),  // in-progress flag (kept even for featured projects)
     group: (p.featured ? "featured" : p.current ? "current" : "past") as HomeProject["group"]
   }))
   .sort((a, b) => GROUP_ORDER[a.group] - GROUP_ORDER[b.group]);
@@ -38,6 +39,13 @@ export const PROJECTS: HomeProject[] = getProjectItems()
 // Featured projects get the big poster windows; the rest become archive rows
 export const FEATURED = PROJECTS.filter(p => p.group === "featured");
 export const ARCHIVE = PROJECTS.filter(p => p.group !== "featured");
+
+// Slug -> project lookup, powering the per-project detail pages at
+// /projects/<slug>. Keys are produced by the same slug() helper used to build
+// the URLs, so a project's home-page link and its page always agree.
+export const PROJECT_BY_SLUG: Record<string, HomeProject> = Object.fromEntries(
+  PROJECTS.map(p => [slug(p.title), p])
+);
 
 // Skill wall renders these categories in this order
 const SKILL_CATEGORIES: TechnologyCategory[] = [

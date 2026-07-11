@@ -1,0 +1,124 @@
+/*
+  TopicPage — /topics/:topic. Scoped under .tpage; the palette, CRT overlays
+  (.fx-scan/.fx-vig) and base .thome styles come from TerminalHome.css, which the
+  component imports alongside this file. Only page-specific layout lives here.
+*/
+
+.tpage { min-height: 100vh; position: relative; overflow-x: hidden; }
+
+/* background grid (fixed, masked, themeable via --acid-dim) — matches the project page */
+.tpage .tp-grid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--acid-dim) 1px, transparent 1px),
+    linear-gradient(90deg, var(--acid-dim) 1px, transparent 1px);
+  background-size: 56px 56px;
+  opacity: .45;
+  -webkit-mask-image: radial-gradient(ellipse 75% 65% at 50% 30%, #000 25%, transparent 75%);
+  mask-image: radial-gradient(ellipse 75% 65% at 50% 30%, #000 25%, transparent 75%);
+}
+
+/* shared inline bits */
+.tpage .tp-cmt { color: var(--mut); font-size: 12.5px; }
+.tpage .tp-cmt .s,
+.tpage .tp-intro .s { color: var(--acid-deep); }
+.tpage .gt { color: var(--acid); }
+
+/* ---------- header ---------- */
+.tpage .tp-head { position: relative; padding: 84px 22px 0; overflow: hidden; }
+.tpage .tp-head-in { max-width: 1180px; margin: 0 auto; position: relative; z-index: 1; }
+.tpage .tp-title {
+  margin: 8px 0 0;
+  font-family: var(--disp);
+  text-transform: uppercase;
+  font-size: clamp(46px, 10vw, 88px);
+  line-height: .96;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.tpage .tp-intro { margin: 20px 0 0; color: var(--mut); font-size: 13.5px; max-width: 660px; text-wrap: pretty; }
+.tpage .tp-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+.tpage .tp-stat { border: 1px solid var(--line); background: var(--bg2); padding: 6px 12px; font-size: 11.5px; color: var(--mut); }
+.tpage .tp-stat b { color: var(--acid); font-weight: 700; }
+
+/* ---------- topic switcher ---------- */
+.tpage .tp-switch-wrap { padding: 44px 22px 0; position: relative; z-index: 1; }
+.tpage .tp-switch-in { max-width: 1180px; margin: 0 auto; }
+.tpage .tp-prompt { margin: 0 0 12px; color: var(--mut); font-size: 12.5px; }
+.tpage .tp-prompt .pr { color: var(--acid); font-weight: 700; }
+.tpage .tp-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+.tpage .tp-tab {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 8px 15px;
+  border: 1px solid var(--line);
+  background: var(--bg2);
+  color: var(--mut);
+  transition: border-color .15s, color .15s, background .15s;
+}
+.tpage .tp-tab:hover { border-color: var(--acid-deep); color: var(--acid); }
+.tpage .tp-tab.on { background: var(--acid); border-color: var(--acid); color: #070906; }
+
+/* ---------- sections ---------- */
+.tpage .tp-sec { padding: 48px 22px 30px; position: relative; z-index: 1; }
+.tpage .tp-sec-tools { padding: 40px 22px 70px; }
+.tpage .tp-sec-in { max-width: 1180px; margin: 0 auto; }
+.tpage .tp-sec-title {
+  margin: 8px 0 30px;
+  font-family: var(--disp);
+  text-transform: uppercase;
+  font-size: clamp(34px, 6vw, 44px);
+  line-height: .96;
+  color: var(--ink);
+}
+
+/* ---------- card grid ---------- */
+.tpage .tp-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 20px; }
+
+.tpage .tp-card { border: 1px solid var(--line); background: #0d110b; box-shadow: 0 20px 50px rgba(0, 0, 0, .35); display: flex; flex-direction: column; }
+.tpage .tp-card-bar { display: flex; align-items: center; gap: 8px; padding: 9px 14px; border-bottom: 1px solid var(--line); background: var(--bg2); font-size: 11px; color: var(--mut); }
+.tpage .tp-card-bar .d { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.tpage .tp-card-bar .d.r { background: var(--red); }
+.tpage .tp-card-bar .d.y { background: var(--amber); }
+.tpage .tp-card-bar .d.g { background: var(--acid); }
+.tpage .tp-card-path { margin-left: 8px; letter-spacing: .05em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.tpage .tp-card-shot { background: #000; border-bottom: 1px solid var(--line); }
+.tpage .tp-card-shot img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; display: block; }
+.tpage .tp-card-noimg {
+  aspect-ratio: 16 / 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg2);
+  color: var(--mut);
+  font-size: 12px;
+  font-style: italic;
+  padding: 20px;
+  text-align: center;
+}
+.tpage .tp-card-noimg .ex { color: var(--amber); font-style: normal; }
+
+.tpage .tp-card-body { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.tpage .tp-card-date { font-size: 11px; letter-spacing: .16em; color: var(--acid); text-transform: uppercase; }
+.tpage .tp-card-title { margin: 0; font-family: var(--disp); text-transform: uppercase; font-size: 27px; line-height: .98; color: var(--ink); font-weight: 400; }
+.tpage .tp-card-desc { margin: 0; color: var(--mut); font-size: 12.5px; text-wrap: pretty; }
+.tpage .tp-card-badges { display: flex; gap: 7px; flex-wrap: wrap; margin-top: auto; padding-top: 6px; }
+.tpage .tp-badge { font-size: 9.5px; letter-spacing: .1em; padding: 3px 8px; text-transform: uppercase; white-space: nowrap; border: 1px solid; }
+.tpage .tp-badge.acid { border-color: var(--acid-deep); color: var(--acid); }
+.tpage .tp-badge.mut { border-color: var(--line); color: var(--mut); }
+
+.tpage .tp-card-cta { display: block; padding: 12px 20px; border-top: 1px solid var(--line); font-size: 11.5px; font-weight: 700; letter-spacing: .08em; color: var(--acid); text-transform: uppercase; transition: background .15s; }
+.tpage .tp-card-cta:hover { background: color-mix(in srgb, var(--acid) 12%, transparent); }
+.tpage .tp-card-cta .op { opacity: .7; }
+
+/* ---------- tools ---------- */
+.tpage .tp-tools { display: flex; flex-wrap: wrap; gap: 9px; }
+.tpage .tp-tool { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 12.5px; background: #070906; color: var(--acid); border: 1px solid var(--acid-deep); padding: 9px 14px; }
+.tpage .tp-tool img { width: 15px; height: 15px; filter: invert(.9) sepia(1) saturate(4) hue-rotate(45deg) brightness(1.3); }

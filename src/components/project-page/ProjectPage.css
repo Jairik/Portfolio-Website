@@ -1,0 +1,202 @@
+/*
+  ProjectPage — per-project detail page (/projects/:slug), the "README window"
+  design. Scoped under .ppage; the palette, CRT overlays (.fx-scan/.fx-vig),
+  lightbox (.lb) and base .thome styles come from TerminalHome.css, which the
+  component imports alongside this file. Only page-specific layout lives here.
+*/
+
+.ppage {
+  --dash: #2b3620; /* dashed empty-state border */
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ---------- background grid (fixed, masked, themeable via --acid-dim) ---------- */
+.ppage .pp-grid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--acid-dim) 1px, transparent 1px),
+    linear-gradient(90deg, var(--acid-dim) 1px, transparent 1px);
+  background-size: 56px 56px;
+  opacity: .45;
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 35%, #000 20%, transparent 72%);
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 35%, #000 20%, transparent 72%);
+}
+
+/* ---------- page column + prompt lines ---------- */
+.ppage .pp-main { position: relative; z-index: 1; max-width: 1120px; margin: 0 auto; padding: 44px 22px 72px; }
+.ppage .pp-prompt { color: var(--mut); font-size: 13px; margin: 0 0 14px; }
+.ppage .pp-prompt.sm { margin: 0; }
+.ppage .pp-prompt .pr { color: var(--acid); font-weight: 700; }
+.ppage .pp-prompt .cmd { color: var(--ink); }
+
+/* ---------- README window ---------- */
+.ppage .rdwin {
+  border: 1px solid var(--line);
+  background: rgba(13, 17, 11, .94);
+  box-shadow: 0 40px 90px rgba(0, 0, 0, .6), 0 0 70px color-mix(in srgb, var(--acid) 6%, transparent);
+}
+.ppage .rd-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 15px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg2);
+  font-size: 11.5px;
+  color: var(--mut);
+}
+.ppage .rd-bar .d { width: 11px; height: 11px; border-radius: 50%; flex: none; }
+.ppage .rd-bar .d.r { background: var(--red); }
+.ppage .rd-bar .d.y { background: var(--amber); }
+.ppage .rd-bar .d.g { background: var(--acid); }
+.ppage .rd-ttl { margin-left: 10px; letter-spacing: .06em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ppage .rd-award {
+  margin-left: auto;
+  color: #070906;
+  background: var(--acid);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: .08em;
+  padding: 3px 9px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+@media (max-width: 640px) { .ppage .rd-award { display: none; } }
+
+.ppage .rd-body { padding: 30px 34px 34px; }
+@media (max-width: 560px) { .ppage .rd-body { padding: 22px 18px 26px; } }
+
+.ppage .rd-title {
+  margin: 16px 0 6px;
+  font-family: var(--disp);
+  text-transform: uppercase;
+  line-height: .9;
+  letter-spacing: .01em;
+  font-size: clamp(44px, 9vw, 84px);
+  color: transparent;
+  -webkit-text-stroke: 2px var(--ink);
+  overflow-wrap: anywhere;
+}
+.ppage .rd-meta { margin: 0 0 22px; color: var(--mut); font-size: 12px; letter-spacing: .06em; text-wrap: pretty; }
+.ppage .rd-meta .ac { color: var(--acid); }
+/* the tag links to its topic page — signal it's interactive */
+.ppage .rd-meta a { color: inherit; text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 3px; transition: color .15s; }
+.ppage .rd-meta a:hover { color: var(--acid); }
+
+/* ---------- two-column grid ---------- */
+.ppage .rd-cols { display: grid; grid-template-columns: 280px 1fr; gap: 36px; align-items: start; }
+@media (max-width: 820px) { .ppage .rd-cols { grid-template-columns: 1fr; gap: 28px; } }
+
+/* ---------- shared block labels ("// links", "## about") ---------- */
+.ppage .rail-lbl,
+.ppage .sec-lbl {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--mut);
+}
+.ppage .rail-lbl { margin-bottom: 10px; }
+.ppage .sec-lbl { margin-bottom: 12px; }
+.ppage .rail-lbl .s,
+.ppage .sec-lbl .s { color: var(--acid-deep); }
+
+/* ---------- meta rail ---------- */
+.ppage .pp-rail { display: flex; flex-direction: column; gap: 22px; }
+.ppage .rail-links { display: flex; flex-direction: column; gap: 9px; }
+.ppage .rail-btn {
+  display: block;
+  text-align: center;
+  font-size: 11.5px;
+  letter-spacing: .08em;
+  padding: 11px 16px;
+  text-transform: uppercase;
+  border: 1.5px solid transparent;
+  transition: transform .15s, box-shadow .15s, background .15s, color .15s, border-color .15s;
+}
+.ppage .rail-btn::before { content: "$ "; opacity: .7; }
+.ppage .rail-btn.primary { font-weight: 800; color: #070906; background: var(--acid); border-color: var(--acid); }
+.ppage .rail-btn.primary:hover { transform: scale(1.02); box-shadow: 4px 4px 0 color-mix(in srgb, var(--acid) 25%, transparent); }
+.ppage .rail-btn.ghost { font-weight: 700; color: var(--acid); border-color: var(--acid-deep); }
+.ppage .rail-btn.ghost:hover { background: var(--acid); border-color: var(--acid); color: #070906; }
+.ppage .rail-btn.back { font-weight: 700; color: var(--mut); border-color: var(--line); }
+.ppage .rail-btn.back:hover { color: var(--acid); border-color: var(--acid-deep); }
+
+.ppage .rail-meta { border: 1px solid var(--line); background: var(--bg2); }
+.ppage .rail-meta .row {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  font-size: 11.5px;
+}
+.ppage .rail-meta .row:last-child { border-bottom: none; }
+.ppage .rail-meta .k { color: var(--mut); }
+.ppage .rail-meta .v { color: var(--ink); }
+.ppage .rail-meta .v.ac { color: var(--acid); }
+
+.ppage .rail-stack { display: flex; flex-direction: column; gap: 6px; }
+.ppage .stack-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--mut);
+  border: 1px solid var(--line);
+  background: var(--bg2);
+  padding: 6px 10px;
+}
+.ppage .stack-item img { width: 13px; height: 13px; filter: invert(.85); flex: none; }
+
+/* ---------- content column ---------- */
+.ppage .pp-content { display: flex; flex-direction: column; gap: 30px; min-width: 0; }
+.ppage .rd-lead { margin: 0 0 12px; color: var(--ink); font-size: 13.5px; text-wrap: pretty; }
+.ppage .rd-copy { margin: 0 0 12px; color: var(--ink); font-size: 13.5px; text-wrap: pretty; }
+.ppage .rd-copy:last-child { margin-bottom: 0; }
+
+.ppage .rd-phs { display: flex; flex-direction: column; gap: 10px; }
+.ppage .rd-ph { border: 1px dashed var(--dash); background: var(--bg2); padding: 15px 17px; color: var(--mut); font-size: 13px; }
+.ppage .rd-ph .ex { color: var(--amber); }
+
+.ppage .rd-demo { border: 1px solid var(--line); }
+.ppage .rd-demo iframe { width: 100%; aspect-ratio: 16 / 9; border: 0; display: block; background: #000; }
+
+.ppage .rd-shots { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ppage .rd-shots img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  object-position: top;
+  border: 1px solid var(--line);
+  cursor: zoom-in;
+  transition: border-color .15s, transform .15s;
+}
+.ppage .rd-shots img:hover { border-color: var(--acid); transform: translateY(-2px); }
+@media (max-width: 480px) { .ppage .rd-shots { grid-template-columns: 1fr; } }
+
+.ppage .rd-noimg { color: var(--mut); font-size: 12px; font-style: italic; }
+.ppage .rd-noimg::before { content: "! "; color: var(--amber); font-style: normal; }
+
+/* ---------- window footer ---------- */
+.ppage .rd-foot {
+  margin-top: 30px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--mut);
+  letter-spacing: .04em;
+}
+.ppage .rd-back { transition: color .15s; }
+.ppage .rd-back .op { opacity: .6; }
+.ppage .rd-back:hover { color: var(--acid); }
+.ppage .rd-foot b { color: var(--acid); font-weight: 700; }

@@ -1,0 +1,36 @@
+/*
+  Shared sub-page top bar (SubTopbar). Scoped under .thome so it inherits the
+  terminal palette tokens (--acid, --mut, --ink, --line) on any sub-page root.
+  Ported from the project page's original .pp-top rules.
+*/
+
+.thome .sub-top {
+  position: sticky;
+  top: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 11px 22px;
+  background: rgba(7, 9, 6, .88);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+.thome .sub-host { color: var(--acid); font-weight: 700; white-space: nowrap; }
+.thome .sub-who { color: var(--mut); letter-spacing: .06em; }
+.thome .sub-who b { color: var(--ink); font-weight: 700; }
+@media (max-width: 860px) { .thome .sub-who { display: none; } }
+
+.thome .sub-top nav { display: flex; gap: 16px; margin-left: auto; }
+.thome .sub-top nav a { color: var(--mut); letter-spacing: .04em; transition: color .15s; white-space: nowrap; }
+.thome .sub-top nav a::before { content: "./"; opacity: .5; }
+.thome .sub-top nav a:hover { color: var(--acid); }
+.thome .sub-top nav a.on { color: var(--acid); }
+
+@media (max-width: 520px) {
+  .thome .sub-host { display: none; } /* free the row for the nav on small screens */
+  .thome .sub-top nav { gap: 12px; margin-left: 0; }
+  .thome .sub-top nav a::before { display: none; }
+}

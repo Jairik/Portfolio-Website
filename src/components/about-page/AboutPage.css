@@ -1,0 +1,82 @@
+/*
+  AboutPage — /about. Scoped under .apage; the palette, CRT overlays and base
+  .thome styles come from TerminalHome.css (imported by the component). A narrow
+  reading column with the extended-cut sections.
+*/
+
+.apage { min-height: 100vh; position: relative; overflow-x: hidden; }
+
+/* background grid (fixed, masked) */
+.apage .ap-grid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--acid-dim) 1px, transparent 1px),
+    linear-gradient(90deg, var(--acid-dim) 1px, transparent 1px);
+  background-size: 56px 56px;
+  opacity: .45;
+  -webkit-mask-image: radial-gradient(ellipse 75% 65% at 50% 30%, #000 25%, transparent 75%);
+  mask-image: radial-gradient(ellipse 75% 65% at 50% 30%, #000 25%, transparent 75%);
+}
+
+.apage .ap-cmt { color: var(--mut); font-size: 12.5px; }
+.apage .ap-cmt .s { color: var(--acid-deep); }
+.apage .gt { color: var(--acid); }
+
+/* ---------- header ---------- */
+.apage .ap-head { position: relative; padding: 84px 22px 0; overflow: hidden; }
+.apage .ap-head-in { max-width: 1180px; margin: 0 auto; position: relative; z-index: 1; }
+.apage .ap-title {
+  margin: 8px 0 0;
+  font-family: var(--disp);
+  text-transform: uppercase;
+  font-size: clamp(52px, 12vw, 96px);
+  line-height: .96;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+/* ---------- intro prose (live) ---------- */
+.apage .ap-intro {
+  position: relative;
+  z-index: 1;
+  padding: 56px 22px 20px;
+  max-width: 740px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.apage .ap-prompt { margin: 0 0 4px; color: var(--mut); font-size: 13px; }
+.apage .ap-prompt .pr { color: var(--acid); font-weight: 700; }
+.apage .ap-prompt .cmd { color: var(--ink); }
+.apage .ap-prose { margin: 0; font-size: 15px; color: var(--ink); line-height: 1.6; text-wrap: pretty; }
+.apage em { font-style: normal; color: var(--acid); }
+
+/* ---------- extended sections ---------- */
+.apage .ap-sections {
+  position: relative;
+  z-index: 1;
+  padding: 40px 22px 30px;
+  max-width: 740px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 52px;
+}
+.apage .ap-sec-cmd { margin: 0; color: var(--mut); font-size: 12.5px; }
+.apage .ap-sec-cmd .pr { color: var(--acid); font-weight: 700; }
+.apage .ap-sec-title {
+  margin: 8px 0 16px;
+  font-family: var(--disp);
+  text-transform: uppercase;
+  font-size: clamp(30px, 6vw, 38px);
+  line-height: .96;
+  color: var(--ink);
+}
+.apage .ap-sec .ap-prose { margin: 0 0 12px; }
+.apage .ap-sec .ap-prose:last-child { margin-bottom: 0; }
+.apage .ap-ph { border: 1px dashed #2b3620; background: var(--bg2); padding: 18px 20px; color: var(--mut); font-size: 13px; }
+.apage .ap-ph .ex { color: var(--amber); }

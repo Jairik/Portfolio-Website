@@ -7,7 +7,7 @@ import * as C from "../../assets/terminalContent";
 /* Renders the ~/history window listing the current + past project rows */
 export default function ArchiveSection() {
   return (
-    <section id="archive">
+    <section id="projects">
       <SectionHeading cmt={C.sections.archive.cmt} title={C.sections.archive.title} />
       <div className="inner">
         <div className="arch-list">
