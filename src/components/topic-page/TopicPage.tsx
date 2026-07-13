@@ -1,13 +1,13 @@
-/* TopicPage — a curated lens over the projects, served at /topics/:topic
-   (and /topics → the default topic). A React port of the "Topic page" design,
-   built as a reusable template: the topic key in the URL selects the topic, and
-   all content is resolved from src/assets/topics.ts against the live project and
-   tool data. Reuses the terminal palette, CRT overlays, and shared top bar/footer.
+/* TopicPage — a curated lens over the projects. Canonical URL is /:topic
+   (e.g. /ai-engineering); /topics/:topic and bare /topics stay as aliases.
+   The topic key in the URL selects the topic, and all content is resolved from
+   src/assets/topics.ts against the live project and tool data. Reuses the
+   terminal palette, CRT overlays, and shared top bar/footer.
 
    TopicPage resolves the key and falls back to the site 404; the page (and its
    hooks) live in TopicPageShell, which only renders once a topic is resolved. */
 import { useRef } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import "../terminal-home/TerminalHome.css"; // shared .thome tokens + CRT fx
 import "./TopicPage.css";
 import NotFound from "../NotFound";
@@ -17,10 +17,22 @@ import TopicProjectCard from "./TopicProjectCard";
 import { usePageChrome } from "../../hooks/usePageChrome";
 import { useVisitorPrefs } from "../../hooks/useVisitorPrefs";
 import { getTopicPageView, type TopicPageView } from "../../lib/topicPage";
+import { topics } from "../../assets/topics";
+
+/* Pulls the topic key from /topics/:topic or a top-level /:topic path */
+function useTopicKey(): string | undefined {
+  const { topic: paramTopic } = useParams();
+  const { pathname } = useLocation();
+  if (paramTopic) return paramTopic;
+  // Last non-empty segment — /ai-engineering → "ai-engineering"; /topics → undefined
+  const segment = pathname.replace(/\/+$/, "").split("/").filter(Boolean).pop();
+  if (segment && segment in topics) return segment;
+  return undefined;
+}
 
 /* Resolves the URL topic key to a topic, or renders the 404 for unknown keys */
 export default function TopicPage() {
-  const { topic } = useParams();
+  const topic = useTopicKey();
   const view = getTopicPageView(topic);
   if (!view) return <NotFound />;
   return <TopicPageShell view={view} />;
@@ -31,7 +43,7 @@ function TopicPageShell({ view }: { view: TopicPageView }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const { def, projects, tools, projectCount, toolCount, tabs } = view;
 
-  usePageChrome("#070906", `${def.title} — JJ McCauley`);
+  usePageChrome("#070906");
   useVisitorPrefs(rootRef); // carry the visitor's chosen accent across pages
 
   return (
@@ -41,7 +53,7 @@ function TopicPageShell({ view }: { view: TopicPageView }) {
       <div className="fx-scan" />
       <div className="fx-vig" />
 
-      <SubTopbar host="jj@portfolio:~/topics$" current="projects" />
+      <SubTopbar host={`jj@portfolio:~/${view.key}$`} current="projects" />
 
       {/* header: command comment, hollow title, intro, count badges */}
       <header className="tp-head">
@@ -56,13 +68,13 @@ function TopicPageShell({ view }: { view: TopicPageView }) {
         </div>
       </header>
 
-      {/* topic switcher: each tab links to its own /topics/<key> URL */}
+      {/* topic switcher: each tab links to its canonical /<key> URL */}
       <div className="tp-switch-wrap">
         <div className="tp-switch-in">
           <p className="tp-prompt"><span className="pr">$</span> ls ~/topics</p>
           <div className="tp-tabs">
             {tabs.map(t => (
-              <Link key={t.key} to={`/topics/${t.key}`} className={t.active ? "tp-tab on" : "tp-tab"}>
+              <Link key={t.key} to={`/${t.key}/`} className={t.active ? "tp-tab on" : "tp-tab"}>
                 {t.label}
               </Link>
             ))}
@@ -78,6 +90,15 @@ function TopicPageShell({ view }: { view: TopicPageView }) {
           <div className="tp-cards">
             {projects.map(p => <TopicProjectCard key={p.title} p={p} />)}
           </div>
+        </div>
+      </section>
+
+      {/* shared technical decisions across this topic's projects */}
+      <section className="tp-sec">
+        <div className="tp-sec-in">
+          <span className="tp-cmt"><span className="s"># </span>tradeoffs that keep showing up in this lane</span>
+          <h2 className="tp-sec-title"><span className="gt">&gt; </span>Decisions</h2>
+          <p className="tp-intro"><span className="s"># </span>{def.decisions}</p>
         </div>
       </section>
 

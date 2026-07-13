@@ -1,7 +1,9 @@
 /* Featured project poster: window chrome, main shot + filmstrip, info column. */
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import TechChips from "./TechChips";
 import ProjectLinks from "./ProjectLinks";
+import ResponsiveImage from "../ResponsiveImage";
 import { slug, type HomeProject } from "../../lib/terminalHomeData";
 import { projectImageAlt } from "../../assets/projects";
 
@@ -21,12 +23,12 @@ export default function FeaturedWindow({ p }: { p: HomeProject }) {
       <div className="body">
         {/* screenshot pane: clicking the main image opens the lightbox */}
         <div className="pshot">
-          <img
+          <ResponsiveImage
             className="main"
             src={p.images[mainIdx]}
+            slot="project-hero"
+            lightbox
             alt={projectImageAlt(p.title, p.desc, mainIdx, p.images.length)}
-            loading="lazy"
-            data-lb={p.images[mainIdx]}
             data-cap={p.title}
             role="button"
             tabIndex={0}
@@ -43,7 +45,7 @@ export default function FeaturedWindow({ p }: { p: HomeProject }) {
                   aria-label={`screenshot ${j + 1}`}
                   onClick={() => setMainIdx(j)}
                 >
-                  <img src={im} alt="" loading="lazy" />
+                  <ResponsiveImage src={im} slot="thumbnail" alt="" />
                 </button>
               ))}
             </div>
@@ -52,7 +54,9 @@ export default function FeaturedWindow({ p }: { p: HomeProject }) {
         {/* info column: date, title, description, tech pills, links */}
         <div className="pinfo">
           <span className="pdate">{p.date}</span>
-          <h3>{p.title}</h3>
+          <h3>
+            <Link to={`/projects/${slug(p.title)}/`}>{p.title}</Link>
+          </h3>
           <p className="pdesc">{p.desc}</p>
           <TechChips tech={p.tech} />
           <ProjectLinks p={p} />

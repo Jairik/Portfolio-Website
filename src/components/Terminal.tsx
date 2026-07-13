@@ -15,7 +15,7 @@ import {
   type TechnologyCategory
 } from "../assets/experience";
 import { socialItems, aboutParagraphs } from "../assets/constantVars";
-import { mePictures } from "../assets/myPictures";
+import { mePicturesSorted } from "../assets/myPictures";
 import { fetchCommitCount } from "../lib/commitCount";
 
 const GITHUB_URL = "https://github.com/Jairik";
@@ -32,6 +32,16 @@ const esc = (s: unknown) =>
   String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 const base = (p: string) => p.split("/").pop() || p;
+/* In-app project README route — same path as the main-page "readme" links */
+const projectReadmePath = (title: string) => `/projects/${slug(title)}/`;
+/* "$ readme / code / live / video" — readme first, matching ProjectLinks on home */
+const projectLinksHtml = (p: { title: string; code: string; demo: string; video: string }) =>
+  [
+    `<a href="${esc(projectReadmePath(p.title))}">readme</a>`,
+    p.code ? `<a href="${esc(p.code)}" target="_blank" rel="noopener">code ↗</a>` : "",
+    p.demo ? `<a href="${esc(p.demo)}" target="_blank" rel="noopener">live ↗</a>` : "",
+    p.video ? `<a href="${esc(p.video)}" target="_blank" rel="noopener">video ↗</a>` : ""
+  ].filter(Boolean).join(" · ");
 
 /* ---------- site data, reshaped for the emulator ---------- */
 interface TermProject {
@@ -71,12 +81,15 @@ const XP: TermXp[] = experienceItems.map(x => ({
 }));
 
 interface MediaItem { src: string; title: string; cap: string; alt: string }
+/* Me-pictures lead so the media tab opens on personal photos, then project shots */
 const MEDIA: MediaItem[] = [
+  ...mePicturesSorted.map(pic => ({
+    src: pic.path, title: "JJ — field records", cap: pic.label, alt: personImageAlt(pic.label)
+  })),
   ...PROJECTS.flatMap(p => p.images.map((im, j) => ({
     src: im, title: p.title, cap: `screenshot ${j + 1}/${p.images.length} · ${p.date}`,
     alt: projectImageAlt(p.title, p.desc, j, p.images.length)
-  }))),
-  ...mePictures.map(pic => ({ src: pic.path, title: "JJ — field records", cap: pic.label, alt: personImageAlt(pic.label) }))
+  })))
 ];
 
 const CONTACT_LINES: [string, string][] = [
@@ -110,7 +123,7 @@ const THEMES: Record<string, { acid: string; deep: string; dim: string }> = {
 const THEME_KEY = "jj-term-theme";
 
 const COMMANDS = [
-  "help", "ls", "cd", "pwd", "cat", "less", "head", "tail", "open", "resume", "cv", "whoami", "neofetch", "tui",
+  "help", "ls", "cd", "pwd", "cat", "less", "head", "tail", "open", "projects", "resume", "cv", "whoami", "neofetch", "tui",
   "clear", "history", "echo", "contact", "sudo", "exit", "vim", "nvim", "grep", "tree", "top",
   "touch", "mkdir", "fortune", "cowsay", "corgisay", "matrix", "sl", "hack", "caffeine", "theme",
   "roll", "coinflip", "ping", "links", "./links"
@@ -150,14 +163,11 @@ export default function Terminal() {
   const lbImgRef = useRef<HTMLImageElement>(null);
   const lbCapRef = useRef<HTMLDivElement>(null);
 
-  // Page title + dark page background (restored on unmount).
+  // Keep the terminal background across overscroll, then restore it on exit.
   useEffect(() => {
-    const prevTitle = document.title;
     const prevBodyBg = document.body.style.background;
-    document.title = "Interactive Terminal Portfolio | JJ McCauley";
     document.body.style.background = "#070906";
     return () => {
-      document.title = prevTitle;
       document.body.style.background = prevBodyBg;
     };
   }, []);
@@ -296,9 +306,7 @@ export default function Terminal() {
         `<span class="ok"># ${esc(p.title)}</span>  <span class="dim">${esc(p.date)}${badges ? " · " + esc(badges) : ""}</span><br />` +
         `${esc(p.desc)}<br />` +
         `<span class="dim">tech:</span> ${p.tech.map(esc).join(", ")}<br />` +
-        [p.code ? `<a href="${esc(p.code)}" target="_blank" rel="noopener">code ↗</a>` : "",
-         p.demo ? `<a href="${esc(p.demo)}" target="_blank" rel="noopener">live ↗</a>` : "",
-         p.video ? `<a href="${esc(p.video)}" target="_blank" rel="noopener">video ↗</a>` : ""].filter(Boolean).join(" · ") +
+        projectLinksHtml(p) +
           (p.images.length ? `<br /><span class="dim">${p.images.length} image(s) on file — run <kbd>tui</kbd> to view them</span>` : "")
       );
     }
@@ -377,9 +385,9 @@ export default function Terminal() {
       if (a.includes("mail") || a.includes("contact")) { location.href = `mailto:${EMAIL}`; return; }
       const p = findProject(arg);
       if (p) {
-        const url = p.code || p.demo || p.video;
-        if (url) { window.open(url, "_blank"); print(`opening ${esc(p.title)} …`, "ok"); return; }
-        print(`open: ${esc(p.title)} has no public link (closed source)`, "warn");
+        /* Same destination as Enter in the TUI — project README page */
+        navigate(projectReadmePath(p.title));
+        print(`opening ${esc(p.title)} readme …`, "ok");
         return;
       }
       print(`open: don't know how to open '${esc(arg)}'`, "err");
@@ -415,7 +423,8 @@ export default function Terminal() {
         ["cd <dir>", "move — projects/ skills/ media/"],
         ["cat <file>", "read — <kbd>cat about.md</kbd>, <kbd>cat projects/lunara.md</kbd>"],
         ["less / head / tail <file>", "pagers — <kbd>head experience.log</kbd>, <kbd>tail 3 about.md</kbd>"],
-        ["open <thing>", "open resume / github / a project"],
+        ["open <thing>", "open resume / github / a project readme"],
+        ["projects", "the full projects index — or just type a project name, e.g. <kbd>lunara</kbd>"],
         ["resume", "open my résumé (pdf) — same as <kbd>open resume</kbd>"],
         ["./links", "all my links, one page"],
         ["tui", "<span class='ok'>arrow-key browser — the good stuff</span>"],
@@ -704,8 +713,14 @@ export default function Terminal() {
         const lines = [`# ${p.title}`, "", `date: ${p.date}`];
         if (p.award) lines.push(`award: ★ ${p.award}`);
         lines.push("", ...wrapText(p.desc), "", "## stack", ...p.tech.map(t => "- " + t));
-        const links = [p.code && "- code: " + p.code, p.demo && "- live: " + p.demo, p.video && "- video: " + p.video].filter(Boolean) as string[];
-        if (links.length) lines.push("", "## links", ...links);
+        /* Always include readme; optional public URLs follow */
+        const links = [
+          "- readme: " + projectReadmePath(p.title),
+          p.code && "- code: " + p.code,
+          p.demo && "- live: " + p.demo,
+          p.video && "- video: " + p.video
+        ].filter(Boolean) as string[];
+        lines.push("", "## links", ...links);
         return { name: slug(p.title) + ".md", lines };
       }
       return { name: a, lines: [""], fresh: true };
@@ -895,14 +910,13 @@ export default function Terminal() {
         (p.images[0] ? `<img src="${esc(p.images[0])}" alt="${esc(projectImageAlt(p.title, p.desc, 0, p.images.length))}" data-lb="${esc(p.images[0])}" data-cap="${esc(p.title)}" loading="lazy" />` : "") +
         `<p>${esc(p.desc)}</p>` +
         `<div class="kv"><b>tech</b> ${p.tech.map(esc).join(", ")}</div>` +
-        `<div class="kv">${[p.code ? `<a href="${esc(p.code)}" target="_blank" rel="noopener">code ↗</a>` : "",
-          p.demo ? `<a href="${esc(p.demo)}" target="_blank" rel="noopener">live ↗</a>` : "",
-          p.video ? `<a href="${esc(p.video)}" target="_blank" rel="noopener">video ↗</a>` : ""].filter(Boolean).join(" · ") || '<span class="dim">no public links</span>'}</div>`;
+        `<div class="kv">${projectLinksHtml(p)}</div>`;
     }
     const SECS: TuiSection[] = [
       { label: "1:projects", items: PROJECTS.map(p => ({
           label: p.title, html: () => projDetail(p),
-          enter: () => { const u = p.code || p.demo || p.video; if (u) window.open(u, "_blank"); } })) },
+          /* Enter opens the project README page (same as main-page "readme") */
+          enter: () => { navigate(projectReadmePath(p.title)); } })) },
       { label: "2:skills", items: SKILL_GROUPS.flatMap(g => SKILLS[g].map(s => ({
           label: s.name, html: () => {
             const projs = PROJECTS.filter(p => p.tech.some(t => technologiesMatch(s.name, t)));
@@ -1061,6 +1075,11 @@ export default function Terminal() {
     registerCommands(["contact"], () => catFile("contact.txt"));
     registerCommands(["sudo"], sudoCmd);
     registerCommands(["links", "./links"], linksCmd);
+    // `projects` leaves the emulator for the full /projects index page
+    registerCommands(["projects", "proj"], () => {
+      print(`opening <span class="ok">~/projects</span> — the full index …`, "ok");
+      navigate("/projects/");
+    });
     registerCommands(["exit", "logout", "gui"], exitTerminal);
     registerCommands(["vim", "vi", "nvim", "neovim"], enterVed);
     registerCommands(["nano", "pico"], () => print(`nano: command not found. we don't use nano around here — this is a <span class="ok">vim</span> household. <span class="dim">(the training wheels are in the bin out back. try <kbd>vim</kbd>.)</span>`, "err"));
@@ -1096,8 +1115,17 @@ export default function Terminal() {
       const [cmd, ...args] = line.split(/\s+/);
       const arg = args.filter(a => !a.startsWith("-")).join(" ");
       const handler = commandHandlers.get(cmd.toLowerCase());
-      if (handler) handler(arg);
-      else print(`zsh: command not found: ${esc(cmd)} — try <kbd>help</kbd>`, "err");
+      if (handler) { handler(arg); return; }
+      // Fallback: a bare project name/slug jumps straight to its README, so
+      // typing "lunara" (or "ai puzzle game") works like "open lunara". Match
+      // against the whole line since project names can be multi-word.
+      const proj = findProject(line);
+      if (proj) {
+        navigate(projectReadmePath(proj.title));
+        print(`opening ${esc(proj.title)} readme …`, "ok");
+        return;
+      }
+      print(`zsh: command not found: ${esc(cmd)} — try <kbd>help</kbd>`, "err");
     }
 
     /* ---------- tab completion ---------- */

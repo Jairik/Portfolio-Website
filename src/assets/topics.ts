@@ -1,13 +1,13 @@
 /*
   Topic definitions for the topic pages (src/components/topic-page/*),
-  served at /topics/<key> (and /topics → the default topic).
+  served at /<key> (canonical) with /topics/<key> kept as a working alias.
 
   A "topic" is a curated lens over the projects — "AI Engineering",
   "Full-Stack Dev", etc. Each topic page reuses the live project data from
   src/assets/projects/ (via PROJECT_BY_SLUG) and the live tool icons from
   experience.ts (via getTechnologyIcon); THIS file only holds the editorial
   curation that can't be derived: which projects belong to a topic, the blurb,
-  and the headline tool list.
+  technical decisions, and the headline tool list.
 
   Quick edit guide:
   - Add a topic: add an entry to `topics` and its key to `topicOrder` (order
@@ -20,6 +20,8 @@
     shared alias map in experience.ts, so "OpenAI API", "Google Gemini",
     "Scikit-Learn", "Node.js", "Cryptography", etc. all work. A tool with no
     known icon still renders as a text-only pill.
+  - `decisions` is a short framing paragraph about tradeoffs that show up
+    across the topic's projects (rendered under the matches section).
 */
 
 export interface TopicDef {
@@ -27,6 +29,7 @@ export interface TopicDef {
   label: string; // short switcher-tab text, e.g. "ai-engineering"
   command: string; // fake shell line rendered as "# <command>"
   intro: string; // one-paragraph blurb under the header
+  decisions: string; // short technical-decisions framing for the topic
   projects: string[]; // real project slugs, in display order
   tools: string[]; // headline tool names (icons resolved via getTechnologyIcon)
 }
@@ -48,6 +51,8 @@ export const topics: Record<string, TopicDef> = {
     command: 'grep -r "ai" ~/projects --include=*.md',
     intro:
       "Projects where the model is the product — LLM apps, RAG pipelines, computer vision, and applied ML shipped end to end.",
+    decisions:
+      "Prefer grounded retrieval and editable outputs over black-box chat. Keep humans in the loop for high-stakes domains (healthcare, education, farm decisions), and favor local or inspectable pipelines when the data should not leave the machine.",
     projects: [
       "lunara",
       "rova",
@@ -55,7 +60,9 @@ export const topics: Record<string, TopicDef> = {
       "testifai",
       "perishless",
       "shakespearean-personality-llm-augmentation",
-      "knowyouruni"
+      "knowyouruni",
+      "poultry-farm-data-analytics-dashboard",
+      "computer-vision-chick-counting"
     ],
     tools: [
       "Python",
@@ -74,6 +81,8 @@ export const topics: Record<string, TopicDef> = {
     command: 'grep -r "full-stack" ~/projects --include=*.md',
     intro:
       "Front-to-back builds — React frontends, API backends, databases, and the deploys that keep them up.",
+    decisions:
+      "Ship a real React + API loop early, then harden auth, storage, and deployment. Prefer boring, known stacks (Vite, FastAPI, Postgres/Firebase) so most of the risk sits in product logic, not framework novelty.",
     projects: [
       "lunara",
       "perishless",
@@ -91,6 +100,8 @@ export const topics: Record<string, TopicDef> = {
     command: 'grep -r "data" ~/projects --include=*.ipynb',
     intro:
       "ETL, analysis, and models on real datasets — dashboards, decision support, and ML that answers actual questions.",
+    decisions:
+      "Start with data quality and reproducible notebooks before the fancy model. Dashboards and Quarto reports stay decision-support tools — they surface signal for a person, they do not auto-act on it.",
     projects: [
       "data-science-stuff",
       "poultry-farm-data-analytics-dashboard",
@@ -106,6 +117,8 @@ export const topics: Record<string, TopicDef> = {
     command: 'grep -r "cli" ~/projects --include=*.md',
     intro:
       "Tools built for people who live in the editor — local-first assistants, benchmarks, and workflow utilities.",
+    decisions:
+      "Optimize for local control and inspectability: BM25 over hosted embeddings when the vault stays on disk, swap-in agent backends, and measurable benchmarks instead of vibes. A little setup friction is fine if the evidence stays visible.",
     projects: [
       "vault-assistant",
       "parallel-query-processing-system",
@@ -120,6 +133,8 @@ export const topics: Record<string, TopicDef> = {
     command: 'grep -r "encryption" ~/projects --include=*.c',
     intro:
       "Closer to the metal — encryption, distributed query processing, and performance work in C and C++.",
+    decisions:
+      "Prefer explicit protocols and measurable performance over convenience wrappers. Encryption, concurrency, and query planning stay understandable when you own the byte-level details.",
     projects: [
       "encrypted-p2p-chatroom",
       "parallel-query-processing-system",
@@ -133,6 +148,8 @@ export const topics: Record<string, TopicDef> = {
     command: "journalctl --unit=hackathons --no-pager",
     intro:
       "Projects built under hackathon constraints, shaped by short timelines, team decisions, and demo-day feedback.",
+    decisions:
+      "Cut scope hard: one demable loop, editable LLM outputs, and a stack the team already knows. Post-hackathon work is where auth, data quality, and deployment catch up.",
     projects: ["knowyouruni", "testifai", "lunara", "rova", "perishless", "claritycash"],
     tools: ["React", "FastAPI", "AWS", "Python", "OpenAI API", "LangChain"]
   }

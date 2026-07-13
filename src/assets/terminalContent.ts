@@ -17,7 +17,7 @@ export const ribbon = {
     messageBold: "terminal-only",
     messageEnd: " build.",
     buttonLabel: "use the terminal",
-    buttonTarget: "/terminal"  // react-router path the ribbon button navigates to
+    buttonTarget: "/terminal/"  // canonical react-router path the ribbon navigates to
 };
 
 /* ---------- fixed top bar ---------- */
@@ -129,6 +129,12 @@ export const media = {
 /* ---------- about ---------- */
 // Phrases inside aboutParagraphs that get the accent <em> highlight treatment
 export const aboutHighlights = ["nerd for this stuff", "Slay the Spire", "Corgi guy"];
+
+// CTA buttons under the Readme prose — same .plinks style as project link buttons
+export const aboutLinks = [
+    { label: "more about me", to: "/about/" },
+    { label: "press", to: "/press/" }
+] as const;
 
 /* ---------- footer ---------- */
 export const footer = {

@@ -47,16 +47,9 @@ function publicDirIndex(): Plugin {
   }
 }
 
-// Preview-only: serve prerendered extensionless routes from their generated
-// .html aliases so hydration tests exercise the same route HTML users request.
+// Preview-only: serve directory-style routes from their prerendered index file
+// so hydration tests exercise the same HTML that GitHub Pages returns.
 function previewStaticRoutes(): Plugin {
-  const aliases: Record<string, string> = {
-    '/terminal': '/terminal.html',
-    '/simple': '/simple.html',
-    '/resume': '/resume.html',
-    '/links': '/links/index.html'
-  };
-  const knownPaths = new Set(['/', '/terminal/', '/simple/', '/resume/', '/links/']);
   const dist = resolve(configDir, 'dist');
 
   return {
@@ -65,11 +58,7 @@ function previewStaticRoutes(): Plugin {
       server.middlewares.use((req, _res, next) => {
         const originalUrl = req.url || '/';
         const url = new URL(originalUrl, 'http://localhost');
-        const alias = aliases[url.pathname];
-
-        if (alias) {
-          req.url = `${alias}${url.search}`;
-        } else if (!url.pathname.includes('.') && url.pathname !== '/') {
+        if (!url.pathname.includes('.') && url.pathname !== '/') {
           // Mirror GitHub Pages directory-index serving: if a prerendered
           // <path>/index.html exists (e.g. /projects/<slug>/), serve it;
           // otherwise fall back to the SPA 404 page.
@@ -78,7 +67,7 @@ function previewStaticRoutes(): Plugin {
 
           if (existsSync(indexFile)) {
             req.url = `${withSlash}index.html${url.search}`;
-          } else if (!knownPaths.has(url.pathname)) {
+          } else {
             req.url = `/404.html${url.search}`;
           }
         }

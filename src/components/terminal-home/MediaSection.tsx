@@ -4,6 +4,7 @@ import { useState } from "react";
 import SectionHeading from "./SectionHeading";
 import { MEDIA, MEDIA_CATS, type MediaCatId } from "../../lib/terminalHomeData";
 import * as C from "../../assets/terminalContent";
+import ResponsiveImage from "../ResponsiveImage";
 
 /* Renders the filter tabs and the mosaic for the active category */
 export default function MediaSection() {
@@ -33,22 +34,24 @@ export default function MediaSection() {
             </button>
           ))}
         </div>
-        {/* mosaic: every figure is lightboxable via data-lb */}
+        {/* mosaic: each inner image owns the complete lightbox contract */}
         <div className="mosaic">
           {mosaicItems.map(m => {
             // Personal photos carry only a title (their myPictures.ts label), so
             // fold the caption in only when there is one to avoid dangling separators.
             const caption = m.cap ? `${m.title} — ${m.cap}` : m.title;
             return (
-              <figure
-                key={m.src}
-                data-lb={m.src}
-                data-cap={caption}
-                role="button"
-                tabIndex={0}
-                aria-label={`Open ${caption || m.alt} in lightbox`}
-              >
-                <img src={m.src} alt={m.alt} loading="lazy" />
+              <figure key={m.src}>
+                <ResponsiveImage
+                  src={m.src}
+                  slot="mosaic"
+                  lightbox
+                  alt={m.alt}
+                  data-cap={caption}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Open ${caption || m.alt} in lightbox`}
+                />
                 <figcaption><b>{m.title}</b>{m.cap}</figcaption>
               </figure>
             );

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import TechChips from "./TechChips";
 import ProjectLinks from "./ProjectLinks";
+import ResponsiveImage from "../ResponsiveImage";
 import { slug, type HomeProject } from "../../lib/terminalHomeData";
 import { projectImageAlt } from "../../assets/projects";
 import * as C from "../../assets/terminalContent";
@@ -36,12 +37,12 @@ export default function ArchiveRow({ p }: { p: HomeProject }) {
         {p.images.length > 0 ? (
           <div className="gal">
             {p.images.map((im, j) => (
-              <img
+              <ResponsiveImage
                 key={im}
                 src={im}
+                slot="project-grid"
+                lightbox
                 alt={projectImageAlt(p.title, p.desc, j, p.images.length)}
-                loading="lazy"
-                data-lb={im}
                 data-cap={p.title}
                 role="button"
                 tabIndex={0}

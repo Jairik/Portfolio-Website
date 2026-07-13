@@ -29,12 +29,7 @@ export default function Resume() {
   const [accent, setAccent] = useState(ACCENTS.lime.c);
 
   useEffect(() => {
-    const prevTitle = document.title;
-    document.title = "Resume | JJ McCauley";
     setAccent(cachedAccent());
-    return () => {
-      document.title = prevTitle;
-    };
   }, []);
 
   return (

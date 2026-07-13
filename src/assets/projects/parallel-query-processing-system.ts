@@ -29,7 +29,7 @@ export default function createParallelQueryProcessingSystem(): ProjectItem {
     "Parallel Query Processing System",
     "Distributed system that optimizes SQL query execution across multiple nodes, significantly reducing processing time.",
     "https://github.com/Jairik/Parallel-Query-Processing-System",
-    ["MPI", "OpenMP", "C", "Python"],
+    ["MPI", "OpenMP", "C", "Python", "Valgrind", "GitHub Actions"],
     "November 2025 - December 2025",
     [],
     "",

@@ -4,15 +4,15 @@ import type { ProjectPageExtra } from "./page-content";
 export const content: ProjectPageExtra = {
   tags: "algorithms",
   about: [
-    "This was one of my first projects, and it grew from implementing sorts into asking a better question: when does each sort actually make sense? The study compares Merge, Comb, Shell, Heap, and the C++ library sort with Radix, Counting, and Bucket Sort.",
-    "That comparison matters because the second group can avoid the normal comparison-sort lower bound, but only when the keys and their range cooperate. A fast algorithm on one dataset can be a poor choice on another."
+    "I started by implementing sorting algorithms and ended up comparing when each one is actually worth using. The study puts Merge, Comb, Shell, Heap, and the C++ library sort next to Radix, Counting, and Bucket Sort.",
+    "Those last three can avoid the usual comparison-sort lower bound, but only when the keys and their range cooperate. A sort that looks great on one dataset can be the wrong call on another."
   ],
   sections: [
     {
       label: "benchmarking",
       body: [
-        "Each implementation runs across repeated experimental datasets and records its timing with C++ chrono. I compared those measurements with the expected complexity, memory needs, stability, key ranges, and data distribution instead of declaring one universal winner.",
-        "The project is small, but the workflow stuck with me: define competing approaches, control the inputs, collect evidence, and then explain why the measurements do or do not match the theory."
+        "Each implementation runs across repeated experimental datasets, and I record timing with C++ chrono. I look at those measurements alongside expected complexity, memory needs, stability, key ranges, and data distribution rather than picking a universal winner.",
+        "The project is small, but the workflow stuck with me. I define competing approaches, control the inputs, collect evidence, and then explain why the measurements do or do not match the theory."
       ]
     }
   ]

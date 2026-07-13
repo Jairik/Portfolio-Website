@@ -39,7 +39,9 @@ export default function createVaultAssistant(): ProjectItem {
       "OpenCode",
       "SearXNG",
       "Tauri",
-      "Tailwind CSS"
+      "Tailwind CSS",
+      "Chart.js",
+      "GitHub Actions"
     ],
     "January 2026 - Present",
     [

@@ -1,15 +1,27 @@
 /* Lightbox behavior: opens from any visible [data-lb] element via DOM
    delegation on the page root, and supports ←/→/Esc keyboard navigation
-   across everything that was visible when it opened. */
+   across everything that was visible when it opened. Callers can also open
+   an explicit list (e.g. the about-page photo popout) via openList. */
 import { useCallback, useEffect, useState, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, type RefObject } from "react";
 
-// Lightbox state: the navigable image list plus the current index
-export interface LbState { list: { src: string; cap: string }[]; idx: number }
+// One navigable lightbox entry
+export interface LbItem { src: string; cap: string }
 
-/* Owns the lightbox state; returns it plus the root click handler that opens
-   it (delegation keeps every [data-lb] image clickable with zero wiring) */
+// Lightbox state: the navigable image list plus the current index
+export interface LbState { list: LbItem[]; idx: number }
+
+/* Owns the lightbox state; returns it plus open helpers and the root click
+   handler that opens it from [data-lb] (delegation keeps every tagged image
+   clickable with zero per-image wiring) */
 export function useLightbox(rootRef: RefObject<HTMLDivElement | null>) {
   const [lb, setLb] = useState<LbState | null>(null);
+
+  /* Opens the lightbox on an explicit list (skips the DOM [data-lb] scan) */
+  const openList = useCallback((list: LbItem[], idx = 0) => {
+    if (!list.length) return;
+    const safeIdx = ((idx % list.length) + list.length) % list.length;
+    setLb({ list, idx: safeIdx });
+  }, []);
 
   const openFromElement = useCallback((hit: HTMLElement) => {
     if (!rootRef.current) return;
@@ -51,5 +63,5 @@ export function useLightbox(rootRef: RefObject<HTMLDivElement | null>) {
     return () => window.removeEventListener("keydown", onKey);
   }, [lb]);
 
-  return { lb, handleRootClick, handleRootKeyDown };
+  return { lb, openList, handleRootClick, handleRootKeyDown };
 }

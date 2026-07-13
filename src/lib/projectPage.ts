@@ -1,13 +1,27 @@
 /* View-model + helpers for the per-project detail pages (/projects/<slug>).
    Merges a project's home-page data with the long-form content exported by
    its module in src/assets/projects/. */
-import { PROJECT_BY_SLUG, type HomeProject } from "./terminalHomeData";
+import { PROJECTS, PROJECT_BY_SLUG, slug as toSlug, type HomeProject } from "./terminalHomeData";
 import { projectContent, type ProjectPageExtra } from "../assets/projects";
-import { primaryTopicForSlug } from "./topicPage";
+import { topicsForProject } from "./topicPage";
 
 // One segment of the meta line under the title (date · status · N shots · tags).
 // `to` turns the segment into a link (used to point the tag at its topic page).
 export interface MetaSegment { label: string; accent?: boolean; to?: string }
+
+// Prev / next project in the home-page list (featured → current → past)
+export interface ProjectNeighbor {
+  slug: string;
+  title: string;
+  to: string; // /projects/<slug>/
+}
+
+// Canonical topic hub linked from the project metadata rail.
+export interface ProjectTopicLink {
+  key: string;
+  label: string;
+  to: string;
+}
 
 // Everything a project detail page needs, resolved from a slug
 export interface ProjectPageView {
@@ -17,6 +31,27 @@ export interface ProjectPageView {
   statusLabel: string; // "running" (current work) | "shipped" | override
   embedUrl: string | null; // normalized YouTube embed URL, or null
   meta: MetaSegment[];
+  topics: ProjectTopicLink[];
+  prev: ProjectNeighbor; // wraps to the last project from the first
+  next: ProjectNeighbor; // wraps to the first project from the last
+}
+
+/* Builds a neighbor link for the project at `index` in the ordered PROJECTS list */
+function neighborAt(index: number): ProjectNeighbor {
+  const project = PROJECTS[index];
+  const slug = toSlug(project.title);
+  return { slug, title: project.title, to: `/projects/${slug}/` };
+}
+
+/* Resolves prev/next around `slug` in the home-page project order (wraps) */
+export function getProjectNeighbors(slug: string): { prev: ProjectNeighbor; next: ProjectNeighbor } | null {
+  const index = PROJECTS.findIndex(p => toSlug(p.title) === slug);
+  if (index < 0 || PROJECTS.length === 0) return null;
+  const last = PROJECTS.length - 1;
+  return {
+    prev: neighborAt(index === 0 ? last : index - 1),
+    next: neighborAt(index === last ? 0 : index + 1)
+  };
 }
 
 /* Normalizes any YouTube URL (watch?v=, youtu.be/, /embed/) to an embed URL */
@@ -42,9 +77,17 @@ export function getProjectPageView(slugParam: string): ProjectPageView | null {
   const project = PROJECT_BY_SLUG[slug];
   if (!project) return null;
 
+  const neighbors = getProjectNeighbors(slug);
+  if (!neighbors) return null;
+
   const extra = projectContent[slug] ?? {};
   const statusLabel = extra.status ?? (project.current ? "running" : "shipped");
   const embedUrl = youtubeEmbedUrl(project.video);
+  const projectTopics = topicsForProject(slug);
+  const projectTopicLinks = projectTopics.map(topic => ({
+    ...topic,
+    to: `/${topic.key}/`
+  }));
 
   // Build the meta line, dropping segments the project has no data for
   const meta: MetaSegment[] = [];
@@ -52,11 +95,16 @@ export function getProjectPageView(slugParam: string): ProjectPageView | null {
   meta.push({ label: `● ${statusLabel}`, accent: true });
   const n = project.images.length;
   if (n) meta.push({ label: `${n} screenshot${n > 1 ? "s" : ""}` });
-  if (extra.tags) {
-    // Link the tag to the project's primary topic page, when it belongs to one
-    const topic = primaryTopicForSlug(slug);
-    meta.push({ label: extra.tags, to: topic ? `/topics/${topic}` : undefined });
-  }
+  if (extra.tags) meta.push({ label: extra.tags });
 
-  return { project, slug, extra, statusLabel, embedUrl, meta };
+  return {
+    project,
+    slug,
+    extra,
+    statusLabel,
+    embedUrl,
+    meta,
+    topics: projectTopicLinks,
+    ...neighbors
+  };
 }

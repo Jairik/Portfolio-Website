@@ -1,15 +1,12 @@
 import { useMemo } from "react";
 import { motion } from "motion/react";
+import { Link } from "react-router-dom";
 
-import { socialItems } from "../assets/constantVars";
+// ponytail: reuse shared about/social assets so /simple stays in sync with the main site
+import { aboutParagraphs, socialItems } from "../assets/constantVars";
 import { experienceItems, technologyItems } from "../assets/experience";
 import { getProjectItems, type ProjectItem } from "../assets/projects";
-
-const ABOUT_PARAGRAPHS = [
-  "I'm a fourth-year Computer Science student (AI & Software Engineering focus) and Data Science major who loves building things. I'm a fast, curiosity-driven programmer who takes ownership of my work and genuinely enjoys the process of creating.",
-  "I proudly describe myself as a nerd for this stuff, I spend my free time learning about new technologies and am always looking to learn. In addition to SWE, I am on the SU Track & Field team as a thrower, absolutely love Slay the Spire, and my favorite dog are Corgis (big dog guy).",
-  "Feel free to send me an email or connect with me on LinkedIn if you want to chat or collaborate on something cool!"
-] as const;
+import { slug } from "../lib/terminalHomeData";
 
 const revealProps = {
   initial: { opacity: 0, y: 18 },
@@ -59,7 +56,9 @@ function ProjectCard({ project }: { project: ProjectItem }) {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-2">
           <div>
-            <h3 className="text-2xl font-semibold text-white">{project.title}</h3>
+            <h3 className="text-2xl font-semibold text-white">
+              <Link to={`/projects/${slug(project.title)}/`}>{project.title}</Link>
+            </h3>
             {project.date && <p className="text-sm text-white/[0.55]">{project.date}</p>}
           </div>
         </div>
@@ -143,7 +142,7 @@ export default function SimplePortfolio() {
         <motion.div {...revealProps} className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
           <h2 className="text-3xl font-semibold text-white sm:text-4xl">About Me</h2>
           <div className="mt-4 space-y-4 text-base leading-8 text-white/[0.8]">
-            {ABOUT_PARAGRAPHS.map(paragraph => (
+            {aboutParagraphs.map(paragraph => (
               <p key={paragraph}>{paragraph}</p>
             ))}
           </div>

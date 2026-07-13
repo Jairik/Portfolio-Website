@@ -1,0 +1,66 @@
+/*
+  ProjectsPage — /projects index. Scoped under .tpage so it shares the topic
+  page's palette, CRT overlays, and header/switcher styles (imported from
+  TerminalHome.css + TopicPage.css). Only the column list is defined here.
+*/
+
+/* section wrapper matches the topic page's horizontal rhythm */
+.tpage .pix-sec { padding: 48px 22px 70px; position: relative; z-index: 1; }
+.tpage .pix-in { max-width: 1180px; margin: 0 auto; }
+.tpage .pix-sec .tp-cmt { display: block; margin-bottom: 14px; }
+
+/* each project is a single clickable row: title + meta + description on the
+   left, status badges and an "open" hint on the right */
+.tpage .pix-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 16px;
+  border-bottom: 1px solid var(--line);
+  transition: background .15s;
+}
+.tpage .pix-row:last-child { border-bottom: none; }
+.tpage .pix-row:hover { background: var(--acid-dim); }
+
+/* left column grows to fill the row; text wraps naturally */
+.tpage .pix-main { flex: 1; min-width: 0; }
+.tpage .pix-title {
+  margin: 0;
+  font-family: var(--disp);
+  text-transform: uppercase;
+  font-size: clamp(17px, 2.2vw, 26px);
+  line-height: 1.05;
+  color: var(--ink);
+  font-weight: 400;
+}
+.tpage .pix-row:hover .pix-title { color: var(--acid); }
+.tpage .pix-meta { display: block; margin-top: 5px; font-size: 11px; color: var(--mut); }
+.tpage .pix-desc { margin: 8px 0 0; color: var(--mut); font-size: 12.5px; text-wrap: pretty; }
+
+/* right column: badges stacked with the shell-style open hint */
+.tpage .pix-side { display: flex; align-items: center; gap: 8px; flex: none; }
+.tpage .pix-badge {
+  font-size: 9.5px;
+  letter-spacing: .1em;
+  padding: 3px 8px;
+  border: 1px solid var(--acid-deep);
+  color: var(--acid);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.tpage .pix-cta {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: var(--acid);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.tpage .pix-cta .op { opacity: .7; }
+
+/* on narrow screens drop the meta/CTA clutter and stack for readability */
+@media (max-width: 640px) {
+  .tpage .pix-row { align-items: flex-start; gap: 12px; }
+  .tpage .pix-side { flex-direction: column; align-items: flex-end; }
+  .tpage .pix-cta { display: none; }
+}

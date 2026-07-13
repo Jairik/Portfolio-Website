@@ -24,6 +24,7 @@ import { useVisitorPrefs } from "../../hooks/useVisitorPrefs";
 import { useRevealOnScroll } from "../../hooks/useRevealOnScroll";
 import { useLightbox } from "../../hooks/useLightbox";
 import { useCursorFx } from "../../hooks/useCursorFx";
+import { useHashScroll } from "../../hooks/useHashScroll";
 import * as C from "../../assets/terminalContent";
 
 /* Page shell: root data-attributes, page-level hooks, and section composition */
@@ -37,11 +38,12 @@ export default function TerminalHome() {
   const [cfgOpen, setCfgOpen] = useState(false);
 
   // Page-level behaviors (each hook documents and owns its own concern)
-  usePageChrome("#070906", "JJ McCauley | Full Stack Developer");
+  usePageChrome("#070906");
   const [prefs, savePrefs] = useVisitorPrefs(rootRef);
   const { lb, handleRootClick, handleRootKeyDown } = useLightbox(rootRef);
   useRevealOnScroll(rootRef);
   useCursorFx(rootRef, fxRef);
+  useHashScroll(); // honor /#projects (and other section hashes) after SPA nav
 
   return (
     <div

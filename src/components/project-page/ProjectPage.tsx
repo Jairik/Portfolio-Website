@@ -1,13 +1,14 @@
 /* ProjectPage — the per-project detail page served at /projects/:slug.
    A React port of the "README window" design prototype, built as a reusable
    template: the slug in the URL selects the project, and all content comes
-   from that project's module in the shared assets directory. It reuses the terminal home page's palette,
-   CRT overlays, and lightbox so every route feels like one machine.
+   from that project's module in the shared assets directory. It reuses the
+   terminal home page's palette, CRT overlays, and lightbox so every route
+   feels like one machine.
 
    ProjectPage does the slug lookup and falls back to the site 404; the actual
    page (and all its hooks) live in ProjectPageShell, which only renders once a
    project is resolved. */
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Link, useParams } from "react-router-dom";
 import "../terminal-home/TerminalHome.css"; // shared .thome tokens, CRT fx, lightbox
 import "./ProjectPage.css";
@@ -15,6 +16,7 @@ import NotFound from "../NotFound";
 import SubTopbar from "../site-chrome/SubTopbar";
 import ProjectMetaRail from "./ProjectMetaRail";
 import ProjectContent from "./ProjectContent";
+import ProjectNavArrows from "./ProjectNavArrows";
 import Lightbox from "../terminal-home/Lightbox";
 import { usePageChrome } from "../../hooks/usePageChrome";
 import { useVisitorPrefs } from "../../hooks/useVisitorPrefs";
@@ -34,12 +36,17 @@ export default function ProjectPage() {
 function ProjectPageShell({ view }: { view: ProjectPageView }) {
   // Root ref: scopes lightbox DOM queries + holds the runtime accent variable
   const rootRef = useRef<HTMLDivElement>(null);
-  const { project, slug, meta } = view;
+  const { project, slug, meta, prev, next } = view;
   const P = projectPage;
 
-  usePageChrome("#070906", `${project.title} — ${P.titleSuffix}`);
+  usePageChrome("#070906");
   useVisitorPrefs(rootRef); // carry the visitor's chosen accent across pages
   const { lb, handleRootClick, handleRootKeyDown } = useLightbox(rootRef);
+
+  // Jump to the top when the slug changes via the prev / next arrows
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [slug]);
 
   return (
     <div
@@ -59,12 +66,8 @@ function ProjectPageShell({ view }: { view: ProjectPageView }) {
 
       <SubTopbar host={P.topHost} current="projects" />
 
+      {/* one-card body: no outer prompt — just the README window */}
       <main className="pp-main">
-        <p className="pp-prompt">
-          <span className="pr">{P.promptHost}</span> <span className="cmd">cd ~/projects/{slug}</span>
-        </p>
-
-        {/* the whole page body lives in one terminal "README.md" window */}
         <article className="rdwin">
           <div className="rd-bar">
             <span className="d r" /><span className="d y" /><span className="d g" />
@@ -73,6 +76,9 @@ function ProjectPageShell({ view }: { view: ProjectPageView }) {
           </div>
 
           <div className="rd-body">
+            {/* prev / next sit at the top of the card body */}
+            <ProjectNavArrows prev={prev} next={next} />
+
             <p className="pp-prompt sm">
               <span className="pr">jj@portfolio:~/projects/{slug}$</span> <span className="cmd">cat README.md</span>
             </p>
@@ -96,7 +102,8 @@ function ProjectPageShell({ view }: { view: ProjectPageView }) {
             </div>
 
             <div className="rd-foot">
-              <a className="rd-back" href={P.footBackTarget}><span className="op">$ cd </span>{P.footBack}</a>
+              {/* SPA Link so /#projects triggers useHashScroll on the home page */}
+              <Link className="rd-back" to={P.footBackTarget}><span className="op">$ cd </span>{P.footBack}</Link>
               <span>exit code <b>0</b></span>
             </div>
           </div>

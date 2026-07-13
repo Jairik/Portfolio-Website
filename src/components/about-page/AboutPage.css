@@ -28,6 +28,7 @@
 /* ---------- header ---------- */
 .apage .ap-head { position: relative; padding: 84px 22px 0; overflow: hidden; }
 .apage .ap-head-in { max-width: 1180px; margin: 0 auto; position: relative; z-index: 1; }
+.apage .ap-head-in > .ap-cmt { display: block; }
 .apage .ap-title {
   margin: 8px 0 0;
   font-family: var(--disp);
@@ -54,6 +55,103 @@
 .apage .ap-prompt .cmd { color: var(--ink); }
 .apage .ap-prose { margin: 0; font-size: 15px; color: var(--ink); line-height: 1.6; text-wrap: pretty; }
 .apage em { font-style: normal; color: var(--acid); }
+
+/* ---------- identity strip (headshot + name + location + links) ---------- */
+.apage .ap-identity {
+  position: relative;
+  z-index: 1;
+  max-width: 740px;
+  margin: 36px auto 0;
+  padding: 0 22px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+.apage .ap-shot-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+.apage .ap-shot-btn {
+  display: block;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  cursor: zoom-in;
+  line-height: 0;
+}
+/* .ap-shot is on <picture>; crop/border live on the inner img */
+.apage .ap-shot {
+  width: 96px;
+  height: 96px;
+  display: block;
+}
+.apage .ap-shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 1px solid #2b3620;
+  display: block;
+}
+.apage .ap-shot-btn:hover .ap-shot img,
+.apage .ap-shot-btn:focus-visible .ap-shot img {
+  border-color: var(--acid);
+}
+.apage .ap-shot-btn:focus-visible {
+  outline: 2px solid var(--acid);
+  outline-offset: 3px;
+}
+/* Small popout chip — opens the full me-pictures lightbox */
+.apage .ap-shot-pop {
+  position: absolute;
+  right: -6px;
+  bottom: -8px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid #2b3620;
+  background: var(--bg2);
+  color: var(--acid);
+  cursor: pointer;
+  line-height: 0;
+}
+.apage .ap-shot-pop-ico {
+  width: 13px;
+  height: 13px;
+  display: block;
+}
+.apage .ap-shot-pop:hover,
+.apage .ap-shot-pop:focus-visible {
+  border-color: var(--acid);
+  background: var(--bg);
+  outline: none;
+}
+.apage .ap-id-copy { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.apage .ap-id-name {
+  margin: 0;
+  font-family: var(--disp);
+  text-transform: uppercase;
+  font-size: clamp(22px, 4vw, 28px);
+  line-height: 1.05;
+  color: var(--ink);
+}
+.apage .ap-id-meta { margin: 0; font-size: 13.5px; color: var(--mut); }
+.apage .ap-id-meta .ac { color: var(--acid); }
+.apage .ap-id-links { display: flex; flex-wrap: wrap; gap: 10px 14px; margin-top: 4px; }
+.apage .ap-id-links a {
+  color: var(--ink);
+  font-size: 13px;
+  text-decoration: none;
+  border-bottom: 1px solid var(--acid-dim);
+}
+.apage .ap-id-links a:hover { color: var(--acid); border-bottom-color: var(--acid); }
+
+@media (max-width: 520px) {
+  .apage .ap-identity { align-items: flex-start; }
+  .apage .ap-shot { width: 72px; height: 72px; }
+}
 
 /* ---------- extended sections ---------- */
 .apage .ap-sections {

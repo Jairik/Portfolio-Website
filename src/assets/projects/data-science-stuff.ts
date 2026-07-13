@@ -29,7 +29,7 @@ export default function createDataScienceStuff(): ProjectItem {
     "Data Science Stuff",
     "Data science project collection showcasing different ETL and ML techniques on numerous different datasets.",
     "https://github.com/Jairik/Data-Science-Fundementals",
-    ["Python", "Pandas", "Numpy", "Scikit-Learn", "Tensorflow", "Seaborn", "Plotly", "Jupyter", "MKDocs"],
+    ["Python", "Pandas", "Numpy", "Scikit-Learn", "Tensorflow", "Seaborn", "Plotly", "Jupyter", "MKDocs", "GitHub Actions"],
     "August 2025 - December 2025",
     [],
     "https://jairik.github.io/Data-Science-Fundementals/",

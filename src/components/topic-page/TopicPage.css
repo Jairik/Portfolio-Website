@@ -1,7 +1,8 @@
 /*
-  TopicPage — /topics/:topic. Scoped under .tpage; the palette, CRT overlays
-  (.fx-scan/.fx-vig) and base .thome styles come from TerminalHome.css, which the
-  component imports alongside this file. Only page-specific layout lives here.
+  TopicPage — /:topic (canonical) with /topics/:topic as alias. Scoped under
+  .tpage; the palette, CRT overlays (.fx-scan/.fx-vig) and base .thome styles
+  come from TerminalHome.css, which the component imports alongside this file.
+  Only page-specific layout lives here.
 */
 
 .tpage { min-height: 100vh; position: relative; overflow-x: hidden; }
@@ -89,6 +90,7 @@
 .tpage .tp-card-path { margin-left: 8px; letter-spacing: .05em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .tpage .tp-card-shot { background: #000; border-bottom: 1px solid var(--line); }
+.tpage .tp-card-shot picture { width: 100%; }
 .tpage .tp-card-shot img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; display: block; }
 .tpage .tp-card-noimg {
   aspect-ratio: 16 / 10;

@@ -1,21 +1,12 @@
 /* Kernel-panic 404 — port of the "404.html" design prototype. Rendered by the
    router's catch-all route; on GitHub Pages unknown URLs load the SPA via the
    404.html fallback and land here. */
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./NotFound.css";
 
 const T = () => <span className="t">[ 404.040404]</span>;
 
 export default function NotFound() {
-  useEffect(() => {
-    const prevTitle = document.title;
-    document.title = "404 | JJ McCauley";
-    return () => {
-      document.title = prevTitle;
-    };
-  }, []);
-
   return (
     <div className="kpanic">
       <div className="grid-bg" />

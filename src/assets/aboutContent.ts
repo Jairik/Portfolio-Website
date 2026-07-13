@@ -5,9 +5,10 @@
   shared `aboutParagraphs` in constantVars.ts (the same three paragraphs the
   home page's Readme section shows), so editing it in one place updates both.
 
-  THIS file only holds the page's extra long-form sections (Education, Awards,
-  Leadership, Beyond). Each entry needs a `body` array of paragraphs; if `body`
-  is missing or empty, the page shows a dashed fallback hint from `placeholder`.
+  THIS file holds the entity identity strip (name, location, headshot, links)
+  plus the extra long-form sections (Education, Awards, Leadership, Beyond).
+  Each section needs a `body` array of paragraphs; if `body` is missing or
+  empty, the page shows a dashed fallback hint from `placeholder`.
 
   Add or remove whole sections by editing the array below; order here is render order.
 */
@@ -16,8 +17,28 @@
 export const aboutPage = {
   host: "jj@portfolio:~/about$", // topbar prompt
   headerCommand: "cat ~/about.md — the extended cut", // "# <command>" above the title
-  title: "Readme", // big hollow header (after the acid "> ")
+  title: "Readme", // decorative terminal label retained above the descriptive H1
+  pageHeading: 'About Jairik "JJ" McCauley',
   whoami: { host: "jj@portfolio:~$", command: "whoami" } // prompt above the intro prose
+} as const;
+
+/* ---------- identity strip (matches Person schema on every page) ---------- */
+export const aboutIdentity = {
+  // Default/SSR headshot; the about page randomizes from mePictures on the client
+  headshot: "/me-pictures/BAH-Professional.png",
+  headshotAlt: "Professional headshot of Jairik \"JJ\" McCauley",
+  name: 'Jairik "JJ" McCauley',
+  role: "Full Stack Developer",
+  location: "Salisbury, MD",
+  // Opens the full me-pictures lightbox (icon button; aria-label only)
+  popoutAria: "View all photos",
+  // Links that should stay visible so they match Person.sameAs + resume
+  links: [
+    { label: "GitHub", href: "https://github.com/Jairik" },
+    { label: "LinkedIn", href: "https://www.linkedin.com/in/jairik-mccauley/" },
+    { label: "Resume", href: "/Jairik_McCauley_Resume.pdf" },
+    { label: "Press", href: "/press/" }
+  ]
 } as const;
 
 /* ---------- extended sections ---------- */

@@ -38,7 +38,7 @@ function hostOf(url: string): string {
 export default function PressPage() {
   const rootRef = useRef<HTMLDivElement>(null);
 
-  usePageChrome("#070906", "Press — JJ McCauley");
+  usePageChrome("#070906");
   useVisitorPrefs(rootRef); // carry the visitor's chosen accent across pages
 
   const stories = articleItems.length;

@@ -1,4 +1,4 @@
-/* View-model + helpers for the topic pages (/topics/<key>).
+/* View-model + helpers for the topic pages (/<key> canonical, /topics/<key> alias).
    Merges the editorial topic curation from src/assets/topics.ts with the live
    project data (PROJECT_BY_SLUG) and tool icons (getTechnologyIcon) into one
    shape the page components consume. Also exposes the reverse lookup used to

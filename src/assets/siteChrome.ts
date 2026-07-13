@@ -19,13 +19,13 @@ export interface SubNavItem {
   id: string; // matched against a page's `current` to highlight the active tab
   label: string; // "./<label>" is rendered (the "./" prefix is added by CSS)
   to: string;
-  kind: SubNavKind; // route = SPA <Link>; hash = home-page anchor; mail = mailto
+  kind: SubNavKind; // route/hash = SPA <Link>; mail = mailto
 }
 
 export const subNav: SubNavItem[] = [
   { id: "home", label: "home", to: "/", kind: "route" },
   { id: "projects", label: "projects", to: "/#projects", kind: "hash" },
-  { id: "press", label: "press", to: "/press", kind: "route" },
-  { id: "about", label: "about", to: "/about", kind: "route" },
+  { id: "press", label: "press", to: "/press/", kind: "route" },
+  { id: "about", label: "about", to: "/about/", kind: "route" },
   { id: "contact", label: "contact", to: "mailto:mjairik@gmail.com", kind: "mail" }
 ];

@@ -9,6 +9,11 @@ export const projectPage = {
     back: "all projects",
     backTarget: "/#projects"
   },
+  // Top-of-body prev/next labels; `{title}` is replaced with the neighbor name
+  prevLabel: "previous",
+  nextLabel: "next",
+  prevAria: "Previous project: {title}",
+  nextAria: "Next project: {title}",
   footBack: "~/projects",
   footBackTarget: "/#projects",
   noImagesClosed: "no images — source and assets are closed.",

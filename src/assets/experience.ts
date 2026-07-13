@@ -31,6 +31,7 @@ export const experienceItems: ExperienceItem[] = [
       "Developed a full-stack web application tracking user logs across various devices in a network. Collaborated with other interns to design a scalable and deployable solution for a client in the defense sector.",
     technologies: [
       "React",
+      "TypeScript",
       "Vite",
       "Node.js",
       "Redis",
@@ -40,6 +41,7 @@ export const experienceItems: ExperienceItem[] = [
       "D3.js",
       "Nginx",
       "Docker",
+      "BASH",
       "Confluence",
     ],
   },
@@ -407,6 +409,7 @@ export const technologyItems: TechnologyItem[] = [
 const EXPERIENCE_TECH_LINKS: Record<string, string[]> = {
   "booz-allen-intern": [
     "React",
+    "TypeScript",
     "Vite",
     "Node.js",
     "Express",
@@ -416,6 +419,7 @@ const EXPERIENCE_TECH_LINKS: Record<string, string[]> = {
     "WebSockets",
     "D3.js",
     "Elastic Stack",
+    "BASH",
     "Confluence",
   ],
   "salisbury-tutor-lab-assistant": [
@@ -546,6 +550,11 @@ const EXTRA_TECH_ICON_MAP: Record<string, string> = {
   cursor: "/tech-icons/cursor.svg",
   antigravity: "/tech-icons/antigravity.svg",
   tavily: "/tech-icons/tavily.svg",
+  searxng: "/tech-icons/searxng.svg",
+
+  // Desktop / edge runtimes
+  tauri: "/tech-icons/tauri.svg",
+  valtown: "/tech-icons/valtown.svg",
 
   // Docs / productivity
   mkdocs: "/tech-icons/mkdocs.svg",

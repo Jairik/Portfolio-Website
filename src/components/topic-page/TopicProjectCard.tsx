@@ -4,6 +4,7 @@
 import { Link } from "react-router-dom";
 import { slug, type HomeProject } from "../../lib/terminalHomeData";
 import { projectImageAlt } from "../../assets/projects";
+import ResponsiveImage from "../ResponsiveImage";
 
 export default function TopicProjectCard({ p }: { p: HomeProject }) {
   const s = slug(p.title);
@@ -18,7 +19,11 @@ export default function TopicProjectCard({ p }: { p: HomeProject }) {
 
       {img ? (
         <div className="tp-card-shot">
-          <img src={img} alt={projectImageAlt(p.title, p.desc, 0, p.images.length)} loading="lazy" />
+          <ResponsiveImage
+            src={img}
+            slot="topic-card"
+            alt={projectImageAlt(p.title, p.desc, 0, p.images.length)}
+          />
         </div>
       ) : (
         <div className="tp-card-noimg">
@@ -37,7 +42,7 @@ export default function TopicProjectCard({ p }: { p: HomeProject }) {
         </div>
       </div>
 
-      <Link className="tp-card-cta" to={`/projects/${s}`}><span className="op">$ </span>cat README →</Link>
+      <Link className="tp-card-cta" to={`/projects/${s}/`}><span className="op">$ </span>cat README →</Link>
     </article>
   );
 }

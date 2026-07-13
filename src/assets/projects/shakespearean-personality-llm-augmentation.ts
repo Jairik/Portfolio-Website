@@ -41,7 +41,8 @@ export default function createShakespeareanPersonalityLlmAugmentation(): Project
       "TypeScript",
       "Vite",
       "TailwindCSS",
-      "Docker"
+      "Docker",
+      "GitHub Actions"
     ],
     "January 2026 - May 2026",
     ["/projects/Shakespearean-LLM-1.png"],

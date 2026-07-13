@@ -14,10 +14,11 @@ export default function SubTopbar({ host, current }: { host: string; current: st
       <nav>
         {subNav.map(item => {
           const cls = item.id === current ? "on" : undefined;
-          // route -> SPA <Link>; hash/mail -> plain <a> (reliable anchor scroll / mailto)
-          return item.kind === "route"
-            ? <Link key={item.id} to={item.to} className={cls}>{item.label}</Link>
-            : <a key={item.id} href={item.to} className={cls}>{item.label}</a>;
+          // route/hash -> SPA <Link> (hash scroll handled by useHashScroll on home);
+          // mail -> plain <a>
+          return item.kind === "mail"
+            ? <a key={item.id} href={item.to} className={cls}>{item.label}</a>
+            : <Link key={item.id} to={item.to} className={cls}>{item.label}</Link>;
         })}
       </nav>
     </header>

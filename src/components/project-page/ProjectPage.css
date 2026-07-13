@@ -34,6 +34,67 @@
 .ppage .pp-prompt .pr { color: var(--acid); font-weight: 700; }
 .ppage .pp-prompt .cmd { color: var(--ink); }
 
+/* Prev / next row at the top of the README body */
+.ppage .pp-navrow {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 18px;
+}
+.ppage .pp-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(48%, 280px);
+  padding: 8px 12px;
+  color: var(--mut);
+  border: 1.5px solid var(--line);
+  background: var(--bg2);
+  transition: color .15s, border-color .15s, background .15s, transform .15s;
+}
+.ppage .pp-nav.next { margin-left: auto; text-align: right; }
+.ppage .pp-nav:hover {
+  color: var(--acid);
+  border-color: var(--acid-deep);
+  background: color-mix(in srgb, var(--acid) 8%, var(--bg2));
+}
+.ppage .pp-nav.prev:hover { transform: translateX(-2px); }
+.ppage .pp-nav.next:hover { transform: translateX(2px); }
+.ppage .pp-nav-arrow {
+  font-family: var(--disp);
+  font-size: 28px;
+  line-height: .8;
+  color: var(--acid);
+  flex: none;
+}
+.ppage .pp-nav-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.ppage .pp-nav.next .pp-nav-copy { align-items: flex-end; }
+.ppage .pp-nav-lbl {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.ppage .pp-nav-title {
+  font-size: 11px;
+  letter-spacing: .02em;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+@media (max-width: 560px) {
+  .ppage .pp-nav-title { display: none; }
+  .ppage .pp-nav { padding: 8px 10px; }
+}
+
 /* ---------- README window ---------- */
 .ppage .rdwin {
   border: 1px solid var(--line);
@@ -95,6 +156,7 @@
 /* ---------- shared block labels ("// links", "## about") ---------- */
 .ppage .rail-lbl,
 .ppage .sec-lbl {
+  margin-top: 0;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: .1em;
@@ -153,6 +215,15 @@
   padding: 6px 10px;
 }
 .ppage .stack-item img { width: 13px; height: 13px; filter: invert(.85); flex: none; }
+.ppage .topic-link { transition: color .15s, border-color .15s; }
+.ppage .topic-link:hover { color: var(--acid); border-color: var(--acid-deep); }
+
+/* README <section>s are not home scroll sections — kill .thome section padding */
+.ppage .pp-rail section,
+.ppage .pp-content section {
+  padding: 0;
+  position: static;
+}
 
 /* ---------- content column ---------- */
 .ppage .pp-content { display: flex; flex-direction: column; gap: 30px; min-width: 0; }
@@ -168,6 +239,8 @@
 .ppage .rd-demo iframe { width: 100%; aspect-ratio: 16 / 9; border: 0; display: block; background: #000; }
 
 .ppage .rd-shots { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+/* picture is the grid item; img fills it at a shared 16:10 crop */
+.ppage .rd-shots > picture { width: 100%; min-width: 0; }
 .ppage .rd-shots img {
   width: 100%;
   aspect-ratio: 16 / 10;
@@ -177,7 +250,7 @@
   cursor: zoom-in;
   transition: border-color .15s, transform .15s;
 }
-.ppage .rd-shots img:hover { border-color: var(--acid); transform: translateY(-2px); }
+.ppage .rd-shots picture:hover img { border-color: var(--acid); transform: translateY(-2px); }
 @media (max-width: 480px) { .ppage .rd-shots { grid-template-columns: 1fr; } }
 
 .ppage .rd-noimg { color: var(--mut); font-size: 12px; font-style: italic; }
