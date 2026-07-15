@@ -568,6 +568,44 @@ export const generatedImageManifest: Record<string, GeneratedImageEntry> = {
       ]
     }
   },
+  "/projects/Chick-Count-1.png": {
+    "src": "/projects/Chick-Count-1.png",
+    "width": 307,
+    "height": 147,
+    "variants": {
+      "avif": [
+        {
+          "width": 307,
+          "src": "/_generated/projects/Chick-Count-1/307.avif"
+        }
+      ],
+      "webp": [
+        {
+          "width": 307,
+          "src": "/_generated/projects/Chick-Count-1/307.webp"
+        }
+      ]
+    }
+  },
+  "/projects/Chick-Count-2.png": {
+    "src": "/projects/Chick-Count-2.png",
+    "width": 546,
+    "height": 265,
+    "variants": {
+      "avif": [
+        {
+          "width": 400,
+          "src": "/_generated/projects/Chick-Count-2/400.avif"
+        }
+      ],
+      "webp": [
+        {
+          "width": 400,
+          "src": "/_generated/projects/Chick-Count-2/400.webp"
+        }
+      ]
+    }
+  },
   "/projects/KnowYourUni-1.png": {
     "src": "/projects/KnowYourUni-1.png",
     "width": 1896,
@@ -1211,6 +1249,181 @@ export const generatedImageManifest: Record<string, GeneratedImageEntry> = {
         {
           "width": 800,
           "src": "/_generated/projects/P2P-Encrypted-Chatroom-3/800.webp"
+        }
+      ]
+    }
+  },
+  "/projects/Parallel-Query-Processing-System-1.png": {
+    "src": "/projects/Parallel-Query-Processing-System-1.png",
+    "width": 2599,
+    "height": 1309,
+    "variants": {
+      "avif": [
+        {
+          "width": 400,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-1/400.avif"
+        },
+        {
+          "width": 800,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-1/800.avif"
+        },
+        {
+          "width": 1200,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-1/1200.avif"
+        }
+      ],
+      "webp": [
+        {
+          "width": 400,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-1/400.webp"
+        },
+        {
+          "width": 800,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-1/800.webp"
+        },
+        {
+          "width": 1200,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-1/1200.webp"
+        }
+      ]
+    }
+  },
+  "/projects/Parallel-Query-Processing-System-2.png": {
+    "src": "/projects/Parallel-Query-Processing-System-2.png",
+    "width": 2600,
+    "height": 1302,
+    "variants": {
+      "avif": [
+        {
+          "width": 400,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-2/400.avif"
+        },
+        {
+          "width": 800,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-2/800.avif"
+        },
+        {
+          "width": 1200,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-2/1200.avif"
+        }
+      ],
+      "webp": [
+        {
+          "width": 400,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-2/400.webp"
+        },
+        {
+          "width": 800,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-2/800.webp"
+        },
+        {
+          "width": 1200,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-2/1200.webp"
+        }
+      ]
+    }
+  },
+  "/projects/Parallel-Query-Processing-System-3.png": {
+    "src": "/projects/Parallel-Query-Processing-System-3.png",
+    "width": 2601,
+    "height": 1308,
+    "variants": {
+      "avif": [
+        {
+          "width": 400,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-3/400.avif"
+        },
+        {
+          "width": 800,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-3/800.avif"
+        },
+        {
+          "width": 1200,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-3/1200.avif"
+        }
+      ],
+      "webp": [
+        {
+          "width": 400,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-3/400.webp"
+        },
+        {
+          "width": 800,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-3/800.webp"
+        },
+        {
+          "width": 1200,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-3/1200.webp"
+        }
+      ]
+    }
+  },
+  "/projects/Parallel-Query-Processing-System-4.png": {
+    "src": "/projects/Parallel-Query-Processing-System-4.png",
+    "width": 2597,
+    "height": 1310,
+    "variants": {
+      "avif": [
+        {
+          "width": 400,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-4/400.avif"
+        },
+        {
+          "width": 800,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-4/800.avif"
+        },
+        {
+          "width": 1200,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-4/1200.avif"
+        }
+      ],
+      "webp": [
+        {
+          "width": 400,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-4/400.webp"
+        },
+        {
+          "width": 800,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-4/800.webp"
+        },
+        {
+          "width": 1200,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-4/1200.webp"
+        }
+      ]
+    }
+  },
+  "/projects/Parallel-Query-Processing-System-5.png": {
+    "src": "/projects/Parallel-Query-Processing-System-5.png",
+    "width": 2599,
+    "height": 1302,
+    "variants": {
+      "avif": [
+        {
+          "width": 400,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-5/400.avif"
+        },
+        {
+          "width": 800,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-5/800.avif"
+        },
+        {
+          "width": 1200,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-5/1200.avif"
+        }
+      ],
+      "webp": [
+        {
+          "width": 400,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-5/400.webp"
+        },
+        {
+          "width": 800,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-5/800.webp"
+        },
+        {
+          "width": 1200,
+          "src": "/_generated/projects/Parallel-Query-Processing-System-5/1200.webp"
         }
       ]
     }

@@ -32,7 +32,10 @@ export default function createComputerVisionChickCounting(): ProjectItem {
     "",
     ["Python", "Ultralytics YOLO", "Raspberry Pi", "Jupyter"],
     "January 2024 - December 2025",
-    [],
+    [
+      "/projects/Chick-Count-1.png",
+      "/projects/Chick-Count-2.png"
+    ],
     "",
     "",
     false

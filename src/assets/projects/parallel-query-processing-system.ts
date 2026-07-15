@@ -31,7 +31,13 @@ export default function createParallelQueryProcessingSystem(): ProjectItem {
     "https://github.com/Jairik/Parallel-Query-Processing-System",
     ["MPI", "OpenMP", "C", "Python", "Valgrind", "GitHub Actions"],
     "November 2025 - December 2025",
-    [],
+    [
+      "/projects/Parallel-Query-Processing-System-1.png",
+      "/projects/Parallel-Query-Processing-System-2.png",
+      "/projects/Parallel-Query-Processing-System-3.png",
+      "/projects/Parallel-Query-Processing-System-4.png",
+      "/projects/Parallel-Query-Processing-System-5.png"
+    ],
     "",
     "",
     false
