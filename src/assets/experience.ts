@@ -22,6 +22,32 @@ export interface ExperienceItem {
 // Professional Experience
 export const experienceItems: ExperienceItem[] = [
   {
+    id: "tenaxiom-lead-developer",
+    role: "Lead Software Developer",
+    company: "Tenaxiom",
+    duration: "July 2026 - Present",
+    logoSrc: "/experience/tenaxiom.svg",
+    description:
+      "Lead development of a multi-tenant workflow and compliance platform at an early-stage startup, with a React and TypeScript client on top of a Django REST Framework API. Own tenant isolation and audit logging ahead of the public launch.",
+    technologies: [
+      "React",
+      "TypeScript",
+      "Vite",
+      "Python",
+      "Django",
+      "Django REST Framework",
+      "PostgreSQL",
+      "Redis",
+      "Celery",
+      "Docker",
+      "AWS",
+      "OpenAPI",
+      "pytest",
+      "Playwright",
+      "GitHub Actions",
+    ],
+  },
+  {
     id: "booz-allen-intern",
     role: "Full-Stack Software Engineer Intern",
     company: "Booz Allen Hamilton",
@@ -49,10 +75,10 @@ export const experienceItems: ExperienceItem[] = [
     id: "salisbury-tutor-lab-assistant",
     role: "Computer Science Tutor & Lab Assistant",
     company: "Salisbury University",
-    duration: "September 2023 - May 2024",
+    duration: "September 2023 - May 2026",
     logoSrc: "/experience/salisburyuniversity.svg",
     description:
-      "Provided tutoring and lab assistance for all undergraduate computer science courses, specializing in Systems Software. Assisted students in understanding complex concepts, completing assignment, and practicing good programming principles.",
+      "Provided tutoring and lab assistance for all undergraduate computer science courses, specializing in Systems Software. Assisted students in understanding complex concepts, completing assignments, and practicing good programming principles.",
     technologies: [
       "C",
       "C++",
@@ -160,6 +186,16 @@ export const technologyItems: TechnologyItem[] = [
   {
     name: "Flask",
     iconSrc: "/tech-icons/flask.svg",
+    category: "Backend & Infrastructure",
+  },
+  {
+    name: "Django",
+    iconSrc: "/tech-icons/django.svg",
+    category: "Backend & Infrastructure",
+  },
+  {
+    name: "Celery",
+    iconSrc: "/tech-icons/celery.svg",
     category: "Backend & Infrastructure",
   },
   {
@@ -379,6 +415,16 @@ export const technologyItems: TechnologyItem[] = [
     category: "Data, AI & Productivity",
   },
   {
+    name: "pytest",
+    iconSrc: "/tech-icons/pytest.svg",
+    category: "Data, AI & Productivity",
+  },
+  {
+    name: "Playwright",
+    iconSrc: "/tech-icons/playwright.svg",
+    category: "Data, AI & Productivity",
+  },
+  {
     name: "Vim",
     iconSrc: "/tech-icons/vim.svg",
     category: "Data, AI & Productivity",
@@ -407,6 +453,21 @@ export const technologyItems: TechnologyItem[] = [
   - Value: skills that should surface that experience as "related"
 */
 const EXPERIENCE_TECH_LINKS: Record<string, string[]> = {
+  "tenaxiom-lead-developer": [
+    "React",
+    "TypeScript",
+    "Vite",
+    "Python",
+    "Django",
+    "Celery",
+    "PostgreSQL",
+    "Redis",
+    "Docker",
+    "AWS",
+    "GitHub Actions",
+    "pytest",
+    "Playwright",
+  ],
   "booz-allen-intern": [
     "React",
     "TypeScript",
@@ -480,6 +541,8 @@ const TECH_KEY_ALIASES: Record<string, string> = {
   plaidapi: "plaid",
   postgres: "postgresql",
   mysql: "sql",
+  djangorestframework: "django",
+  drf: "django",
 
   // Frontend naming variants
   js: "javascript",
@@ -529,6 +592,7 @@ const EXTRA_TECH_ICON_MAP: Record<string, string> = {
   androidstudio: "/tech-icons/androidstudio.svg",
 
   // Backend / platform extras
+  openapi: "/tech-icons/openapi.svg",
   elastic: "/tech-icons/elastic.svg",
   github: "/tech-icons/github.svg",
   jinja: "/tech-icons/jinja.svg",

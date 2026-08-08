@@ -10,7 +10,7 @@
 // Name shown next to the host prompt in the sub-page top bar
 export const subIdentity = {
   whoBold: 'jairik "jj" mccauley',
-  whoRest: " — software engineer"
+  whoRest: " · software engineer"
 } as const;
 
 export type SubNavKind = "route" | "hash" | "mail";

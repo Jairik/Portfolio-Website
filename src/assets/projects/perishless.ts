@@ -21,7 +21,7 @@ export const content: ProjectPageExtra = {
 export default function createPerishLess(): ProjectItem {
   return new ProjectItem(
     "PerishLess",
-    "Food waste reduction platform that uses AI to predict spoilage and optimize inventory management for households.",
+    "Pantry tracker that flags food before it expires, then suggests recipes and donations for whatever needs using up.",
     "https://github.com/Jairik/Perishless",
     [
       "React",
@@ -47,6 +47,6 @@ export default function createPerishLess(): ProjectItem {
     ],
     "",
     "https://youtu.be/nwS19i9P33c",
-    true
+    false
   );
 }

@@ -36,7 +36,7 @@ export default function HeroSection() {
         </h1>
         {/* looping role typewriter with its block cursor */}
         <p className="pline role-line"><span className="pr">&gt;</span> <span className="cmd">{roleText}</span><span className="tcur" /></p>
-        <p className="out">{C.hero.outBlurb}<b>{C.hero.outBold}</b>{C.hero.outLocation}<span className="ok">{C.hero.outStatus}</span></p>
+        <p className="out">{C.hero.outBlurb}<b>{C.hero.outBold}</b><span className="ok">{C.hero.outStatus}</span></p>
         {/* stat chips */}
         <div className="stat-row">
           {stats.map(s => <span key={s.label}><b>{s.value}</b> {s.label}</span>)}

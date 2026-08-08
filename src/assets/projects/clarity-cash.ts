@@ -21,7 +21,7 @@ export const content: ProjectPageExtra = {
 export default function createClarityCash(): ProjectItem {
   return new ProjectItem(
     "ClarityCash",
-    "Data driven budgeting app that turns your financial data into clear insights and actionable plans.",
+    "Budgeting prototype that pulls transactions through Plaid and sorts spending into what is structural, what is flexible, and what is doing damage.",
     "https://github.com/aforti1/clarity-cash",
     ["React", "TypeScript", "Vite", "Firebase", "Plaid API", "FastAPI", "Gemini", "TailwindCSS", "Python"],
     "November 2025",

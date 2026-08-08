@@ -27,7 +27,7 @@ export const content: ProjectPageExtra = {
 export default function createParallelQueryProcessingSystem(): ProjectItem {
   return new ProjectItem(
     "Parallel Query Processing System",
-    "Distributed system that optimizes SQL query execution across multiple nodes, significantly reducing processing time.",
+    "Command-line SQL engine with serial, OpenMP, and MPI backends, built to measure where parallel query execution actually pays off.",
     "https://github.com/Jairik/Parallel-Query-Processing-System",
     ["MPI", "OpenMP", "C", "Python", "Valgrind", "GitHub Actions"],
     "November 2025 - December 2025",

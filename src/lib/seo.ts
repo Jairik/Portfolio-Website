@@ -124,7 +124,7 @@ const staticRoutes: SeoRoute[] = [
     outputPath: "about/index.html",
     title: "About | JJ McCauley",
     description:
-      "About Jairik \"JJ\" McCauley — a full-stack software engineer and Computer Science/Data Science grad: background, education, awards, leadership, and life beyond the terminal.",
+      "About Jairik \"JJ\" McCauley, a full-stack software engineer and Computer Science/Data Science grad. Background, education, awards, leadership, and life beyond the terminal.",
     breadcrumbName: "About",
     includeInSitemap: true,
     prerender: true,
@@ -138,7 +138,7 @@ const staticRoutes: SeoRoute[] = [
     outputPath: "press/index.html",
     title: "Press | JJ McCauley",
     description:
-      "Press and coverage of JJ McCauley's work — hackathon wins, awards, and features from Salisbury University and beyond.",
+      "Press and coverage of JJ McCauley's work, including hackathon wins, awards, and features from Salisbury University and beyond.",
     breadcrumbName: "Press",
     includeInSitemap: true,
     prerender: true,
@@ -154,7 +154,7 @@ const staticRoutes: SeoRoute[] = [
     outputPath: "projects/index.html",
     title: "Projects | JJ McCauley",
     description:
-      "Every project by JJ McCauley — full-stack apps, AI tooling, data science, and systems work, each with a full write-up.",
+      "Every project by JJ McCauley: full-stack apps, AI tooling, data science, and systems work, each with a full write-up.",
     breadcrumbName: "Projects",
     includeInSitemap: true,
     prerender: true,
@@ -266,7 +266,7 @@ export const prerenderRoutes = seoRoutes.filter(
 
 // Converts every directory-backed path to the canonical trailing-slash form.
 // Query strings and hashes do not affect which route owns the document head.
-export const normalizeSeoPath = (pathname: string): string => {
+const normalizeSeoPath = (pathname: string): string => {
   const pathOnly = pathname.split(/[?#]/, 1)[0] || "/";
   const normalized = `/${pathOnly}`.replace(/\/+/g, "/");
   if (normalized === "/" || normalized === "/404") return normalized;

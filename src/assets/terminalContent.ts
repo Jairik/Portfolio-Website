@@ -24,7 +24,7 @@ export const ribbon = {
 export const topbar = {
     host: "jj@portfolio:~$",  // green prompt at the left of the bar
     whoBold: 'jairik "jj" mccauley',
-    whoRest: " — software engineer"
+    whoRest: " · software engineer"
 };
 
 // In-page anchor links rendered in the top bar nav (config + contact are appended after)
@@ -41,10 +41,9 @@ export const navItems = [
 export const hero = {
     typedCommand: "whoami",  // typed out character-by-character after load
     nameRows: ["JAIRIK 'JJ'", "McCAULEY"],  // first row hollow-stroked, second acid green
-    // Output line under the typewriter: "// <blurb> <bold> — <location> <status>"
-    outBlurb: "// moves fast and occasionally breaks the staging server. ",
-    outBold: "CS (AI/SWE) + Data Science",
-    outLocation: " — Salisbury, MD. ",
+    // Output block under the typewriter: blurb, then bold, then status, each on its own line
+    outBlurb: "// moves fast and occasionally breaks the staging server.",
+    outBold: "Software Engineer: CS (AI/SWE) + Data Science",
     outStatus: "● open to work",
     scrollCue: "▼ SCROLL ▼"
 };

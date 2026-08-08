@@ -448,7 +448,7 @@ export default function Terminal() {
     }
     function whoami() {
       print(`<h1 class="tname"><span class="hollow">Jairik 'JJ'</span><br /><span class="zap">McCauley</span></h1>` +
-        `<span class="dim"><b style="color:var(--ink)">full-stack software engineer</b> — AI, data, shipping fast. CS (AI/SWE) + Data Science @ Salisbury. Thrower. Corgi guy.</span> <span class="ok">[STATUS: OPEN TO WORK]</span>` +
+        `<span class="dim"><b style="color:var(--ink)">full-stack software engineer</b>. CS (AI/SWE) + Data Science. AI, data, shipping fast. Thrower. Corgi guy.</span> <span class="ok">[STATUS: OPEN TO WORK]</span>` +
         `<div class="tstat"><span><b>${PROJECTS.length}+</b> projects</span><span>${commitCountHtml("b")} commits</span><span><b>1st</b> HealthHack '25</span><span><b>2nd</b> HackUMBC '24</span></div>`);
     }
 

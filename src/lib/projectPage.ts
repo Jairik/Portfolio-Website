@@ -44,7 +44,7 @@ function neighborAt(index: number): ProjectNeighbor {
 }
 
 /* Resolves prev/next around `slug` in the home-page project order (wraps) */
-export function getProjectNeighbors(slug: string): { prev: ProjectNeighbor; next: ProjectNeighbor } | null {
+function getProjectNeighbors(slug: string): { prev: ProjectNeighbor; next: ProjectNeighbor } | null {
   const index = PROJECTS.findIndex(p => toSlug(p.title) === slug);
   if (index < 0 || PROJECTS.length === 0) return null;
   const last = PROJECTS.length - 1;
@@ -55,7 +55,7 @@ export function getProjectNeighbors(slug: string): { prev: ProjectNeighbor; next
 }
 
 /* Normalizes any YouTube URL (watch?v=, youtu.be/, /embed/) to an embed URL */
-export function youtubeEmbedUrl(url: string): string | null {
+function youtubeEmbedUrl(url: string): string | null {
   if (!url) return null;
   try {
     const u = new URL(url);

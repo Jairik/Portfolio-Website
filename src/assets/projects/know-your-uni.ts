@@ -21,7 +21,7 @@ export const content: ProjectPageExtra = {
 export default function createKnowYourUni(): ProjectItem {
   return new ProjectItem(
     "KnowYourUni",
-    "Student analytics platform providing ML-derived insights into student performance.",
+    "Student analytics dashboard built on a Neo4j knowledge graph, looking for patterns in academic habits and engagement.",
     "https://github.com/ncorcoran771/KnowYourUni_",
     ["React", "TypeScript", "Vite", "Neo4J", "FastAPI", "Gemini", "Langchain", "Python"],
     "September 2025 - November 2025",

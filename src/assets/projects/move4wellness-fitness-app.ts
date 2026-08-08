@@ -21,7 +21,7 @@ export const content: ProjectPageExtra = {
 export default function createMove4WellnessFitnessApp(): ProjectItem {
   return new ProjectItem(
     "Move4Wellness Fitness App",
-    "Prototype mobile app promoting physical activity through personalized workout plans and progress tracking.",
+    "Native Android fitness tracker with split user and manager views, backed by Firebase Authentication and Firestore.",
     "https://github.com/Jairik/MOVE4WELLNESS-Android-App",
     ["Java", "Android Studio", "Firebase", "Figma"],
     "April 2024 - May 2024",

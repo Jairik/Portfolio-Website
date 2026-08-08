@@ -104,8 +104,8 @@
 .thome .hero .role-line { margin-top: 20px; font-size: clamp(15px, 2.2vw, 24px); min-height: 1.7em; }
 .thome .hero .role-line .cmd { color: var(--ink); font-weight: 700; }
 .thome .hero .out { color: var(--mut); font-size: clamp(12.5px, 1.5vw, 15px); margin-top: 14px; max-width: 640px; }
-.thome .hero .out b { color: var(--ink); }
-.thome .hero .out .ok { color: var(--acid); }
+.thome .hero .out b { display: block; margin-top: 4px; color: var(--ink); text-wrap: balance; }
+.thome .hero .out .ok { display: block; margin-top: 4px; color: var(--acid); }
 .thome .hero .stat-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
 .thome .hero .stat-row span { border: 1px solid var(--line); background: var(--bg2); padding: 6px 12px; font-size: 11.5px; color: var(--mut); }
 .thome .hero .stat-row b { color: var(--acid); font-weight: 700; }
@@ -177,8 +177,8 @@
   transition: color .15s, border-color .15s, background .15s, transform .15s; }
 .thome .ptech span:hover { color: var(--ink); border-color: var(--acid-deep);
   background: color-mix(in srgb, var(--acid) 8%, var(--bg2)); transform: translateY(-1px); }
-.thome .ptech img { width: 12px; height: 12px; filter: invert(.85); transition: filter .15s; }
-.thome .ptech span:hover img { filter: invert(.9) sepia(1) saturate(4) hue-rotate(45deg) brightness(1.3); }
+.thome .ptech img { width: 12px; height: 12px; object-fit: contain; filter: brightness(0) invert(1); transition: filter .15s; }
+.thome .ptech span:hover img { filter: brightness(0) invert(1) sepia(1) saturate(4) hue-rotate(45deg) brightness(1.3); }
 .thome .plinks { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
 .thome .plinks a { font-size: 11.5px; font-weight: 700; letter-spacing: .08em; color: var(--acid);
   border: 1.5px solid var(--acid-deep); padding: 9px 16px; text-transform: uppercase; transition: all .15s; }
@@ -251,7 +251,7 @@
 .thome .sk-wall { display: flex; flex-wrap: wrap; gap: 9px; }
 .thome .chip { display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-weight: 700; font-size: 12.5px;
   background: #070906; color: var(--acid); padding: 9px 14px; border: none; cursor: pointer; transition: transform .15s, box-shadow .15s; }
-.thome .chip img { width: 15px; height: 15px; filter: invert(.9) sepia(1) saturate(4) hue-rotate(45deg) brightness(1.3); }
+.thome .chip img { width: 15px; height: 15px; object-fit: contain; filter: brightness(0) invert(1); }
 .thome .chip:hover { transform: scale(1.07); box-shadow: 5px 5px 0 rgba(7,9,6,.85); position: relative; z-index: 2; }
 .thome .chip .nb { font-size: 9px; font-weight: 400; opacity: .6; letter-spacing: .06em; text-transform: uppercase; }
 .thome .pop { position: fixed; z-index: 85; max-width: 360px; background: #070906; color: var(--ink); border: 1.5px solid var(--acid);

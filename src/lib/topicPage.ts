@@ -8,7 +8,7 @@ import { PROJECT_BY_SLUG, type HomeProject } from "./terminalHomeData";
 import { getTechnologyIcon } from "../assets/experience";
 
 // The topic served at bare /topics (and the switcher's first tab)
-export const DEFAULT_TOPIC = topicOrder[0];
+const DEFAULT_TOPIC = topicOrder[0];
 
 // A headline tool with its resolved icon (null when no icon is known)
 export interface TopicTool {
@@ -62,9 +62,4 @@ export function topicsForProject(slug: string): { key: string; label: string }[]
   return topicOrder
     .filter(k => topics[k].projects.includes(slug))
     .map(k => ({ key: k, label: topics[k].label }));
-}
-
-/* The first topic (in topicOrder) that lists this project slug, or null. */
-export function primaryTopicForSlug(slug: string): string | null {
-  return topicOrder.find(k => topics[k].projects.includes(slug)) ?? null;
 }

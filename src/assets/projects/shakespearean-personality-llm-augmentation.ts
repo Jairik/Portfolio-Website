@@ -28,7 +28,7 @@ export const content: ProjectPageExtra = {
 export default function createShakespeareanPersonalityLlmAugmentation(): ProjectItem {
   return new ProjectItem(
     "Shakespearean Personality LLM Augmentation",
-    "Develops and evaluates persona-consistent LLMs grounded in Hamlet and Macbeth via LoRA fine-tuning, RAG, and a FastAPI + React demo for single-character and multi-model dialogues.",
+    "Capstone system that develops and evaluates persona-consistent LLMs grounded in Hamlet and Macbeth via LoRA fine-tuning, RAG, and a FastAPI + React demo for single-character and multi-model dialogues.",
     "https://github.com/bmccorison/DSCI490-Shakespearean-Personality-LLM-Augmentation-",
     [
       "Python",
@@ -48,7 +48,7 @@ export default function createShakespeareanPersonalityLlmAugmentation(): Project
     ["/projects/Shakespearean-LLM-1.png"],
     "",
     "",
-    false,
+    true,
     false
   );
 }

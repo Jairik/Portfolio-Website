@@ -27,7 +27,7 @@ export const content: ProjectPageExtra = {
 export default function createLunara(): ProjectItem {
   return new ProjectItem(
     "Lunara",
-    "AI-powered triage system for healthcare, winning 1st place at Rutgers HealthHack 2025. Currently working with Rutgers on a completer program to bring to production.",
+    "AI-powered triage system for healthcare, winner of 1st place at Rutgers HealthHack 2025. Currently in development with Rutgers through a completer program to bring it to production.",
     "https://github.com/Jairik/RUHealthHack-25",
     ["AWS", "React", "JavaScript", "Vite", "Node.js", "FastAPI", "Python", "Scikit-Learn", "Terraform"],
     "October 2025 - Present",

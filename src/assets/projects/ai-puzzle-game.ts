@@ -21,7 +21,7 @@ export const content: ProjectPageExtra = {
 export default function createAiPuzzleGame(): ProjectItem {
   return new ProjectItem(
     "AI Puzzle Game",
-    "Utilizes A* Search to automate the 15-puzzle-game, a popular game that includes shifting tiles to a sequential configuration.",
+    "Puzzle solver that uses A* Search to automate the 15-puzzle game, a popular game that involves shifting tiles into a sequential configuration.",
     "https://github.com/Jairik/AI-Puzzle-Game",
     ["Python", "A* Search Algorithm", "Tkinter"],
     "November 2024",

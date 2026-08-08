@@ -21,7 +21,7 @@ export const content: ProjectPageExtra = {
 export default function createAlgorithmPerformanceBenchmarker(): ProjectItem {
   return new ProjectItem(
     "Algorithm Performance Benchmarker",
-    "Benchmarks and compares the performance of various sorting algorithms (Bubble Sort, Merge Sort, Quick Sort, etc.). One of the first projects I built.",
+    "Benchmarking tool that measures and compares the performance of various sorting algorithms (Bubble Sort, Merge Sort, Quick Sort, etc.). One of my first projects.",
     "https://github.com/Jairik/Sort-Analysis",
     ["C++", "Chrono"],
     "March 2024",

@@ -4,7 +4,7 @@
 
 const BASE_IMAGE_PATH = "/tech-icons/";  // site-root absolute so icons resolve on any route
 const SU_TODAY_PATH = BASE_IMAGE_PATH + "su-today-icon.png";
-export const SLIDES_ICON_PATH = BASE_IMAGE_PATH + "google-slides.svg";
+const SLIDES_ICON_PATH = BASE_IMAGE_PATH + "google-slides.svg";
 
 export interface ArticleItem {
     source: string;  // Where it originated from (eg SU Today)

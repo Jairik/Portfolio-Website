@@ -26,7 +26,7 @@ export const content: ProjectPageExtra = {
 export default function createTestifAi(): ProjectItem {
   return new ProjectItem(
     "TestifAI",
-    "LLM-driven platform that generates quizes and tests from user-provided material, winning 2nd best overall and best educational hack at HackUMBC 2024.",
+    "LLM-driven platform that generates quizzes and tests from user-provided material, winner of 2nd best overall and best educational hack at HackUMBC 2024.",
     "https://github.com/SpencerPresley/TestifAI",
     ["OpenAI API", "Langchain", "FastAPI", "AWS", "HTML/CSS/JavaScript", "Jinja", "Python"],
     "September 2024",

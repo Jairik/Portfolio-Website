@@ -50,7 +50,7 @@ export const topics: Record<string, TopicDef> = {
     label: "ai-engineering",
     command: 'grep -r "ai" ~/projects --include=*.md',
     intro:
-      "Projects where the model is the product — LLM apps, RAG pipelines, computer vision, and applied ML shipped end to end.",
+      "The model is the product here. LLM apps, RAG pipelines, computer vision, and applied ML, each shipped end to end.",
     decisions:
       "Prefer grounded retrieval and editable outputs over black-box chat. Keep humans in the loop for high-stakes domains (healthcare, education, farm decisions), and favor local or inspectable pipelines when the data should not leave the machine.",
     projects: [
@@ -80,7 +80,7 @@ export const topics: Record<string, TopicDef> = {
     label: "full-stack",
     command: 'grep -r "full-stack" ~/projects --include=*.md',
     intro:
-      "Front-to-back builds — React frontends, API backends, databases, and the deploys that keep them up.",
+      "React on the front, an API and a database behind it, and a deploy that keeps the whole thing up.",
     decisions:
       "Ship a real React + API loop early, then harden auth, storage, and deployment. Prefer boring, known stacks (Vite, FastAPI, Postgres/Firebase) so most of the risk sits in product logic, not framework novelty.",
     projects: [
@@ -99,9 +99,9 @@ export const topics: Record<string, TopicDef> = {
     label: "data-science-ml",
     command: 'grep -r "data" ~/projects --include=*.ipynb',
     intro:
-      "ETL, analysis, and models on real datasets — dashboards, decision support, and ML that answers actual questions.",
+      "ETL, analysis, and models run against real datasets. The output is dashboards and decision support that answer an actual question.",
     decisions:
-      "Start with data quality and reproducible notebooks before the fancy model. Dashboards and Quarto reports stay decision-support tools — they surface signal for a person, they do not auto-act on it.",
+      "Start with data quality and reproducible notebooks before the fancy model. Dashboards and Quarto reports stay decision-support tools. They surface signal for a person; they do not act on it.",
     projects: [
       "data-science-stuff",
       "poultry-farm-data-analytics-dashboard",
@@ -116,7 +116,7 @@ export const topics: Record<string, TopicDef> = {
     label: "dev-tools",
     command: 'grep -r "cli" ~/projects --include=*.md',
     intro:
-      "Tools built for people who live in the editor — local-first assistants, benchmarks, and workflow utilities.",
+      "Local-first assistants, benchmarks, and workflow utilities, built for people who live in the editor.",
     decisions:
       "Optimize for local control and inspectability: BM25 over hosted embeddings when the vault stays on disk, swap-in agent backends, and measurable benchmarks instead of vibes. A little setup friction is fine if the evidence stays visible.",
     projects: [
@@ -132,9 +132,9 @@ export const topics: Record<string, TopicDef> = {
     label: "systems-security",
     command: 'grep -r "encryption" ~/projects --include=*.c',
     intro:
-      "Closer to the metal — encryption, distributed query processing, and performance work in C and C++.",
+      "This is where things get closer to the metal: encryption, distributed query processing, and performance work in C and C++.",
     decisions:
-      "Prefer explicit protocols and measurable performance over convenience wrappers. Encryption, concurrency, and query planning stay understandable when you own the byte-level details.",
+      "Explicit protocols and measurable performance beat convenience wrappers. Encryption, concurrency, and query planning stay understandable when you own the byte-level details.",
     projects: [
       "encrypted-p2p-chatroom",
       "parallel-query-processing-system",
@@ -149,7 +149,7 @@ export const topics: Record<string, TopicDef> = {
     intro:
       "Projects built under hackathon constraints, shaped by short timelines, team decisions, and demo-day feedback.",
     decisions:
-      "Cut scope hard: one demable loop, editable LLM outputs, and a stack the team already knows. Post-hackathon work is where auth, data quality, and deployment catch up.",
+      "Cut scope hard: one demoable loop, editable LLM outputs, and a stack the team already knows. Post-hackathon work is where auth, data quality, and deployment catch up.",
     projects: ["knowyouruni", "testifai", "lunara", "rova", "perishless", "claritycash"],
     tools: ["React", "FastAPI", "AWS", "Python", "OpenAI API", "LangChain"]
   }

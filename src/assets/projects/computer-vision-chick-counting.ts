@@ -28,7 +28,7 @@ export const content: ProjectPageExtra = {
 export default function createComputerVisionChickCounting(): ProjectItem {
   return new ProjectItem(
     "Computer Vision Chick Counting",
-    "AI-based system using computer vision to accurately count chicks in poultry farms, improving standard industry efficiencies and reducing manual labor. Patent consideration.",
+    "Camera-based counter for newly hatched chicks on a conveyor belt, built to handle the overlapping birds that throw off a laser counter. Patent consideration.",
     "",
     ["Python", "Ultralytics YOLO", "Raspberry Pi", "Jupyter"],
     "January 2024 - December 2025",

@@ -75,8 +75,8 @@ export const aboutSections: AboutMdSection[] = [
     placeholder: "UPE presidency, tutoring & lab assistance, clubs, volunteering, talks.",
     body: [
       "I served as president of both Salisbury University's Upsilon Pi Epsilon honors society chapter and its Computer Science, Math & Data Science Club, helping represent and strengthen the department's student community.",
-      "As a Computer Science Department Tutor & Lab Assistant, I supported students across the undergraduate curriculum, from software engineering and artificial intelligence to cybersecurity and systems programming. I specialized in helping students work through data structures, IPC, signals, and threading in C and Linux. I also spent two years as a Resident Assistant, mentoring more than 300 residents and earning Salisbury University's Best Community Builder award.",
-      "I have presented technical work to audiences ranging from Salisbury's campus community to senior client leadership. That includes introducing GullHacks (an initiative to start Salisbury University's first hackathon) at the 2025 Salisbury University Student Research Conference, presenting \"The Practical AI: Designing Solutions for Real-World Problems\" to industry leadership, and demonstrating my Booz Allen team's cyber-physical analytics platform to a senior military general."
+      "As a Computer Science Department Tutor & Lab Assistant, I supported students across the undergraduate curriculum, covering software engineering, artificial intelligence, cybersecurity, and systems programming. I specialized in helping students work through data structures, IPC, signals, and threading in C and Linux. I also spent two years as a Resident Assistant, mentoring more than 300 residents and earning Salisbury University's Best Community Builder award.",
+      "I have presented technical work to Salisbury's campus community and to senior client leadership. That includes introducing GullHacks (an initiative to start Salisbury University's first hackathon) at the 2025 Salisbury University Student Research Conference, presenting \"The Practical AI: Designing Solutions for Real-World Problems\" to industry leadership, and demonstrating my Booz Allen team's cyber-physical analytics platform to a senior military general."
     ]
   },
   {
@@ -85,7 +85,7 @@ export const aboutSections: AboutMdSection[] = [
     placeholder: "track & field, music, games, the annual Shining Force run, dog pictures.",
     body: [
       "Outside the terminal, I competed as a thrower on Salisbury University's varsity track & field team. The sport gave me a demanding counterweight to school and software, along with a community I am proud to have been part of and lifelong friendships.",
-      "I am also into rock and metal, Slay the Spire, and an annual run through Shining Force on the Sega Genesis. I am also a big dog person—especially when corgis are involved, even if my allergies disagree. Also, my favorite YouTuber is ThePrimeagen (I use Arch btw) (I use vim btw) (Still use QWERTY tho)."
+      "I am also into rock and metal, Slay the Spire, and an annual run through Shining Force on the Sega Genesis. Big dog person too, especially when corgis are involved, even if my allergies disagree. Also, my favorite YouTuber is ThePrimeagen (I use Arch btw) (I use vim btw) (Still use QWERTY tho)."
     ]
   }
 ];

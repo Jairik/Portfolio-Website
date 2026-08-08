@@ -21,7 +21,7 @@ export const content: ProjectPageExtra = {
 export default function createStockPortfolioManagementSystem(): ProjectItem {
   return new ProjectItem(
     "Stock Portfolio Management System",
-    "Web application for managing and analyzing stock portfolios with real-time data integration and performance tracking.",
+    "Database-backed portfolio tracker with separate investor, advisor, and admin workflows, wired to live market data from Alpaca.",
     "https://github.com/Jairik/Stock-Portfolio-Management",
     ["PHP", "MySQL", "Chart.js", "Cron", "HTML/CSS/JavaScript", "Bootstrap", "Alpaca API"],
     "March 2024 - April 2024",

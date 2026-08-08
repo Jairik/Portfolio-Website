@@ -27,7 +27,7 @@ export const content: ProjectPageExtra = {
 export default function createDataScienceStuff(): ProjectItem {
   return new ProjectItem(
     "Data Science Stuff",
-    "Data science project collection showcasing different ETL and ML techniques on numerous different datasets.",
+    "Collected coursework from Data Science Fundamentals: smaller studies on penguins, PCA, and gradient descent, plus a capstone on academic performance.",
     "https://github.com/Jairik/Data-Science-Fundementals",
     ["Python", "Pandas", "Numpy", "Scikit-Learn", "Tensorflow", "Seaborn", "Plotly", "Jupyter", "MKDocs", "GitHub Actions"],
     "August 2025 - December 2025",
